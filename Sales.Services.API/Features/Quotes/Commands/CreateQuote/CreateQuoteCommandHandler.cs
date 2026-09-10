@@ -1,0 +1,38 @@
+using MediatR;
+using SNUL.Shared.Common.Interfaces;
+using SNUL.Shared.Common.Repositories.Interfaces.Base;
+using SNUL.Shared.Localization;
+using SNUL.Shared.Results;
+using QuoteEntity = SNUL.Shared.Domain.Models.Quote;
+using QuoteItemEntity = SNUL.Shared.Domain.Models.QuoteItem;
+using RFQEntity = SNUL.Shared.Domain.Models.RFQ;
+namespace Sales.Services.API.Features.Quotes.Commands.CreateQuote
+{
+    public class CreateQuoteCommandHandler : IRequestHandler<CreateQuoteCommand, Result<string>>
+    {
+        private readonly IUnitOfWork _uow; private readonly ICurrentUserService _cur;
+        public CreateQuoteCommandHandler(IUnitOfWork uow, ICurrentUserService cur) { _uow = uow; _cur = cur; }
+        public async Task<Result<string>> Handle(CreateQuoteCommand r, CancellationToken ct)
+        {
+            var curId = _cur.UserId != Guid.Empty ? _cur.UserId.ToString() : "System";
+            var quote = new QuoteEntity { Id = Guid.NewGuid(), QuoteNumber = $"QT-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString()[..6].ToUpper()}", RFQId = r.RFQId, Amount = r.Amount, ValidUntil = r.ValidUntil, Status = SNUL.Shared.Domain.Models.QuoteStatus.Draft, CreatedBySalesRepId = _cur.UserId };
+            quote.MarkAsCreated(curId);
+            foreach (var it in r.Items) { var qi = new QuoteItemEntity { Id = Guid.NewGuid(), QuoteId = quote.Id, ProductId = it.ProductId, Quantity = it.Quantity, UnitPrice = it.UnitPrice }; qi.MarkAsCreated(curId); quote.Items.Add(qi); }
+            var repo = _uow.GetRepository<QuoteEntity, Guid>();
+            await repo.AddAsync(quote, ct);
+            // Advance the parent RFQ so it no longer sits in Pending once priced.
+            if (r.RFQId.HasValue)
+            {
+                var rfqRepo = _uow.GetRepository<RFQEntity, Guid>();
+                var rfq = await rfqRepo.GetByIdAsync(r.RFQId.Value, ct);
+                if (rfq != null && !rfq.IsDeleted && rfq.Status == SNUL.Shared.Domain.Models.RFQStatus.Pending)
+                {
+                    rfq.Status = SNUL.Shared.Domain.Models.RFQStatus.Quoted;
+                    rfq.MarkAsUpdated(curId);
+                }
+            }
+            await _uow.SaveChangesAsync(ct);
+            return Result<string>.Created(quote.Id.ToString(), LocalizationKeys.Quote.Created);
+        }
+    }
+}

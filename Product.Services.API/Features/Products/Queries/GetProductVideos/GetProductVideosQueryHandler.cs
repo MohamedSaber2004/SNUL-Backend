@@ -1,0 +1,50 @@
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using SNUL.Shared.Common.DTOs.Products;
+using SNUL.Shared.Common.Repositories.Interfaces.Base;
+using SNUL.Shared.Domain.Models;
+using SNUL.Shared.Localization;
+using SNUL.Shared.Results;
+using ProductEntity = SNUL.Shared.Domain.Models.Product;
+
+namespace Product.Services.API.Features.Products.Queries.GetProductVideos
+{
+    public class GetProductVideosQueryHandler : IRequestHandler<GetProductVideosQuery, Result<IReadOnlyList<ProductMediaDto>>>
+    {
+        private readonly IUnitOfWork _unitOfWork;
+
+        public GetProductVideosQueryHandler(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
+        public async Task<Result<IReadOnlyList<ProductMediaDto>>> Handle(GetProductVideosQuery request, CancellationToken cancellationToken)
+        {
+            var productRepo = _unitOfWork.GetRepository<ProductEntity, Guid>();
+            var productExists = await productRepo.ExistsAsync(p => !p.IsDeleted && p.Id == request.ProductId, cancellationToken);
+            if (!productExists)
+                return Result<IReadOnlyList<ProductMediaDto>>.NotFound(LocalizationKeys.Product.NotFound);
+
+            var mediaRepo = _unitOfWork.GetRepository<ProductMedia, Guid>();
+            // NOTE: materialize before the (int) cast — EF translates an explicit
+            // numeric cast of a string-converted enum into CAST([Type] AS int),
+            // which blows up on the stored 'Video'/'Image'/'Document' values.
+            var rows = await mediaRepo.GetAll(m => !m.IsDeleted && m.ProductId == request.ProductId && m.Type == ProductMediaType.Video)
+                .OrderBy(m => m.SortOrder)
+                .Select(m => new { m.Id, m.ProductId, m.Type, m.Url, m.SortOrder })
+                .ToListAsync(cancellationToken);
+
+            var videos = rows.Select(m => new ProductMediaDto
+                {
+                    Id = m.Id,
+                    ProductId = m.ProductId,
+                    Type = (int)m.Type,
+                    Url = m.Url,
+                    SortOrder = m.SortOrder
+                })
+                .ToList();
+
+            return Result<IReadOnlyList<ProductMediaDto>>.Success(videos, LocalizationKeys.Product.Fetched);
+        }
+    }
+}

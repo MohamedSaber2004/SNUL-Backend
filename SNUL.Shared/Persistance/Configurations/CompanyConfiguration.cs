@@ -1,0 +1,25 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SNUL.Shared.Domain.Models;
+
+namespace SNUL.Shared.Persistance.Configurations
+{
+    public class CompanyConfiguration : IEntityTypeConfiguration<Company>
+    {
+        public void Configure(EntityTypeBuilder<Company> builder)
+        {
+            builder.ToTable("Companies");
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
+            builder.Property(x => x.Email).IsRequired(false).HasMaxLength(256);
+            builder.Property(x => x.ImageName).IsRequired(false).HasMaxLength(500);
+            builder.Property(x => x.Type).HasConversion<string>().IsRequired();
+            builder.Property(x => x.Status).HasConversion<string>().IsRequired();
+            builder.HasIndex(x => x.Name);
+            builder.HasOne(x => x.Country).WithMany().HasForeignKey(x => x.CountryId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(x => x.AccountManager).WithMany().HasForeignKey(x => x.AccountManagerId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasMany(x => x.Users).WithOne(u => u.Company).HasForeignKey(u => u.CompanyId).OnDelete(DeleteBehavior.SetNull);
+            builder.Property(x => x.CreatedBy).IsRequired();
+        }
+    }
+}

@@ -1,0 +1,32 @@
+@Gateway_BaseUrl = https://localhost:7266
+# @Gateway_BaseUrl = https://snul.innovation.com
+
+### 1. Test Gateway Scalar Documentation
+GET {{Gateway_BaseUrl}}/scalar/v1
+Accept: text/html
+
+###
+
+### 2. Test Gateway OpenAPI Schema
+GET {{Gateway_BaseUrl}}/openapi/v1.json
+Accept: application/json
+
+###
+
+### 3. Test Auth Microservice via Gateway (Ocelot Routing)
+GET {{Gateway_BaseUrl}}/api/v1/auth/health
+Accept: application/json
+
+###
+
+### 4. Test User Management Microservice via Gateway (Ocelot Routing)
+GET {{Gateway_BaseUrl}}/api/v1/user-management/users
+Accept: application/json
+
+###
+
+### 5. Test User Management OpenAPI Docs via Gateway
+GET {{Gateway_BaseUrl}}/api/docs/usermanagement/openapi.json
+Accept: application/json
+
+###

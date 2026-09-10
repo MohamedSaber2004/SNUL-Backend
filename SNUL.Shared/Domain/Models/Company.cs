@@ -1,0 +1,72 @@
+using SNUL.Shared.Common.Classes;
+using SNUL.Shared.Enums;
+
+namespace SNUL.Shared.Domain.Models
+{
+    public class Company : BaseEntity<Guid>
+    {
+        public string Name { get; set; } = null!;
+        public string? Email { get; set; }
+        public string? ImageName { get; set; }
+        public CompanyType Type { get; set; }
+        public Guid CountryId { get; set; }
+        public virtual Country? Country { get; set; }
+        public CompanyStatus Status { get; set; } = CompanyStatus.Pending;
+        public Guid? AccountManagerId { get; set; }
+        public bool IsProvider { get; set; }
+        // Cross-system integration: Welco master provider/company ID reference
+        public Guid? WelcoCompanyId { get; set; }
+        public virtual ApplicationUser? AccountManager { get; set; }
+        public virtual ICollection<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
+        public virtual ICollection<CompanyAddress> Addresses { get; set; } = new List<CompanyAddress>();
+
+        public static Company Create(
+            string name,
+            CompanyType type,
+            Guid countryId,
+            CompanyStatus status,
+            Guid? accountManagerId,
+            string createdBy,
+            string? email = null,
+            string? imageName = null)
+        {
+            var company = new Company
+            {
+                Id = Guid.NewGuid(),
+                Name = name,
+                Email = NormalizeEmail(email),
+                ImageName = string.IsNullOrWhiteSpace(imageName) ? null : imageName.Trim(),
+                Type = type,
+                CountryId = countryId,
+                Status = status,
+                AccountManagerId = accountManagerId
+            };
+            company.MarkAsCreated(createdBy);
+            return company;
+        }
+
+        public void Update(
+            string name,
+            CompanyType type,
+            Guid countryId,
+            CompanyStatus status,
+            Guid? accountManagerId,
+            string updatedBy,
+            string? email = null,
+            string? imageName = null)
+        {
+            Name = name.Trim();
+            Email = NormalizeEmail(email);
+            if (imageName != null)
+                ImageName = string.IsNullOrWhiteSpace(imageName) ? null : imageName.Trim();
+            Type = type;
+            CountryId = countryId;
+            Status = status;
+            AccountManagerId = accountManagerId;
+            MarkAsUpdated(updatedBy);
+        }
+
+        private static string? NormalizeEmail(string? email) =>
+            string.IsNullOrWhiteSpace(email) ? null : email.Trim();
+    }
+}

@@ -1,0 +1,1289 @@
+# Senior .NET + Vue Architect — Welco & Snul System Analysis & Implementation
+
+You are acting as a **Senior Software Architect, Senior .NET Backend Engineer, Senior Vue.js Engineer, and Database Architect**.
+
+I already have two fully implemented systems:
+
+* **Welco** → Pakistan website/system
+* **Snul** → Egypt website/system
+
+Both systems are already implemented using a **Microservices architecture** with:
+
+* Vue.js frontend
+* .NET backend
+* API Gateway
+* Multiple backend microservices
+* Separate databases
+* Authentication/Authorization
+* Existing business logic
+
+Your job is NOT to rebuild the systems from scratch.
+
+Your job is to:
+
+1. Analyze the existing codebase deeply.
+2. Understand the current architecture and business logic.
+3. Identify architectural and business-logic gaps.
+4. Modify and improve the existing implementation.
+5. Preserve the existing architecture wherever possible.
+6. Implement the required Welco ↔ Snul integration correctly.
+7. Keep both systems independently deployable and maintainable.
+
+---
+
+# 1. CRITICAL BUSINESS ARCHITECTURE
+
+The two systems MUST remain separate.
+
+```text
+Welco
+Pakistan Frontend
+        ↓
+Pakistan API Gateway
+        ↓
+Pakistan Microservices
+        ↓
+Pakistan Databases
+```
+
+```text
+Snul
+Egypt Frontend
+        ↓
+Egypt API Gateway
+        ↓
+Egypt Microservices
+        ↓
+Egypt Databases
+```
+
+DO NOT merge the databases.
+
+DO NOT create a shared database.
+
+DO NOT make Snul directly access Welco databases.
+
+DO NOT make Welco directly access Snul databases.
+
+Communication between the two systems must happen through secure backend-to-backend APIs.
+
+---
+
+# 2. BUSINESS OWNERSHIP
+
+Welco is the **master system for Pakistan**.
+
+Welco is the source of truth for:
+
+* Providers
+* Provider approval
+* Master products
+* Product ownership
+* Product identity
+* Warehouse
+* Inventory
+* Provider-market availability
+* Pakistan sales operations
+* Master quote negotiation where applicable
+
+Snul is the **Egypt sales channel**.
+
+Snul is responsible for:
+
+* Egyptian customers
+* Egyptian authentication where applicable
+* Cart
+* Egyptian product catalog representation
+* Egyptian market pricing where applicable
+* Egyptian orders
+* Egyptian order history
+* Egyptian reviews/content where applicable
+
+---
+
+# 3. IMPORTANT PROVIDER BUSINESS RULE
+
+Providers belong to Welco/Pakistan.
+
+However, a Provider can operate in:
+
+* Pakistan only
+* Egypt only
+* Both Pakistan and Egypt
+
+Do NOT duplicate the Provider between systems as two unrelated Providers.
+
+A Provider should have a market availability concept.
+
+Example:
+
+```text
+Provider: ABC Medical
+
+Pakistan: Active
+Egypt: Active
+```
+
+Another:
+
+```text
+Provider: XYZ Pharma
+
+Pakistan: Active
+Egypt: Inactive
+```
+
+Another:
+
+```text
+Provider: DEF Company
+
+Pakistan: Active
+Egypt: Inactive
+```
+
+Implement this using a proper domain model such as:
+
+```text
+Provider
+ProviderMarket
+Market
+```
+
+or improve the existing implementation if an equivalent concept already exists.
+
+The Provider itself remains a Welco master entity.
+
+---
+
+# 4. PROVIDER APPROVAL
+
+Provider registration should be separated from Provider market availability.
+
+Use a lifecycle such as:
+
+```text
+Pending
+Approved
+Rejected
+Suspended
+```
+
+Do NOT mix:
+
+```text
+Provider Role
+```
+
+with:
+
+```text
+Provider Approval Status
+```
+
+A user can have:
+
+```text
+Role = Provider
+ProviderStatus = Pending
+```
+
+and later:
+
+```text
+Role = Provider
+ProviderStatus = Approved
+```
+
+Only approved providers should be allowed to participate in the relevant business operations.
+
+---
+
+# 5. PRODUCT OWNERSHIP
+
+Products are mastered by Welco.
+
+The main Product entity should remain in Welco.
+
+Snul may maintain a synchronized/local representation of the product for performance and independent operation.
+
+Use a clear external relationship such as:
+
+```text
+PakistanProductId
+```
+
+or:
+
+```text
+ExternalProductId
+```
+
+Example:
+
+```text
+Welco Product
+Id = 500
+ProviderId = 20
+```
+
+Snul may contain:
+
+```text
+Snul Product
+Id = 100
+WelcoProductId = 500
+```
+
+The systems must never accidentally treat these as unrelated products.
+
+---
+
+# 6. PRODUCT MARKET AVAILABILITY
+
+A product may be available in:
+
+```text
+Pakistan
+Egypt
+Both
+```
+
+The implementation should support market-level availability.
+
+Example:
+
+```text
+Product X
+
+Pakistan → Active
+Egypt → Active
+```
+
+Another product:
+
+```text
+Product Y
+
+Pakistan → Active
+Egypt → Inactive
+```
+
+Ensure the frontend only displays products that are valid for the current market.
+
+---
+
+# 7. PRICING
+
+Do not assume that Pakistan and Egypt must have identical prices.
+
+The same product may have:
+
+```text
+Pakistan Price = 100
+Egypt Price = 120
+```
+
+If the existing architecture supports market-specific pricing, improve it.
+
+If it does not, introduce a clean market pricing model such as:
+
+```text
+ProductMarket
+    ProductId
+    Market
+    Price
+    IsActive
+```
+
+Do not duplicate the actual Product entity merely because the price differs.
+
+---
+
+# 8. WAREHOUSE AND INVENTORY
+
+There is currently **ONE physical warehouse**.
+
+The warehouse belongs to Welco/Pakistan.
+
+There is NO Egypt warehouse.
+
+There should NOT be an independent Egypt inventory source of truth.
+
+The inventory source of truth is:
+
+```text
+Welco
+    ↓
+Pakistan Warehouse
+    ↓
+Inventory Service
+```
+
+Snul may cache/display availability, but the final stock validation must happen through Welco.
+
+Example:
+
+```text
+Snul Customer
+    ↓
+Snul Order
+    ↓
+Welco Inventory Service
+    ↓
+Check/Reserve Stock
+    ↓
+Success
+```
+
+Prevent race conditions and overselling.
+
+If the existing Inventory Service supports reservation, use it.
+
+If not, implement a safe reservation/transaction mechanism.
+
+Do not simply subtract inventory independently from Snul.
+
+---
+
+# 9. ORDER FLOW FROM SNUL TO WELCO
+
+When an Egyptian customer places an order:
+
+```text
+Snul Vue
+    ↓
+Snul API Gateway
+    ↓
+Snul Order Service
+    ↓
+Welco Integration Client
+    ↓
+Welco API Gateway
+    ↓
+Welco Inventory Service
+    ↓
+Validate/Reserve Stock
+    ↓
+Welco Order Service
+    ↓
+Return Welco Order ID
+    ↓
+Snul Order
+```
+
+Orders must maintain a relationship between both systems.
+
+Example:
+
+```text
+Snul Order
+EG-1001
+WelcoOrderId = 5001
+```
+
+Welco:
+
+```text
+Welco Order
+PK-5001
+SourceMarket = Egypt
+ExternalOrderId = EG-1001
+```
+
+Use stable external identifiers and prevent duplicate order creation.
+
+---
+
+# 10. IDEMPOTENCY
+
+This is critical.
+
+If Snul sends the same order request twice because of:
+
+* network timeout
+* retry
+* gateway failure
+* client retry
+* service restart
+
+Welco MUST NOT create two orders.
+
+Implement idempotency using a stable external order/reference ID.
+
+Example:
+
+```text
+SnulOrderId = EG-1001
+```
+
+If Welco already processed:
+
+```text
+EG-1001
+```
+
+return the existing Welco Order instead of creating another order.
+
+---
+
+# 11. ORDER STATUS
+
+There is NO shipping module.
+
+Do NOT introduce:
+
+* Shipment
+* Carrier
+* TrackingNumber
+* DeliveryService
+* ShippingOrder
+* ShippingTracking
+
+The system only needs **Order Status tracking**.
+
+Use the existing status model if appropriate, otherwise use a clean lifecycle such as:
+
+```text
+Pending
+Confirmed
+Processing
+Ready
+Completed
+Cancelled
+Rejected
+```
+
+Do not introduce unnecessary shipping concepts.
+
+---
+
+# 12. ORDER STATUS SYNCHRONIZATION
+
+Welco should be the operational/master source for the order once an Egyptian order has been accepted into the Welco order process.
+
+When status changes in Welco:
+
+```text
+Welco Order Service
+       ↓
+OrderStatusChanged
+       ↓
+Snul Integration API
+       ↓
+Snul Order Service
+       ↓
+Update Egyptian Order
+```
+
+Prefer event/webhook-based synchronization.
+
+If the existing architecture already has a message broker/event bus, reuse it.
+
+Do NOT introduce Kafka/RabbitMQ merely for the sake of complexity if the current project does not need it.
+
+For an MVP, a reliable API/webhook or background synchronization mechanism is acceptable.
+
+---
+
+# 13. QUOTE SYSTEM
+
+Welco currently has a Request Quote workflow.
+
+The existing concept is:
+
+```text
+Customer
+    ↓
+Add products to cart
+    ↓
+Request Quote
+    ↓
+Sales negotiates price
+    ↓
+Accept / Reject
+```
+
+Preserve and improve this workflow.
+
+Do not reduce quotes to:
+
+```text
+Accepted = true/false
+```
+
+Prefer a lifecycle such as:
+
+```text
+Pending
+UnderReview
+Negotiating
+SentToCustomer
+Accepted
+Rejected
+Expired
+Cancelled
+```
+
+If the existing implementation already has a good quote model, improve it instead of replacing it.
+
+The quote should preserve negotiation history.
+
+Consider:
+
+```text
+Quote
+QuoteItem
+QuoteVersion
+QuoteMessage
+```
+
+with:
+
+```text
+OriginalTotal
+CurrentTotal
+FinalTotal
+Version
+CreatedBy
+CreatedAt
+```
+
+---
+
+# 14. EGYPT QUOTE FLOW
+
+If an Egyptian customer requests a quote:
+
+```text
+Snul Customer
+    ↓
+Snul Cart
+    ↓
+Request Quote
+    ↓
+Snul Quote Service
+    ↓
+Welco Quote Integration
+    ↓
+Welco Quote Service
+    ↓
+Welco Sales
+    ↓
+Negotiation
+```
+
+Maintain the relationship:
+
+```text
+SnulQuoteId
+WelcoQuoteId
+```
+
+Welco remains the master quote/negotiation system if Sales operates from Welco.
+
+---
+
+# 15. API-TO-API INTEGRATION
+
+Create a clean integration contract between the systems.
+
+Possible endpoints:
+
+```text
+/api/integration/providers
+/api/integration/products
+/api/integration/inventory/check
+/api/integration/inventory/reserve
+/api/integration/orders
+/api/integration/orders/{id}/status
+/api/integration/quotes
+```
+
+Do not expose these integration endpoints to public frontend clients.
+
+They are backend-to-backend endpoints.
+
+---
+
+# 16. AUTHENTICATION BETWEEN WELCO AND SNUL
+
+Never put integration secrets inside Vue.
+
+This is WRONG:
+
+```text
+Vue → Welco API
+```
+
+This is correct:
+
+```text
+Snul Backend
+      ↓
+Secure Authentication
+      ↓
+Welco Backend
+```
+
+Use an appropriate service-to-service authentication mechanism such as:
+
+* OAuth2 Client Credentials
+* Signed Service JWT
+* Another secure machine-to-machine authentication mechanism already supported by the architecture
+
+Never hardcode secrets in source code.
+
+Use:
+
+```text
+Environment Variables
+Secret Manager
+Configuration
+```
+
+depending on the existing deployment architecture.
+
+---
+
+# 17. .NET IMPLEMENTATION
+
+Use the existing .NET architecture.
+
+Do not introduce unnecessary frameworks.
+
+Prefer:
+
+* Clean Architecture where already present
+* SOLID principles
+* Dependency Injection
+* CQRS if already used
+* MediatR if already used
+* Entity Framework Core
+* FluentValidation if already used
+* AutoMapper only where it adds value
+* HttpClientFactory for service-to-service communication
+* Resilience/retry policies where appropriate
+* Proper cancellation tokens
+* Async/await
+* Structured logging
+
+Follow the coding conventions already established in the repositories.
+
+Do not introduce a completely different coding style.
+
+---
+
+# 18. DATABASE RULES
+
+Each system must maintain its own database.
+
+```text
+Welco DBs
+    ↓
+Pakistan
+
+Snul DBs
+    ↓
+Egypt
+```
+
+Never create:
+
+```text
+SharedDatabase
+```
+
+Never use cross-database foreign keys between the two systems.
+
+Use external IDs instead.
+
+Example:
+
+```text
+SnulOrder.WelcoOrderId
+SnulProduct.WelcoProductId
+SnulProvider.WelcoProviderId
+SnulQuote.WelcoQuoteId
+```
+
+---
+
+# 19. FRONTEND REQUIREMENTS — VUE
+
+Analyze both Vue applications.
+
+Ensure:
+
+### Welco
+
+Pakistan users should see:
+
+* Pakistan products
+* Pakistan market providers
+* Pakistan orders
+* Provider management
+* Warehouse/inventory where authorized
+* Sales/quote management
+* Appropriate admin dashboards
+
+### Snul
+
+Egypt users should see:
+
+* Egypt products
+* Providers available in Egypt
+* Egypt pricing
+* Cart
+* Egyptian orders
+* Order status
+* Quote functionality if enabled
+
+Do not expose internal integration details to the frontend.
+
+The Vue applications communicate only with their own backend.
+
+---
+
+# 20. ROLE AND AUTHORIZATION REVIEW
+
+Analyze the current authorization implementation.
+
+Current business roles include:
+
+```text
+Admin
+Sales
+Provider
+Customer
+```
+
+Ensure permissions are correctly enforced.
+
+Do not rely only on frontend route guards.
+
+Every sensitive operation must be authorized at the backend.
+
+Examples:
+
+```text
+CanApproveProviders
+CanManageProducts
+CanManageInventory
+CanManageQuotes
+CanManageOrders
+```
+
+Use policies where they provide better control than simple roles.
+
+---
+
+# 21. IMPORTANT: ANALYZE BEFORE MODIFYING
+
+Before making changes:
+
+### Phase 1 — Repository Discovery
+
+Analyze:
+
+```text
+Directory structure
+Projects
+Services
+API Gateways
+Controllers
+Endpoints
+Entities
+DTOs
+DbContexts
+Migrations
+Repositories
+Services
+Handlers
+Validators
+Authentication
+Authorization
+Message brokers
+Background jobs
+HTTP clients
+Vue components
+Stores
+API clients
+Routes
+State management
+Environment configuration
+```
+
+Identify dependencies between components.
+
+---
+
+# 22. CREATE AN ARCHITECTURE REPORT FIRST
+
+Before editing code, produce an internal analysis containing:
+
+```text
+1. Current architecture
+2. Current microservices
+3. Current database ownership
+4. Current Provider implementation
+5. Current Product implementation
+6. Current Inventory implementation
+7. Current Order implementation
+8. Current Quote implementation
+9. Current authentication
+10. Current authorization
+11. Current frontend architecture
+12. Existing integration points
+13. Missing business logic
+14. Architectural risks
+15. Recommended changes
+```
+
+Then implement the changes.
+
+Do not blindly modify code.
+
+---
+
+# 23. DO NOT REWRITE WORKING CODE
+
+This is extremely important.
+
+If an existing implementation already satisfies the requirement:
+
+```text
+KEEP IT.
+```
+
+Only refactor when necessary.
+
+Do NOT:
+
+* Rewrite entire services
+* Replace working architecture
+* Replace the database
+* Replace authentication
+* Replace Vue architecture
+* Introduce unnecessary libraries
+* Create duplicate entities
+* Create duplicate business logic
+* Create unnecessary microservices
+
+Prefer incremental changes.
+
+---
+
+# 24. ERROR HANDLING
+
+Integration failures must be handled correctly.
+
+Consider:
+
+```text
+Timeout
+Connection failure
+Authentication failure
+Validation failure
+Insufficient inventory
+Duplicate request
+Welco unavailable
+Snul unavailable
+Partial failure
+```
+
+Never silently swallow exceptions.
+
+Return meaningful error responses.
+
+Use proper HTTP status codes.
+
+Log integration failures with correlation IDs.
+
+---
+
+# 25. OBSERVABILITY
+
+Every cross-system request should have a correlation ID.
+
+Example:
+
+```text
+CorrelationId
+    ↓
+Snul Gateway
+    ↓
+Snul Order Service
+    ↓
+Welco Integration
+    ↓
+Welco Gateway
+    ↓
+Welco Order Service
+```
+
+This should make debugging a cross-system order possible.
+
+Improve:
+
+* Structured logging
+* Correlation IDs
+* Integration logs
+* Error logs
+* Request tracing
+
+using the existing infrastructure where possible.
+
+---
+
+# 26. DATA CONSISTENCY
+
+Do not attempt distributed database transactions across Welco and Snul.
+
+Instead use:
+
+* Idempotency
+* Reliable API contracts
+* Transactional operations inside each service
+* Outbox pattern if already appropriate
+* Events/webhooks
+* Retry policies
+* Reconciliation/background jobs
+
+The system should tolerate temporary communication failures.
+
+---
+
+# 27. BACKGROUND SYNCHRONIZATION
+
+If appropriate, create background workers for:
+
+```text
+Provider synchronization
+Product synchronization
+Market availability synchronization
+Order status reconciliation
+Failed integration requests
+```
+
+Do not make every frontend request depend on a synchronous call if the data can safely be synchronized asynchronously.
+
+However:
+
+**Inventory validation during order placement must be authoritative and real-time against Welco.**
+
+---
+
+# 28. API CONTRACTS
+
+Create clear DTOs specifically for integration.
+
+Do not expose internal EF entities directly.
+
+Example:
+
+```csharp
+public class CreateExternalOrderRequest
+{
+    public string ExternalOrderId { get; set; }
+
+    public string Market { get; set; }
+
+    public int CustomerId { get; set; }
+
+    public decimal TotalAmount { get; set; }
+
+    public OrderItemRequest[] Items { get; set; }
+}
+```
+
+Use dedicated integration DTOs.
+
+Do not reuse random internal entities simply because they already exist.
+
+---
+
+# 29. TESTING
+
+After implementation, add or improve:
+
+### Unit Tests
+
+For:
+
+* Provider market logic
+* Product market logic
+* Inventory validation
+* Order creation
+* Quote workflow
+* Status transitions
+* Idempotency
+
+### Integration Tests
+
+Test:
+
+```text
+Snul → Welco
+```
+
+for:
+
+* Product synchronization
+* Provider synchronization
+* Inventory check
+* Order creation
+* Duplicate order
+* Order status update
+* Quote request
+* Quote status update
+
+### Frontend Tests
+
+Verify:
+
+* Egypt displays Egypt-available products only
+* Pakistan displays Pakistan products
+* Provider market filtering works
+* Order status displays correctly
+* Error states are handled correctly
+
+---
+
+# 30. SECURITY AUDIT
+
+Review:
+
+* JWT validation
+* Role authorization
+* Policy authorization
+* Service-to-service authentication
+* CORS
+* Rate limiting
+* Input validation
+* Secrets
+* SQL injection
+* Mass assignment
+* IDOR vulnerabilities
+* Sensitive data exposure
+* API endpoint exposure
+
+Integration endpoints must never be publicly usable without proper authentication.
+
+---
+
+# 31. PERFORMANCE
+
+Analyze:
+
+* N+1 queries
+* unnecessary API calls
+* inefficient EF Core queries
+* missing indexes
+* duplicated synchronization
+* excessive frontend requests
+* unnecessary database calls
+
+Use:
+
+```text
+AsNoTracking()
+Projection
+Pagination
+Caching
+Proper indexes
+HttpClientFactory
+```
+
+where appropriate.
+
+Do not optimize blindly; measure the architecture and fix actual bottlenecks.
+
+---
+
+# 32. FRONTEND UX
+
+Review both Vue applications for:
+
+* Loading states
+* Empty states
+* Error states
+* API failures
+* Validation
+* Responsive layout
+* Consistent components
+* Reusable composables
+* API error handling
+* Authentication state
+* Authorization visibility
+* Order status presentation
+* Quote workflow UX
+
+The frontend should reflect the new business architecture without exposing unnecessary technical complexity.
+
+---
+
+# 33. DELIVERABLES
+
+After analyzing and implementing the changes, provide:
+
+## Architecture
+
+```text
+Final Welco Architecture
+Final Snul Architecture
+Welco ↔ Snul Integration Architecture
+```
+
+## Backend
+
+List:
+
+```text
+Modified services
+New services
+Modified entities
+New entities
+Modified DTOs
+New DTOs
+New integration endpoints
+Authentication changes
+Authorization changes
+```
+
+## Database
+
+List:
+
+```text
+New tables
+Modified tables
+New relationships
+New indexes
+New migrations
+```
+
+## Frontend
+
+List:
+
+```text
+Modified pages
+New pages
+Modified components
+New components
+Modified stores
+Modified API clients
+```
+
+## Integration
+
+Document:
+
+```text
+Request flow
+Response flow
+Error handling
+Authentication
+Idempotency
+Retry behavior
+Status synchronization
+```
+
+---
+
+# 34. FINAL ARCHITECTURAL PRINCIPLE
+
+The final system must follow this principle:
+
+```text
+                 WELCO
+              PAKISTAN
+                  │
+        ┌─────────┼─────────┐
+        │         │         │
+    Providers  Products  Inventory
+        │         │         │
+        └─────────┼─────────┘
+                  │
+             Master Data
+                  │
+        ┌─────────┴─────────┐
+        │                   │
+     Pakistan             Egypt
+      Market              Market
+        │                   │
+     Welco Site          Snul Site
+        │                   │
+     Orders              Orders
+        │                   │
+        └─────── API ───────┘
+```
+
+The architecture must preserve:
+
+**One Provider identity**
+
+**One Product master**
+
+**One physical warehouse**
+
+**One inventory source of truth**
+
+**Two independent websites**
+
+**Two independent backend systems**
+
+**Two independent databases**
+
+**Secure backend-to-backend integration**
+
+**Egypt as an additional market/sales channel**
+
+**No shipping module**
+
+**Order status tracking only**
+
+---
+
+# 35. EXECUTION RULE
+
+Start by analyzing the actual repository/codebase.
+
+Do not assume that the current implementation matches this specification.
+
+Find the differences between:
+
+```text
+CURRENT IMPLEMENTATION
+```
+
+and:
+
+```text
+TARGET BUSINESS ARCHITECTURE
+```
+
+Then implement the minimum necessary changes to make the system correctly support the target architecture.
+
+Preserve existing working functionality.
+
+Do not break existing APIs unless absolutely necessary.
+
+If an API contract must change, update all consumers accordingly.
+
+After every significant modification:
+
+1. Build the affected .NET projects.
+2. Run relevant tests.
+3. Fix compilation errors.
+4. Fix integration issues.
+5. Verify database migrations.
+6. Verify Vue build.
+7. Verify API contracts.
+8. Verify authorization.
+9. Verify the complete Egypt → Welco order flow.
+
+Do not stop at analysis.
+
+**Analyze → Plan → Implement → Build → Test → Fix → Verify.**

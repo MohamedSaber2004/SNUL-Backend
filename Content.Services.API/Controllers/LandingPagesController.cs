@@ -1,0 +1,70 @@
+using Content.Services.API.ContentRoutes;
+using Content.Services.API.Features.LandingPages.Commands.CreateLandingPage;
+using Content.Services.API.Features.LandingPages.Commands.DeleteLandingPage;
+using Content.Services.API.Features.LandingPages.Commands.UpdateLandingPage;
+using Content.Services.API.Features.LandingPages.Queries.GetLandingPageBySlug;
+using Content.Services.API.Features.LandingPages.Queries.GetLandingPages;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using SNUL.Shared.Common.Attributes;
+using SNUL.Shared.Controllers;
+using SNUL.Shared.Enums;
+
+namespace Content.Services.API.Controllers
+{
+    [RoleAuthorize]
+    [Route(ContentApiRoutes.LandingPages.Base)]
+    public class LandingPagesController : AppControllerBase
+    {
+        public LandingPagesController(IMediator mediator) : base(mediator) { }
+
+        /// <summary>
+        /// Get All LandingPages
+        /// </summary>
+        [HttpGet]
+        [Route(ContentApiRoutes.LandingPages.GetAll)]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAll([FromQuery] GetLandingPagesQuery q, CancellationToken ct) => ToActionResult(await _mediator.Send(q, ct));
+
+        /// <summary>
+        /// Get LandingPage By Slug
+        /// </summary>
+        [HttpGet]
+        [Route(ContentApiRoutes.LandingPages.GetBySlug)]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetBySlug([FromRoute] string slug, CancellationToken ct) => ToActionResult(await _mediator.Send(new GetLandingPageBySlugQuery { Slug = slug }, ct));
+
+        /// <summary>
+        /// Create LandingPage
+        /// </summary>
+        [HttpPost]
+        [Route(ContentApiRoutes.LandingPages.Create)]
+        [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
+        public async Task<IActionResult> Create([FromBody] CreateLandingPageCommand cmd, CancellationToken ct) => ToActionResult(await _mediator.Send(cmd, ct));
+
+        /// <summary>
+        /// Update LandingPage
+        /// </summary>
+        [HttpPut]
+        [Route(ContentApiRoutes.LandingPages.Update)]
+        [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateLandingPageCommand cmd, CancellationToken ct)
+        {
+            cmd.Id = id;
+            return ToActionResult(await _mediator.Send(cmd, ct));
+        }
+
+        /// <summary>
+        /// Delete LandingPage
+        /// </summary>
+        [HttpDelete]
+        [Route(ContentApiRoutes.LandingPages.Delete)]
+        [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
+        public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken ct)
+        {
+            return ToActionResult(await _mediator.Send(new DeleteLandingPageCommand { Id = id }, ct));
+        }
+    }
+}

@@ -1,0 +1,70 @@
+using MediatR;
+using Microsoft.AspNetCore.Identity;
+using SNUL.Shared.Domain.Models;
+using SNUL.Shared.Localization;
+using SNUL.Shared.Results;
+
+namespace Auth.Services.API.Features.Auth.Commands.ResetPassword
+{
+    public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, Result<string>>
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public ResetPasswordCommandHandler(UserManager<ApplicationUser> userManager)
+        {
+            _userManager = userManager;
+        }
+
+        public async Task<Result<string>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
+        {
+            var email = request.Email?.Trim();
+            var token = request.Token?.Trim();
+
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token))
+            {
+                return Result<string>.BadRequest(
+                    LocalizationKeys.Auth.InvalidOtp,
+                    new List<string> { LocalizationKeys.Auth.InvalidOtp });
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return Result<string>.NotFound(
+                    LocalizationKeys.Auth.UserNotFound,
+                    new List<string> { LocalizationKeys.Auth.UserNotFound });
+            }
+
+            if (!user.ValidatePasswordResetToken(token))
+            {
+                return Result<string>.BadRequest(
+                    LocalizationKeys.Auth.InvalidOtp,
+                    new List<string> { LocalizationKeys.Auth.InvalidOtp });
+            }
+
+            var isSameAsOldPassword = await _userManager.CheckPasswordAsync(user, request.NewPassword);
+            if (isSameAsOldPassword)
+            {
+                return Result<string>.BadRequest(
+                    LocalizationKeys.Auth.NewPasswordSameAsOld,
+                    new List<string> { LocalizationKeys.Auth.NewPasswordSameAsOld });
+            }
+
+            var identityResetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resetResult = await _userManager.ResetPasswordAsync(user, identityResetToken, request.NewPassword);
+
+            if (!resetResult.Succeeded)
+            {
+                var errors = resetResult.Errors.Select(e => e.Description).ToList();
+                return Result<string>.BadRequest(
+                    errors.FirstOrDefault() ?? LocalizationKeys.ExceptionMessages.BadRequest,
+                    errors);
+            }
+
+            user.ClearPasswordResetToken();
+            await _userManager.UpdateAsync(user);
+
+            return Result<string>.Success(LocalizationKeys.Auth.PasswordResetSuccess, LocalizationKeys.Auth.PasswordResetSuccess);
+        }
+    }
+}

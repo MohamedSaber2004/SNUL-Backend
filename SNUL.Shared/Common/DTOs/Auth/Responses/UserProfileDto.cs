@@ -1,0 +1,23 @@
+using SNUL.Shared.Common.DTOs.UserManagement;
+using SNUL.Shared.Enums;
+
+namespace SNUL.Shared.Common.DTOs.Auth.Responses
+{
+    public class UserProfileDto
+    {
+        public Guid UserId { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? PhoneNumber { get; set; }
+        public string? PhoneCode { get; set; }
+        public string? ProfilePictureName { get; set; }
+        public UserType UserType { get; set; }
+        public Guid? CompanyId { get; set; }
+        public CompanyDto? Company { get; set; }
+        public AppLanguage Language { get; set; }
+        public bool IsEmailConfirmed { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public IList<string> Roles { get; set; } = new List<string>();
+        public IList<UserAddressDto> Addresses { get; set; } = new List<UserAddressDto>();
+    }
+}

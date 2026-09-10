@@ -1,0 +1,27 @@
+namespace SNUL.Shared.Common.DTOs.Sales
+{
+    public class RFQDto
+    {
+        public Guid Id { get; set; }
+        public string RFQNumber { get; set; } = string.Empty;
+        public Guid CompanyId { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public Guid? AssignedSalesRepId { get; set; }
+        public List<RFQItemDto> Items { get; set; } = new();
+        public DateTime CreatedAt { get; set; }
+    }
+    public class RFQItemDto { public Guid Id { get; set; } public Guid RFQId { get; set; } public Guid ProductId { get; set; } public string? ProductNameEn { get; set; } public string? ProductNameAr { get; set; } public string? ImageName { get; set; } public int Quantity { get; set; } public decimal UnitPrice { get; set; } public string? Notes { get; set; } }
+    public class QuoteDto
+    {
+        public Guid Id { get; set; }
+        public string QuoteNumber { get; set; } = string.Empty;
+        public Guid? RFQId { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime ValidUntil { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public List<QuoteItemDto> Items { get; set; } = new();
+        public DateTime CreatedAt { get; set; }
+    }
+    public class QuoteItemDto { public Guid Id { get; set; } public Guid QuoteId { get; set; } public Guid ProductId { get; set; } public string? ProductNameEn { get; set; } public string? ProductNameAr { get; set; } public int Quantity { get; set; } public decimal UnitPrice { get; set; } }
+    public class ProductInquiryDto { public Guid Id { get; set; } public Guid ProductId { get; set; } public string? ProductNameEn { get; set; } public string? ProductNameAr { get; set; } public string? ProductSku { get; set; } public string Name { get; set; } = string.Empty; public string Organization { get; set; } = string.Empty; public string Message { get; set; } = string.Empty; public string? Email { get; set; } public DateTime CreatedAt { get; set; } }
+}

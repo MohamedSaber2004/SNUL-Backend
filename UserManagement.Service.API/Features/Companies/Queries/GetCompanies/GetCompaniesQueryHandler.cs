@@ -1,0 +1,34 @@
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using SNUL.Shared.Common.DTOs.UserManagement;
+using SNUL.Shared.Common.Extensions;
+using SNUL.Shared.Common.Repositories.Interfaces.Base;
+using SNUL.Shared.Localization;
+using SNUL.Shared.Results;
+using CompanyEntity = SNUL.Shared.Domain.Models.Company;
+
+namespace UserManagement.Service.API.Features.Companies.Queries.GetCompanies
+{
+    public class GetCompaniesQueryHandler : IRequestHandler<GetCompaniesQuery, PaginatedResult<CompanyDto>>
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        public GetCompaniesQueryHandler(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+        public async Task<PaginatedResult<CompanyDto>> Handle(GetCompaniesQuery request, CancellationToken cancellationToken)
+        {
+            var repo = _unitOfWork.GetRepository<CompanyEntity, Guid>();
+            var query = repo.GetAll(c => !c.IsDeleted).AsNoTracking();
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var term = request.SearchTerm.Trim().ToLower();
+                query = query.Where(c => c.Name.ToLower().Contains(term));
+            }
+            if (request.IsActive.HasValue) query = query.Where(c => c.IsActive == request.IsActive.Value);
+            if (request.IsProvider.HasValue) query = query.Where(c => c.IsProvider == request.IsProvider.Value);
+            if (request.Type.HasValue) query = query.Where(c => c.Type == request.Type.Value);
+            return await query.OrderBy(c => c.Name).ToPaginatedListAsync(c => new CompanyDto
+            {
+                Id = c.Id, Name = c.Name, Email = c.Email, ImageName = c.ImageName, Type = c.Type, CountryId = c.CountryId, CountryNameEn = c.Country != null ? c.Country.NameEn : null, CountryNameAr = c.Country != null ? c.Country.NameAr : null, Status = c.Status, AccountManagerId = c.AccountManagerId, IsActive = c.IsActive, IsProvider = c.IsProvider, CreatedAt = c.CreatedAt, UpdatedAt = c.UpdatedAt
+            }, request.PageNumber, request.PageSize, LocalizationKeys.Company.ListFetched, cancellationToken);
+        }
+    }
+}

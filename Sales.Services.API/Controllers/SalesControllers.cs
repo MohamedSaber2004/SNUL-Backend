@@ -1,0 +1,60 @@
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Sales.Services.API.Features.Quotes.Commands.ApproveQuote;
+using Sales.Services.API.Features.Quotes.Commands.CreateQuote;
+using Sales.Services.API.Features.Quotes.Commands.DeclineQuote;
+using Sales.Services.API.Features.Quotes.Queries.GetQuoteById;
+using Sales.Services.API.Features.Quotes.Queries.GetQuotes;
+using Sales.Services.API.Features.RFQs.Commands.CreateRFQ;
+using Sales.Services.API.Features.RFQs.Commands.UpdateRFQStatus;
+using Sales.Services.API.Features.RFQs.Queries.GetRFQById;
+using Sales.Services.API.Features.RFQs.Queries.GetRFQs;
+using Sales.Services.API.SalesRoutes;
+using Sales.Services.API.Features.ProductInquiries.Commands.CreateProductInquiry;
+using Sales.Services.API.Features.ProductInquiries.Commands.DeleteProductInquiry;
+using Sales.Services.API.Features.ProductInquiries.Queries.GetProductInquiries;
+using Sales.Services.API.Features.ProductInquiries.Queries.GetProductInquiryById;
+using SNUL.Shared.Common.Attributes;
+using SNUL.Shared.Controllers;
+using SNUL.Shared.Enums;
+
+namespace Sales.Services.API.Controllers
+{
+    [RoleAuthorize]
+    [Route(SalesApiRoutes.RFQs.Base)]
+    public class RFQsController : AppControllerBase
+    {
+        public RFQsController(IMediator mediator) : base(mediator) { }
+        [HttpGet] public async Task<IActionResult> GetAll([FromQuery] GetRFQsQuery q, CancellationToken ct) => ToActionResult(await _mediator.Send(q, ct));
+        [HttpGet][Route(SalesApiRoutes.RFQs.GetById)] public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct) => ToActionResult(await _mediator.Send(new GetRFQByIdQuery { Id = id }, ct));
+        [HttpPost][RoleAuthorize(UserType.OrganizationUser, UserType.Admin, UserType.SnulStaff)] public async Task<IActionResult> Create([FromBody] CreateRFQCommand c, CancellationToken ct) => ToActionResult(await _mediator.Send(c, ct));
+        [HttpPut][Route(SalesApiRoutes.RFQs.UpdateStatus)][RoleAuthorize(UserType.SnulStaff, UserType.Admin)] public async Task<IActionResult> UpdateStatus([FromRoute] Guid id, [FromBody] UpdateRFQStatusCommand c, CancellationToken ct) { c.Id = id; return ToActionResult(await _mediator.Send(c, ct)); }
+    }
+    [RoleAuthorize]
+    [Route(SalesApiRoutes.Quotes.Base)]
+    public class QuotesController : AppControllerBase
+    {
+        public QuotesController(IMediator mediator) : base(mediator) { }
+        [HttpGet] public async Task<IActionResult> GetAll([FromQuery] GetQuotesQuery q, CancellationToken ct) => ToActionResult(await _mediator.Send(q, ct));
+        [HttpGet][Route(SalesApiRoutes.Quotes.GetById)] public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct) => ToActionResult(await _mediator.Send(new GetQuoteByIdQuery { Id = id }, ct));
+        [HttpPost][RoleAuthorize(UserType.SnulStaff, UserType.Admin)] public async Task<IActionResult> Create([FromBody] CreateQuoteCommand c, CancellationToken ct) => ToActionResult(await _mediator.Send(c, ct));
+        [HttpPost][Route(SalesApiRoutes.Quotes.Approve)][RoleAuthorize(UserType.OrganizationUser, UserType.Admin, UserType.SnulStaff)] public async Task<IActionResult> Approve([FromRoute] Guid id, CancellationToken ct) => ToActionResult(await _mediator.Send(new ApproveQuoteCommand { Id = id }, ct));
+        [HttpPost][Route(SalesApiRoutes.Quotes.Decline)][RoleAuthorize(UserType.OrganizationUser, UserType.Admin, UserType.SnulStaff)] public async Task<IActionResult> Decline([FromRoute] Guid id, CancellationToken ct) => ToActionResult(await _mediator.Send(new DeclineQuoteCommand { Id = id }, ct));
+    }
+    [Route(SalesApiRoutes.ProductInquiries.Base)]
+    public class ProductInquiriesController : AppControllerBase
+    {
+        public ProductInquiriesController(IMediator mediator) : base(mediator) { }
+        // Guest inquiry (no account needed) — must stay anonymous at controller
+        // level; the gateway exposes POST anonymously, GET/DELETE for staff.
+        [HttpGet][RoleAuthorize(UserType.Admin, UserType.SnulStaff)] public async Task<IActionResult> GetAll([FromQuery] GetProductInquiriesQuery q, CancellationToken ct) => ToActionResult(await _mediator.Send(q, ct));
+        [HttpGet][Route(SalesApiRoutes.ProductInquiries.GetById)][RoleAuthorize(UserType.Admin, UserType.SnulStaff)] public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct) => ToActionResult(await _mediator.Send(new GetProductInquiryByIdQuery { Id = id }, ct));
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Create([FromBody] CreateProductInquiryCommand c, CancellationToken ct) => ToActionResult(await _mediator.Send(c, ct));
+        [HttpDelete][Route(SalesApiRoutes.ProductInquiries.Delete)][RoleAuthorize(UserType.Admin)] public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken ct) => ToActionResult(await _mediator.Send(new DeleteProductInquiryCommand { Id = id }, ct));
+    }
+}
+

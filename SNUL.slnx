@@ -1,0 +1,12 @@
+<Solution>
+  <Project Path="SNUL.Gateway.API/SNUL.Gateway.API.csproj" />
+  <Project Path="SNUL.Shared/SNUL.Shared.csproj" />
+  <Project Path="Auth.Services.API/Auth.Services.API.csproj" />
+  <Project Path="UserManagement.Service.API/UserManagement.Service.API.csproj" />
+  <Project Path="Product.Services.API/Product.Services.API.csproj" />
+  <Project Path="Commerce.Services.API/Commerce.Services.API.csproj" />
+  <Project Path="Sales.Services.API/Sales.Services.API.csproj" />
+  <Project Path="Content.Services.API/Content.Services.API.csproj" />
+  <Project Path="Certification.Services.API/Certification.Services.API.csproj" />
+  <Project Path="Attachment.Services.API/Attachment.Services.API.csproj" />
+</Solution>

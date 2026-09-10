@@ -1,0 +1,120 @@
+using MediatR;
+using Microsoft.AspNetCore.Identity;
+using SNUL.Shared.Common.DTOs.Auth.Responses;
+using SNUL.Shared.Common.Interfaces;
+using SNUL.Shared.Common.Repositories.Interfaces.Base;
+using SNUL.Shared.Domain.Models;
+using SNUL.Shared.Enums;
+using SNUL.Shared.Localization;
+using SNUL.Shared.Results;
+
+namespace Auth.Services.API.Features.Auth.Commands.VerifyEmailOtp
+{
+    public class VerifyEmailOtpCommandHandler : IRequestHandler<VerifyEmailOtpCommand, Result<AuthResponseDto>>
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IJwtTokenService _jwtTokenService;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public VerifyEmailOtpCommandHandler(
+            UserManager<ApplicationUser> userManager,
+            IJwtTokenService jwtTokenService,
+            IUnitOfWork unitOfWork)
+        {
+            _userManager = userManager;
+            _jwtTokenService = jwtTokenService;
+            _unitOfWork = unitOfWork;
+        }
+
+        public async Task<Result<AuthResponseDto>> Handle(VerifyEmailOtpCommand request, CancellationToken cancellationToken)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                return Result<AuthResponseDto>.NotFound(
+                    LocalizationKeys.Auth.UserNotFound,
+                    new List<string> { LocalizationKeys.Auth.UserNotFound });
+            }
+
+            if (!user.ValidateEmailConfirmationOtp(request.OtpCode))
+            {
+                return Result<AuthResponseDto>.BadRequest(
+                    LocalizationKeys.Auth.InvalidOtp,
+                    new List<string> { LocalizationKeys.Auth.InvalidOtp });
+            }
+
+            user.EmailConfirmed = true;
+            user.ClearEmailConfirmationOtp();
+            user.Activate(user.Email ?? "System");
+            await _userManager.UpdateAsync(user);
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            // Distributor gate: OrganizationUser must have approved Company/DistributorApplication.
+            // If still pending, keep them logged out: do NOT issue tokens. They can try to log in anytime later once approved.
+            if (user.UserType == UserType.OrganizationUser)
+            {
+                bool isApproved = false;
+                if (user.CompanyId.HasValue)
+                {
+                    var companyRepo = _unitOfWork.GetRepository<Company, Guid>();
+                    var company = await companyRepo.GetByIdAsync(user.CompanyId.Value, cancellationToken);
+                    isApproved = company != null && !company.IsDeleted && company.Status == CompanyStatus.Approved;
+                }
+                else
+                {
+                    var distRepo = _unitOfWork.GetRepository<DistributorApplication, Guid>();
+                    var userEmail = (user.Email ?? "").Trim().ToLower();
+                    isApproved = await distRepo.ExistsAsync(
+                        d => !d.IsDeleted && (d.ContactEmail.ToLower() == userEmail || d.CreatedBy.ToLower() == userEmail) && d.Status == DistributorApplicationStatus.Approved,
+                        cancellationToken);
+                }
+
+                if (!isApproved)
+                {
+                    var pendingResponse = new AuthResponseDto
+                    {
+                        UserId = user.Id,
+                        FullName = user.FullName,
+                        Email = user.Email ?? string.Empty,
+                        UserName = user.UserName,
+                        UserType = user.UserType,
+                        CompanyId = user.CompanyId,
+                        Language = user.Language,
+                        Roles = roles,
+                        AccessToken = string.Empty,
+                        RefreshToken = string.Empty,
+                        RefreshTokenExpiryTime = DateTime.MinValue
+                    };
+                    return Result<AuthResponseDto>.Success(pendingResponse, LocalizationKeys.DistributorApplication.PendingApproval);
+                }
+            }
+
+            var accessToken = _jwtTokenService.GenerateAccessToken(user, roles);
+            var refreshTokenString = _jwtTokenService.GenerateRefreshToken(user);
+            var refreshTokenExpiry = DateTime.UtcNow.AddDays(30);
+
+            var refreshTokenEntity = UserRefreshToken.Create(user.Id, refreshTokenString, refreshTokenExpiry);
+            var refreshRepo = _unitOfWork.GetRepository<UserRefreshToken, Guid>();
+            await refreshRepo.AddAsync(refreshTokenEntity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var authResponse = new AuthResponseDto
+            {
+                UserId = user.Id,
+                FullName = user.FullName,
+                Email = user.Email ?? string.Empty,
+                UserName = user.UserName,
+                UserType = user.UserType,
+                CompanyId = user.CompanyId,
+                Language = user.Language,
+                Roles = roles,
+                AccessToken = accessToken,
+                RefreshToken = refreshTokenString,
+                RefreshTokenExpiryTime = refreshTokenExpiry
+            };
+
+            return Result<AuthResponseDto>.Success(authResponse, LocalizationKeys.Auth.OtpVerified);
+        }
+    }
+}

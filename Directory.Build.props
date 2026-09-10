@@ -1,0 +1,13 @@
+﻿<Project>
+  <PropertyGroup>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <UseAppHost>false</UseAppHost>
+  </PropertyGroup>
+
+  <Target Name="FilterUnneededRuntimes" AfterTargets="ResolvePackageAssets">
+    <ItemGroup>
+      <RuntimeTargetsCopyLocalItems Remove="@(RuntimeTargetsCopyLocalItems)" Condition="$([System.String]::new('%(RuntimeTargetsCopyLocalItems.Identity)').Contains('/linux-')) or $([System.String]::new('%(RuntimeTargetsCopyLocalItems.Identity)').Contains('\linux-')) or $([System.String]::new('%(RuntimeTargetsCopyLocalItems.Identity)').Contains('/osx-')) or $([System.String]::new('%(RuntimeTargetsCopyLocalItems.Identity)').Contains('\osx-')) or $([System.String]::new('%(RuntimeTargetsCopyLocalItems.Identity)').Contains('/win-arm')) or $([System.String]::new('%(RuntimeTargetsCopyLocalItems.Identity)').Contains('\win-arm')) or $([System.String]::new('%(RuntimeTargetsCopyLocalItems.Identity)').Contains('/win-x86')) or $([System.String]::new('%(RuntimeTargetsCopyLocalItems.Identity)').Contains('\win-x86'))" />
+      <NativeCopyLocalItems Remove="@(NativeCopyLocalItems)" Condition="$([System.String]::new('%(NativeCopyLocalItems.Identity)').Contains('/linux-')) or $([System.String]::new('%(NativeCopyLocalItems.Identity)').Contains('\linux-')) or $([System.String]::new('%(NativeCopyLocalItems.Identity)').Contains('/osx-')) or $([System.String]::new('%(NativeCopyLocalItems.Identity)').Contains('\osx-')) or $([System.String]::new('%(NativeCopyLocalItems.Identity)').Contains('/win-arm')) or $([System.String]::new('%(NativeCopyLocalItems.Identity)').Contains('\win-arm')) or $([System.String]::new('%(NativeCopyLocalItems.Identity)').Contains('/win-x86')) or $([System.String]::new('%(NativeCopyLocalItems.Identity)').Contains('\win-x86'))" />
+    </ItemGroup>
+  </Target>
+</Project>

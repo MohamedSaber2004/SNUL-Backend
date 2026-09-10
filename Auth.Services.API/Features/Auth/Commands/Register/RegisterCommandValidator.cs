@@ -1,0 +1,79 @@
+using FluentValidation;
+using Microsoft.AspNetCore.Identity;
+using SNUL.Shared.Domain.Models;
+using SNUL.Shared.Localization;
+using SNUL.Shared.Enums;
+using SNUL.Shared.Results;
+
+namespace Auth.Services.API.Features.Auth.Commands.Register
+{
+    public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
+    {
+        public RegisterCommandValidator(UserManager<ApplicationUser> userManager)
+        {
+            RuleFor(x => x.FullName)
+                .NotEmpty().WithMessage(LocalizationKeys.Auth.FullNameRequired);
+
+            RuleFor(x => x.Email)
+                .NotEmpty().WithMessage(LocalizationKeys.Auth.EmailRequired)
+                .EmailAddress().WithMessage(LocalizationKeys.Auth.EmailInvalid);
+
+            RuleFor(x => x.Password)
+                .NotEmpty().WithMessage(LocalizationKeys.Auth.PasswordRequired)
+                .MinimumLength(6).WithMessage(LocalizationKeys.Auth.PasswordTooShort);
+
+            RuleFor(x => x.ConfirmPassword)
+                .NotEmpty().WithMessage(LocalizationKeys.Auth.ConfirmPasswordRequired)
+                .Equal(x => x.Password).WithMessage(LocalizationKeys.Auth.PasswordMismatch);
+
+            RuleFor(x => x.UserType)
+                .IsInEnum().WithMessage(LocalizationKeys.Auth.UserTypeRequired);
+
+            RuleFor(x => x.Language)
+                .IsInEnum().WithMessage(LocalizationKeys.Auth.LanguageRequired);
+
+            RuleFor(x => x.PhoneNumber)
+                .MaximumLength(20).WithMessage(LocalizationKeys.Auth.PhoneTooLong)
+                .Matches(@"^\+?[0-9\s\-]{6,20}$").When(x => !string.IsNullOrWhiteSpace(x.PhoneNumber))
+                .WithMessage(LocalizationKeys.Auth.PhoneInvalidFormat);
+
+            RuleFor(x => x.PhoneCountryId)
+                .Must(id => id == null || id != Guid.Empty).WithMessage(LocalizationKeys.Country.NotFound);
+
+            // Unified distributor fields — required for OrganizationUser
+            RuleFor(x => x.CompanyName)
+                .NotEmpty().WithMessage(LocalizationKeys.Company.NameRequired)
+                .When(x => x.UserType == UserType.OrganizationUser);
+            RuleFor(x => x.DistributorCountryId)
+                .NotEmpty().WithMessage(LocalizationKeys.Country.CountryIdRequired)
+                .Must(id => id == null || id != Guid.Empty).WithMessage(LocalizationKeys.Country.CountryIdRequired)
+                .When(x => x.UserType == UserType.OrganizationUser);
+            RuleFor(x => x.SalesVolumeBand)
+                .NotEmpty().WithMessage(LocalizationKeys.Auth.SalesVolumeRequired)
+                .When(x => x.UserType == UserType.OrganizationUser);
+            RuleFor(x => x.CompanyType)
+                .IsInEnum().WithMessage(LocalizationKeys.Company.TypeRequired)
+                .When(x => x.CompanyType.HasValue);
+            RuleFor(x => x.CompanyEmail)
+                .EmailAddress().WithMessage(LocalizationKeys.Company.EmailInvalid)
+                .MaximumLength(256)
+                .When(x => !string.IsNullOrWhiteSpace(x.CompanyEmail));
+            RuleFor(x => x.Website)
+                .Must(url => string.IsNullOrWhiteSpace(url) || Uri.TryCreate(url, UriKind.Absolute, out _))
+                .WithMessage(LocalizationKeys.Auth.WebsiteInvalid)
+                .When(x => !string.IsNullOrWhiteSpace(x.Website));
+
+            RuleFor(x => x).CustomAsync(async (command, context, ct) =>
+            {
+                if (string.IsNullOrWhiteSpace(command.Email))
+                    return;
+
+                var existingUser = await userManager.FindByEmailAsync(command.Email);
+                if (existingUser != null)
+                {
+                    context.AddFailure(nameof(command.Email), LocalizationKeys.Auth.EmailAlreadyExists);
+                }
+            });
+        }
+    }
+}

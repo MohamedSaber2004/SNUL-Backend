@@ -1,0 +1,45 @@
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using SNUL.Shared.Common.Interfaces;
+using SNUL.Shared.Common.Repositories.Interfaces.Base;
+using SNUL.Shared.Domain.Models;
+using SNUL.Shared.Localization;
+using SNUL.Shared.Results;
+
+namespace Product.Services.API.Features.Wishlist.Commands.RemoveFromWishlist
+{
+    public class RemoveFromWishlistCommandHandler : IRequestHandler<RemoveFromWishlistCommand, Result<string>>
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
+
+        public RemoveFromWishlistCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+        {
+            _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
+        }
+
+        public async Task<Result<string>> Handle(RemoveFromWishlistCommand request, CancellationToken cancellationToken)
+        {
+            if (!_currentUserService.IsAuthenticated || _currentUserService.UserId == Guid.Empty)
+                return Result<string>.Unauthorized(LocalizationKeys.ExceptionMessages.Unauthorized);
+
+            var userId = _currentUserService.UserId;
+            var repo = _unitOfWork.GetRepository<UserProductInteraction, Guid>();
+            var interactions = await repo.GetAll(w => !w.IsDeleted && w.UserId == userId && w.ProductId == request.ProductId && w.Type == "Wishlist")
+                .ToListAsync(cancellationToken);
+
+            if (!interactions.Any())
+                return Result<string>.Success(request.ProductId.ToString(), LocalizationKeys.Product.RemovedFromWishlist); // Idempotent remove
+
+            foreach (var interaction in interactions)
+            {
+                interaction.MarkAsDeleted(userId.ToString());
+                repo.Update(interaction);
+            }
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return Result<string>.Success(request.ProductId.ToString(), LocalizationKeys.Product.RemovedFromWishlist);
+        }
+    }
+}
