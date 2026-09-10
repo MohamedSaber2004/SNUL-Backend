@@ -1,15 +1,13 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace SNUL.Shared.Migrations
 {
-    /// <inheritdoc />
-    public partial class AddCrossMarketIntegrationFields : Migration
+        public partial class AddCrossMarketIntegrationFields : Migration
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
+                protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<Guid>(
                 name: "WelcoRfqId",
@@ -54,8 +52,7 @@ namespace SNUL.Shared.Migrations
                 nullable: true);
         }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
+                protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
                 name: "WelcoRfqId",

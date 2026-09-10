@@ -89,8 +89,7 @@ namespace SNUL.Shared
             services.AddMemoryCache();
             services.AddScoped<IExchangeRateService, ExchangeRateService>();
 
-            // Primary provider per prompt: Fawazahmed CDN (no ApiKey, no Authorization) https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json
-            services.AddHttpClient<IExchangeRateProvider, FrankfurterExchangeRateProvider>((sp, client) =>
+services.AddHttpClient<IExchangeRateProvider, FrankfurterExchangeRateProvider>((sp, client) =>
             {
                 var opts = sp.GetRequiredService<IOptions<ExchangeRateSettings>>().Value;
                 var baseUrl = string.IsNullOrWhiteSpace(opts.BaseUrl) ? "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies" : opts.BaseUrl.TrimEnd('/');
@@ -99,12 +98,11 @@ namespace SNUL.Shared
                 client.DefaultRequestHeaders.Clear();
             });
 
-            // Alternative provider registration (keyed by provider name, switch via factory if needed)
-            services.AddHttpClient<ExchangeRateApiProvider>((sp, client) =>
+services.AddHttpClient<ExchangeRateApiProvider>((sp, client) =>
             {
                 var opts = sp.GetRequiredService<IOptions<ExchangeRateSettings>>().Value;
                 var baseUrl = string.IsNullOrWhiteSpace(opts.BaseUrl) ? "https://v6.exchangerate-api.com" : opts.BaseUrl.TrimEnd('/');
-                // ExchangeRate-API expects https://v6.exchangerate-api.com/v6/{key}/
+                
                 if (!string.IsNullOrWhiteSpace(opts.ApiKey) && !baseUrl.Contains("/v6/"))
                     client.BaseAddress = new Uri($"https://v6.exchangerate-api.com/v6/{opts.ApiKey}/");
                 else
@@ -112,8 +110,7 @@ namespace SNUL.Shared
                 client.Timeout = TimeSpan.FromSeconds(opts.TimeoutSeconds > 0 ? opts.TimeoutSeconds : 10);
             });
 
-            // Integration client for Welco (Pakistan) master backend
-            services.AddHttpClient<IWelcoIntegrationService, WelcoIntegrationService>((sp, client) =>
+services.AddHttpClient<IWelcoIntegrationService, WelcoIntegrationService>((sp, client) =>
             {
                 var opts = sp.GetRequiredService<IOptions<WelcoIntegrationOptions>>().Value;
                 if (!string.IsNullOrWhiteSpace(opts.BaseUrl))

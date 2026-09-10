@@ -1,8 +1,7 @@
 namespace SNUL.Shared.Common.DTOs.Integration
 {
-    // ── Categories ─────────────────────────────────────────────────────────────
 
-    public class ExternalCategoryDto
+public class ExternalCategoryDto
     {
         public Guid Id { get; set; }
         public string NameEn { get; set; } = null!;
@@ -12,9 +11,7 @@ namespace SNUL.Shared.Common.DTOs.Integration
         public Guid? ParentCategoryId { get; set; }
     }
 
-    // ── Inventory ──────────────────────────────────────────────────────────────
-
-    public class InventoryCheckRequest
+public class InventoryCheckRequest
     {
         public List<InventoryCheckItem> Items { get; set; } = new();
     }
@@ -38,9 +35,7 @@ namespace SNUL.Shared.Common.DTOs.Integration
         public bool IsAvailable { get; set; }
     }
 
-    // ── Orders ─────────────────────────────────────────────────────────────────
-
-    public class CreateExternalOrderRequest
+public class CreateExternalOrderRequest
     {
         public string? SourceMarket { get; set; } = "Egypt";
         public Guid? ExternalCustomerId { get; set; }
@@ -69,9 +64,7 @@ namespace SNUL.Shared.Common.DTOs.Integration
         public string? Notes { get; set; }
     }
 
-    // ── Products ───────────────────────────────────────────────────────────────
-
-    public class ExternalProductDto
+public class ExternalProductDto
     {
         public Guid Id { get; set; }
         public string NameEn { get; set; } = null!;
@@ -85,9 +78,7 @@ namespace SNUL.Shared.Common.DTOs.Integration
         public Guid CategoryId { get; set; }
     }
 
-    // ── Providers ──────────────────────────────────────────────────────────────
-
-    public class ExternalProviderDto
+public class ExternalProviderDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = null!;
@@ -96,9 +87,7 @@ namespace SNUL.Shared.Common.DTOs.Integration
         public bool IsProvider { get; set; }
     }
 
-    // ── Distributor Applications ───────────────────────────────────────────────
-
-    public class ApplyDistributorRequest
+public class ApplyDistributorRequest
     {
         public string CompanyName { get; set; } = null!;
         public string ContactPerson { get; set; } = null!;
@@ -123,20 +112,18 @@ namespace SNUL.Shared.Common.DTOs.Integration
         public string? SalesVolumeBand { get; set; }
         public string? CategoryInterest { get; set; }
         public string? Website { get; set; }
-        public string Status { get; set; } = null!; // Pending, Approved, Rejected
+        public string Status { get; set; } = null!; 
         public string? RejectionReason { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 
     public class UpdateDistributorStatusRequest
     {
-        public string Status { get; set; } = null!; // Approved, Rejected
+        public string Status { get; set; } = null!; 
         public string? Reason { get; set; }
     }
 
-    // ── Quotes ─────────────────────────────────────────────────────────────────
-
-    public class CreateExternalQuoteRequest
+public class CreateExternalQuoteRequest
     {
         public string? SourceMarket { get; set; } = "Egypt";
         public List<ExternalQuoteItemRequest> Items { get; set; } = new();
@@ -157,15 +144,13 @@ namespace SNUL.Shared.Common.DTOs.Integration
         public string Status { get; set; } = null!;
     }
 
-    // ── Support Tickets ────────────────────────────────────────────────────────
-
-    public class ExternalSupportTicketDto
+public class ExternalSupportTicketDto
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public string Subject { get; set; } = null!;
         public string Message { get; set; } = null!;
-        public string Status { get; set; } = null!; // Open, Answered, Closed
+        public string Status { get; set; } = null!; 
         public string? Reply { get; set; }
         public DateTime? RepliedAt { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -176,9 +161,7 @@ namespace SNUL.Shared.Common.DTOs.Integration
         public string Reply { get; set; } = null!;
     }
 
-    // ── Help Center & FAQs ─────────────────────────────────────────────────────
-
-    public class ExternalHelpArticleDto
+public class ExternalHelpArticleDto
     {
         public Guid Id { get; set; }
         public Guid CategoryId { get; set; }
@@ -196,9 +179,7 @@ namespace SNUL.Shared.Common.DTOs.Integration
         public int SortOrder { get; set; }
     }
 
-    // ── Certifications ─────────────────────────────────────────────────────────
-
-    public class ExternalCertificationDto
+public class ExternalCertificationDto
     {
         public Guid Id { get; set; }
         public string CertificateNumber { get; set; } = null!;

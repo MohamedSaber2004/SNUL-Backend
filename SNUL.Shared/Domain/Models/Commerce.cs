@@ -33,13 +33,13 @@ namespace SNUL.Shared.Domain.Models
         public virtual Currency? Currency { get; set; }
         public Guid? QuoteId { get; set; }
         public decimal TotalAmount { get; set; }
-        // Snapshot of currency context at creation — do not recalculate historical orders with today's rate
+        
         public string? SnapshotBaseCurrency { get; set; }
         public string? SnapshotCurrencyCode { get; set; }
         public decimal? SnapshotRate { get; set; }
         public DateOnly? SnapshotRateDate { get; set; }
         public string? SnapshotSource { get; set; }
-        // Cross-system integration: Welco master order reference
+        
         public Guid? WelcoOrderId { get; set; }
         public string? WelcoOrderNumber { get; set; }
         public virtual ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();

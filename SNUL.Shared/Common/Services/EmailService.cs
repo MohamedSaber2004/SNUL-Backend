@@ -1,6 +1,5 @@
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
@@ -15,16 +14,13 @@ namespace SNUL.Shared.Common.Services
     {
         private readonly EmailSettings _emailSettings;
         private readonly ILocalizationProvider _localizer;
-        private readonly ILogger<EmailService> _logger;
 
         public EmailService(
             IOptions<EmailSettings> emailSettings,
-            ILocalizationProvider localizer,
-            ILogger<EmailService> logger)
+            ILocalizationProvider localizer)
         {
             _emailSettings = emailSettings.Value;
             _localizer = localizer;
-            _logger = logger;
         }
 
         public async Task SendEmailAsync(string toEmail, string subject, string body, bool isHtml = true, CancellationToken cancellationToken = default)
@@ -37,7 +33,6 @@ namespace SNUL.Shared.Common.Services
 
                 if (string.IsNullOrWhiteSpace(fromEmail) || string.IsNullOrWhiteSpace(_emailSettings.Host))
                 {
-                    _logger.LogWarning("Email sending skipped: EmailSettings is not configured (Email/Username or Host is empty). Target: {ToEmail}", toEmail);
                     return;
                 }
 
@@ -67,14 +62,12 @@ namespace SNUL.Shared.Common.Services
                 {
                     await smtp.ConnectAsync(_emailSettings.Host, _emailSettings.Port, socketOptions, cancellationToken);
                 }
-                catch (Exception connEx) when (_emailSettings.Port == 587)
+                catch (Exception) when (_emailSettings.Port == 587)
                 {
-                    _logger.LogWarning(connEx, "Failed connecting to SMTP host {Host}:587 (STARTTLS). Attempting fallback to port 465 (SSL)...", _emailSettings.Host);
                     await smtp.ConnectAsync(_emailSettings.Host, 465, SecureSocketOptions.SslOnConnect, cancellationToken);
                 }
-                catch (Exception connEx) when (_emailSettings.Port == 465)
+                catch (Exception) when (_emailSettings.Port == 465)
                 {
-                    _logger.LogWarning(connEx, "Failed connecting to SMTP host {Host}:465 (SSL). Attempting fallback to port 587 (STARTTLS)...", _emailSettings.Host);
                     await smtp.ConnectAsync(_emailSettings.Host, 587, SecureSocketOptions.StartTls, cancellationToken);
                 }
 
@@ -85,13 +78,9 @@ namespace SNUL.Shared.Common.Services
 
                 await smtp.SendAsync(email, cancellationToken);
                 await smtp.DisconnectAsync(true, cancellationToken);
-
-                _logger.LogInformation("Email successfully sent to {ToEmail} with subject '{Subject}'", toEmail, subject);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Failed to send email to {ToEmail} with subject '{Subject}'. Settings: Host={Host}, Port={Port}, Username={Username}",
-                    toEmail, subject, _emailSettings.Host, _emailSettings.Port, _emailSettings.Username);
             }
         }
 

@@ -2,7 +2,6 @@ using System.Reflection;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using Scalar.AspNetCore;
 using SNUL.Shared;
 using SNUL.Shared.Common.Behaviors;
@@ -82,16 +81,12 @@ namespace UserManagement.Service.API
 
             var app = builder.Build();
 
-            // Ensure Identity roles exist (seeded from the UserType enum)
-            // so admin-created users can be assigned any role even if
-            // the Auth service hasn't started yet. Idempotent.
             using (var scope = app.Services.CreateScope())
             {
                 try
                 {
                     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                    await RoleSeeder.SeedRolesAsync(roleManager, logger);
+                    await RoleSeeder.SeedRolesAsync(roleManager);
                 }
                 catch (Exception)
                 {
@@ -113,7 +108,7 @@ namespace UserManagement.Service.API
             }
 
             app.UseCors("AllowAll");
-            // Downstream services re-validate the JWT forwarded by the SNUL.API Gateway (Ocelot).
+            
             app.UseAuthentication();
             app.UseAuthorization();
 

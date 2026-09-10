@@ -21,13 +21,13 @@ namespace Attachment.Services.API.Infrastructure
         public async Task<(bool Uploaded, string Result)> UploadFile(IFormFile file, int Place)
         {
             if (file == null || file.Length == 0)
-                return (false, _localizer[LocalizationKeys.AttachmentMessages.FileEmpty]);
+                return (false, LocalizationKeys.AttachmentMessages.FileEmpty);
 
             if (!IsValidFile(file))
-                return (false, _localizer[LocalizationKeys.AttachmentMessages.InvalidFormat]);
+                return (false, LocalizationKeys.AttachmentMessages.InvalidFormat);
 
             if (file.Length > MaxFileSizeBytes)
-                return (false, _localizer[LocalizationKeys.AttachmentMessages.FileTooLarge]);
+                return (false, LocalizationKeys.AttachmentMessages.FileTooLarge);
 
             var (uploaded, result) = await _baseFileService.UploadFileAsync(file, FilePathHelper.GetFolderPath(Place));
             if (uploaded)
@@ -76,7 +76,7 @@ namespace Attachment.Services.API.Infrastructure
         public async Task<(bool Uploaded, string Result)> UploadMultipleFile(List<IFormFile> files, int Place)
         {
             if (files == null || !files.Any())
-                return (false, _localizer[LocalizationKeys.AttachmentMessages.NoMediaProvided]);
+                return (false, LocalizationKeys.AttachmentMessages.NoMediaProvided);
 
             var results = new List<string>();
             foreach (var file in files)
@@ -89,7 +89,7 @@ namespace Attachment.Services.API.Infrastructure
             }
 
             if (!results.Any())
-                return (false, _localizer[LocalizationKeys.AttachmentMessages.UploadFailed]);
+                return (false, LocalizationKeys.AttachmentMessages.UploadFailed);
 
             return (true, string.Join(",", results));
         }

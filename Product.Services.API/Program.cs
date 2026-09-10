@@ -37,9 +37,7 @@ namespace Product.Services.API
                 ContentRootPath = AppContext.BaseDirectory
             });
 
-
-
-            var env = builder.Environment;
+var env = builder.Environment;
 
             builder.Configuration.Sources.Clear();
             builder.Configuration
@@ -87,8 +85,7 @@ namespace Product.Services.API
                 });
             });
 
-            // Hangfire background jobs (exclusively hosted in Product.Services.API)
-            var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection")
+var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection")
                 ?? builder.Configuration["DatabaseConnection"];
 
             if (!string.IsNullOrWhiteSpace(connectionString))
@@ -133,7 +130,7 @@ namespace Product.Services.API
             }
 
             app.UseCors("AllowAll");
-            // Downstream services re-validate the JWT forwarded by the SNUL.API Gateway (Ocelot).
+            
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -155,68 +152,51 @@ namespace Product.Services.API
                 });
             }
 
-            // Auto-migrate and seed currencies + world locations - non-destructive
             if (!app.Environment.IsEnvironment("Test"))
             {
                 try
                 {
                     using var scope = app.Services.CreateScope();
                     var db = scope.ServiceProvider.GetRequiredService<SnulDbContext>();
-                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
                     await db.Database.MigrateAsync();
-                    await CurrencySeeder.SeedAsync(db, logger);
-                    await WorldLocationSeeder.SeedAsync(db, logger);
-                    // Bogus demo data: Development only + explicit opt-in flag
-                    // (Seeding:SeedDemoData=true in config OR SEED_DEMO_DATA=true env var).
-                    // Never runs in Production (re-checked inside the seeder).
-                    if (BogusDemoSeeder.ShouldSeedDemoData(app.Environment, app.Configuration, out var demoReason))
-                    {
-                        logger.LogInformation("Bogus demo seeding {Reason}", demoReason);
-                        await BogusDemoSeeder.SeedDemoAsync(scope.ServiceProvider, logger);
-                    }
-                    else
-                    {
-                        logger.LogInformation("Bogus demo seeding {Reason}", demoReason);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    var logger = app.Services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "Seeding / migration failed");
-                }
+                    await CurrencySeeder.SeedAsync(db);
+                    await WorldLocationSeeder.SeedAsync(db);
 
-                // Register Recurring Hangfire Job for Exchange Rate Sync
-                if (!string.IsNullOrWhiteSpace(connectionString))
-                {
-                    try
+                    if (BogusDemoSeeder.ShouldSeedDemoData(app.Environment, app.Configuration, out _))
                     {
-                        var recurringJobManager = app.Services.GetService<IRecurringJobManager>();
-                        if (recurringJobManager != null)
+                        await BogusDemoSeeder.SeedDemoAsync(scope.ServiceProvider);
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(connectionString))
+            {
+                try
+                {
+                    var recurringJobManager = app.Services.GetService<IRecurringJobManager>();
+                    if (recurringJobManager != null)
+                    {
+                        var exchangeRateSettings = app.Configuration.GetSection(ExchangeRateSettings.SectionName).Get<ExchangeRateSettings>() ?? new ExchangeRateSettings();
+                        var intervalHours = exchangeRateSettings.SyncIntervalHours > 0 ? exchangeRateSettings.SyncIntervalHours : 24;
+
+                        var cronExpression = intervalHours switch
                         {
-                            var exchangeRateSettings = app.Configuration.GetSection(ExchangeRateSettings.SectionName).Get<ExchangeRateSettings>() ?? new ExchangeRateSettings();
-                            var intervalHours = exchangeRateSettings.SyncIntervalHours > 0 ? exchangeRateSettings.SyncIntervalHours : 24;
+                            1 => Cron.Hourly(),
+                            > 1 and < 24 => Cron.HourInterval(intervalHours),
+                            _ => Cron.Daily()
+                        };
 
-                            var cronExpression = intervalHours switch
-                            {
-                                1 => Cron.Hourly(),
-                                > 1 and < 24 => Cron.HourInterval(intervalHours),
-                                _ => Cron.Daily()
-                            };
-
-                            recurringJobManager.AddOrUpdate<ExchangeRateSyncJob>(
-                                "sync-latest-exchange-rates",
-                                job => job.ExecuteAsync(),
-                                cronExpression);
-
-                            var logger = app.Services.GetRequiredService<ILogger<Program>>();
-                            logger.LogInformation("Hangfire recurring job 'sync-latest-exchange-rates' registered (interval: {Hours}h)", intervalHours);
-                        }
+                        recurringJobManager.AddOrUpdate<ExchangeRateSyncJob>(
+                            "sync-latest-exchange-rates",
+                            job => job.ExecuteAsync(),
+                            cronExpression);
                     }
-                    catch (Exception ex)
-                    {
-                        var logger = app.Services.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "Failed to register recurring Hangfire jobs");
-                    }
+                }
+                catch (Exception)
+                {
                 }
             }
 

@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SNUL.Shared.Domain.Models;
 using SNUL.Shared.Persistance;
 
@@ -7,7 +6,7 @@ namespace SNUL.Shared.Persistance.Seeding
 {
     public static class CurrencySeeder
     {
-        // Full ISO 4217 active currencies — 178 codes, Frankfurter will skip unsupported (logged)
+        
         private static readonly (string Code, string NameEn, string NameAr, string Symbol, string SymbolNative, int Digits)[] Currencies =
         {
             ("AED","UAE Dirham","درهم إماراتي","AED","د.إ",2),
@@ -167,7 +166,7 @@ namespace SNUL.Shared.Persistance.Seeding
             ("ZWL","Zimbabwean Dollar","دولار زيمبابوي","ZWL","Z$",2),
         };
 
-        public static async Task SeedAsync(SnulDbContext db, ILogger? logger = null)
+        public static async Task SeedAsync(SnulDbContext db)
         {
             var existingCodes = await db.Currencies.AsNoTracking().Select(c => c.Code).ToListAsync();
             var existingSet = new HashSet<string>(existingCodes, StringComparer.OrdinalIgnoreCase);
@@ -181,11 +180,9 @@ namespace SNUL.Shared.Persistance.Seeding
 
             if (toAdd.Count == 0)
             {
-                logger?.LogInformation("CurrencySeeder: all {Count} currencies already present", Currencies.Length);
                 return;
             }
 
-            // Ensure SymbolNative and DecimalDigits for existing currencies that are missing (migrated)
             var existingEntities = await db.Currencies.Where(c => existingSet.Contains(c.Code)).ToListAsync();
             foreach (var e in existingEntities)
             {
@@ -194,22 +191,20 @@ namespace SNUL.Shared.Persistance.Seeding
                 bool changed = false;
                 if (string.IsNullOrWhiteSpace(e.SymbolNative) || e.SymbolNative == e.Symbol)
                 {
-                    // keep existing Symbol if not empty, but ensure SymbolNative set
+                    
                     if (e.SymbolNative != meta.SymbolNative) { e.SymbolNative = meta.SymbolNative; changed = true; }
                 }
                 if (e.DecimalDigits == 0 && meta.Digits != 0) { e.DecimalDigits = meta.Digits; changed = true; }
-                else if (e.DecimalDigits != meta.Digits && (e.Code != "USD" || e.DecimalDigits != 2)) { /* keep as seeded except fix */ }
+                else if (e.DecimalDigits != meta.Digits && (e.Code != "USD" || e.DecimalDigits != 2)) {  }
                 if (changed) e.MarkAsUpdated("Seeder");
             }
 
             if (toAdd.Count > 0)
             {
                 await db.Currencies.AddRangeAsync(toAdd);
-                logger?.LogInformation("CurrencySeeder: adding {Count} currencies", toAdd.Count);
             }
 
             await db.SaveChangesAsync();
-            logger?.LogInformation("CurrencySeeder: seeded, total {Total} currencies", await db.Currencies.CountAsync());
         }
     }
 }

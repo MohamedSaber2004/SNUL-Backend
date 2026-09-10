@@ -4,20 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using SNUL.Shared.Domain.Models;
 using SNUL.Shared.Enums;
 
 namespace SNUL.Shared.Persistance.Seeding
 {
-    /// <summary>
-    /// Development-only demo data seeder (Bogus). Runs ONLY when the host
-    /// environment is Development AND the SEED_DEMO_DATA environment variable
-    /// is "true". Never runs in Production (defense-in-depth check inside).
-    /// Idempotent: skips entirely when marker rows (CreatedBy = "BogusSeeder")
-    /// already exist; re-runs are no-ops. Deterministic faker seed (1234).
-    /// </summary>
-    public static class BogusDemoSeeder
+        public static class BogusDemoSeeder
     {
         public const string Marker = "BogusSeeder";
         private const int FakerSeed = 1234;
@@ -111,12 +103,7 @@ namespace SNUL.Shared.Persistance.Seeding
             return slug.Trim('-');
         }
 
-        /// <summary>
-        /// Crash-safe random subset: Bogus <c>PickRandom(items, n)</c> throws when
-        /// <c>n</c> exceeds the collection size (e.g. a nearly-empty table), so the
-        /// count is clamped to what actually exists.
-        /// </summary>
-        private static List<T> PickSome<T>(Faker faker, IList<T> source, int min, int max)
+                private static List<T> PickSome<T>(Faker faker, IList<T> source, int min, int max)
         {
             if (source.Count == 0) return new List<T>();
             var upper = Math.Min(max, source.Count);
@@ -134,13 +121,7 @@ namespace SNUL.Shared.Persistance.Seeding
                 : "Demo123!";
         }
 
-        /// <summary>
-        /// Central opt-in check. Demo data runs ONLY in non-Production AND when
-        /// explicitly enabled via <c>Seeding:SeedDemoData=true</c> (appsettings /
-        /// user-secrets / command-line <c>--Seeding:SeedDemoData true</c>) OR the
-        /// legacy <c>SEED_DEMO_DATA=true</c> environment variable.
-        /// </summary>
-        public static bool ShouldSeedDemoData(IHostEnvironment? env, IConfiguration? config, out string reason)
+                public static bool ShouldSeedDemoData(IHostEnvironment? env, IConfiguration? config, out string reason)
         {
             if (env != null && env.IsProduction())
             {
@@ -152,9 +133,8 @@ namespace SNUL.Shared.Persistance.Seeding
             var fromEnvVar = string.Equals(
                 Environment.GetEnvironmentVariable("SEED_DEMO_DATA"),
                 "true", StringComparison.OrdinalIgnoreCase);
-            // Covers AddEnvironmentVariables mapping (SEED_DEMO_DATA is also visible
-            // here) plus docker-style Seeding__SeedDemoData=true.
-            var fromConfigString = string.Equals(
+
+var fromConfigString = string.Equals(
                 config?["SEED_DEMO_DATA"],
                 "true", StringComparison.OrdinalIgnoreCase);
 
@@ -171,7 +151,7 @@ namespace SNUL.Shared.Persistance.Seeding
             return false;
         }
 
-        public static async Task SeedDemoAsync(IServiceProvider services, ILogger logger, CancellationToken ct = default)
+        public static async Task SeedDemoAsync(IServiceProvider services, CancellationToken ct = default)
         {
             try
             {
@@ -179,30 +159,25 @@ namespace SNUL.Shared.Persistance.Seeding
                 var config = services.GetService<IConfiguration>();
                 if (!ShouldSeedDemoData(env, config, out var gateReason))
                 {
-                    logger.LogWarning("BogusDemoSeeder {Reason}", gateReason);
                     return;
                 }
 
                 var db = services.GetRequiredService<SnulDbContext>();
                 var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
-                // Self-sufficient: ensure Identity roles (incl. Customer) exist
-                // even when the host service never ran RoleSeeder (e.g. Product).
-                var roleManager = services.GetService<RoleManager<IdentityRole<Guid>>>();
+var roleManager = services.GetService<RoleManager<IdentityRole<Guid>>>();
                 if (roleManager != null)
-                    await RoleSeeder.SeedRolesAsync(roleManager, logger);
+                    await RoleSeeder.SeedRolesAsync(roleManager);
 
                 Randomizer.Seed = new Random(FakerSeed);
                 var faker = new Faker("en");
                 var year = DateTime.UtcNow.Year;
 
-                // Reference data needed by several sections below.
-                var usd = await db.Currencies.FirstOrDefaultAsync(c => !c.IsDeleted && c.Code == "USD", ct)
+var usd = await db.Currencies.FirstOrDefaultAsync(c => !c.IsDeleted && c.Code == "USD", ct)
                     ?? await db.Currencies.FirstOrDefaultAsync(c => !c.IsDeleted, ct);
                 if (usd == null)
                 {
-                    logger.LogInformation("USD currency missing; running CurrencySeeder...");
-                    await CurrencySeeder.SeedAsync(db, logger);
+                    await CurrencySeeder.SeedAsync(db);
                     usd = await db.Currencies.FirstOrDefaultAsync(c => !c.IsDeleted && c.Code == "USD", ct)
                         ?? await db.Currencies.FirstOrDefaultAsync(c => !c.IsDeleted, ct);
                 }
@@ -210,23 +185,17 @@ namespace SNUL.Shared.Persistance.Seeding
                 var countries = await db.Countries.Where(c => !c.IsDeleted).ToListAsync(ct);
                 if (countries.Count == 0)
                 {
-                    logger.LogInformation("No countries found; running WorldLocationSeeder...");
-                    await WorldLocationSeeder.SeedAsync(db, logger);
+                    await WorldLocationSeeder.SeedAsync(db);
                     countries = await db.Countries.Where(c => !c.IsDeleted).ToListAsync(ct);
                 }
                 if (countries.Count == 0)
                 {
-                    logger.LogWarning("Bogus seeding stopped: no countries found (run WorldLocationSeeder first).");
                     return;
                 }
 
-                // ── 1. Categories (6 roots + 18 children) ────────────────────
-                // Guarded by emptiness (names/SKUs below are deterministic, so a
-                // re-run or a legacy-seeded DB must not insert them twice).
-                List<Category> leaves;
+List<Category> leaves;
                 if (await db.Categories.AnyAsync(c => !c.IsDeleted, ct))
                 {
-                    logger.LogInformation("Categories already present, skipping Bogus category seeding.");
                     leaves = await db.Categories.Where(c => !c.IsDeleted && c.ParentCategoryId != null).ToListAsync(ct);
                     if (leaves.Count == 0)
                         leaves = await db.Categories.Where(c => !c.IsDeleted).ToListAsync(ct);
@@ -243,13 +212,11 @@ namespace SNUL.Shared.Persistance.Seeding
                     }
                     await db.Categories.AddRangeAsync(categories, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} categories.", categories.Count);
                     leaves = categories.Where(c => c.ParentCategoryId.HasValue).ToList();
                 }
                 List<Product> products;
                 if (await db.Products.AnyAsync(p => !p.IsDeleted, ct))
                 {
-                    logger.LogInformation("Products already present, skipping Bogus product seeding.");
                     products = await db.Products.Where(p => !p.IsDeleted).Take(200).ToListAsync(ct);
                 }
                 else
@@ -307,13 +274,11 @@ namespace SNUL.Shared.Persistance.Seeding
                 await db.ProductMedias.AddRangeAsync(media, ct);
                 await db.ProductProcedureTags.AddRangeAsync(tags, ct);
                 await db.SaveChangesAsync(ct);
-                logger.LogInformation("Bogus seeded {Count} products (+specs/media/tags).", products.Count);
                 }
 
                 List<Company> companies;
                 if (await db.Companies.AnyAsync(c => !c.IsDeleted, ct))
                 {
-                    logger.LogInformation("Companies already present, updating existing data with actual images and ensuring IsProvider = true.");
                     companies = await db.Companies.Where(c => !c.IsDeleted).Take(20).ToListAsync(ct);
                     var updatedExisting = false;
                     for (var idx = 0; idx < companies.Count; idx++)
@@ -334,7 +299,6 @@ namespace SNUL.Shared.Persistance.Seeding
                     if (updatedExisting)
                     {
                         await db.SaveChangesAsync(ct);
-                        logger.LogInformation("Successfully updated existing companies with actual images and provider access.");
                     }
                 }
                 else
@@ -350,7 +314,7 @@ namespace SNUL.Shared.Persistance.Seeding
                             status, null, Marker,
                             $"info@{Slugify(seed.Name)}.example.com",
                             seed.ImageName);
-                        // All companies are providers and can upload products
+                        
                         company.IsProvider = true;
                         companies.Add(company);
                     }
@@ -381,15 +345,13 @@ namespace SNUL.Shared.Persistance.Seeding
                 }
                 await db.CompanyAddresses.AddRangeAsync(addresses, ct);
                 await db.SaveChangesAsync(ct);
-                logger.LogInformation("Bogus seeded {Count} companies (+addresses).", companies.Count);
                 }
 
-                // ── 4. Users (via UserManager) ───────────────────────────────
-                var password = DemoPassword(config);
+var password = DemoPassword(config);
                 var staff = new List<ApplicationUser>();
                 for (var i = 1; i <= 2; i++)
                 {
-                    var u = await EnsureUserAsync(userManager, logger, faker,
+                    var u = await EnsureUserAsync(userManager, faker,
                         $"demo.staff{i:00}@snul.health", faker.Name.FullName(),
                         UserType.SnulStaff, null, i % 2 == 0 ? AppLanguage.Ar : AppLanguage.En,
                         password, ct);
@@ -399,19 +361,18 @@ namespace SNUL.Shared.Persistance.Seeding
                 var approved = companies.Where(c => c.Status == CompanyStatus.Approved).ToList();
                 for (var i = 0; i < approved.Count; i++)
                 {
-                    var u = await EnsureUserAsync(userManager, logger, faker,
+                    var u = await EnsureUserAsync(userManager, faker,
                         $"demo.org{i + 1:00}@snul.health", faker.Name.FullName(),
                         UserType.OrganizationUser, approved[i].Id, AppLanguage.En, password, ct);
                     if (u != null) orgUsers.Add((u, approved[i]));
 
-                    var u2 = await EnsureUserAsync(userManager, logger, faker,
+                    var u2 = await EnsureUserAsync(userManager, faker,
                         $"demo.member{i + 1:00}@snul.health", faker.Name.FullName(),
                         UserType.OrganizationUser, approved[i].Id, i % 2 == 0 ? AppLanguage.Ar : AppLanguage.En, password, ct);
                     if (u2 != null) orgUsers.Add((u2, approved[i]));
                 }
 
-                // Migrate any legacy users with obsolete UserType (4) to OrganizationUser
-                var legacyCustomers = await db.ApplicationUsers.Where(u => !u.IsDeleted && (int)u.UserType == 4).ToListAsync(ct);
+var legacyCustomers = await db.ApplicationUsers.Where(u => !u.IsDeleted && (int)u.UserType == 4).ToListAsync(ct);
                 if (legacyCustomers.Count > 0 && approved.Count > 0)
                 {
                     for (var i = 0; i < legacyCustomers.Count; i++)
@@ -422,14 +383,9 @@ namespace SNUL.Shared.Persistance.Seeding
                             lc.CompanyId = approved[i % approved.Count].Id;
                     }
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Migrated {Count} legacy customer users to OrganizationUser.", legacyCustomers.Count);
                 }
 
-                logger.LogInformation("Bogus seeded {Staff} staff, {Org} org users.",
-                    staff.Count, orgUsers.Count);
-
-                // Fallbacks in case users were created on a prior run or pre-existing
-                if (staff.Count == 0)
+if (staff.Count == 0)
                     staff = await db.ApplicationUsers.Where(u => !u.IsDeleted && u.UserType == UserType.SnulStaff).Take(5).ToListAsync(ct);
                 if (orgUsers.Count == 0 && approved.Count > 0)
                 {
@@ -447,9 +403,7 @@ namespace SNUL.Shared.Persistance.Seeding
                 if (activeMembers.Count == 0)
                     activeMembers = await db.ApplicationUsers.Where(u => !u.IsDeleted).Take(20).ToListAsync(ct);
 
-                // default address for active members (checkout needs one) —
-                // skip members that already have one so re-runs stay no-ops.
-                var membersWithAddress = new HashSet<Guid>(
+var membersWithAddress = new HashSet<Guid>(
                     await db.UserAddresses.Where(a => !a.IsDeleted).Select(a => a.UserId).ToListAsync(ct));
                 var memberAddresses = new List<UserAddress>();
                 foreach (var c in activeMembers)
@@ -473,15 +427,11 @@ namespace SNUL.Shared.Persistance.Seeding
                     await db.SaveChangesAsync(ct);
                 }
 
-                // ── 5. RFQ → Quote → Order chains (12, on approved companies) ─
-                // Numbers are deterministic per year with unique indexes → seed
-                // only when no chain for this year (or no demo chain) exists.
-                var repId = staff.Count > 0 ? staff[0].Id : Guid.NewGuid();
+var repId = staff.Count > 0 ? staff[0].Id : Guid.NewGuid();
                 var chainNo = 0;
                 var chainPrefix = $"WO-{year}-";
                 if (await db.Orders.AnyAsync(o => !o.IsDeleted && (o.CreatedBy == Marker || o.OrderNumber.StartsWith(chainPrefix)), ct))
                 {
-                    logger.LogInformation("Orders already present, skipping Bogus RFQ→Quote→Order chains.");
                 }
                 else
                 {
@@ -573,13 +523,9 @@ namespace SNUL.Shared.Persistance.Seeding
                     await db.Orders.AddAsync(order, ct);
                     }
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} RFQ→Quote→Order chains.", chainNo);
                 }
 
-                // ── 6. Help content, shows, inquiries, tickets, notifications ─
-                // Each group is seeded only into an empty table (re-runs stay
-                // no-ops; slugs below are unique-indexed and deterministic).
-                var catEntities = new List<HelpCategory>();
+var catEntities = new List<HelpCategory>();
                 if (!await db.HelpCategories.AnyAsync(c => !c.IsDeleted, ct))
                 {
                     var helpCats = new[] { "Ordering", "Shipping & Incoterms", "Returns & RMA", "Sterilization", "Warranty" };
@@ -592,7 +538,6 @@ namespace SNUL.Shared.Persistance.Seeding
                     }
                     await db.HelpCategories.AddRangeAsync(catEntities, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} help categories.", catEntities.Count);
                 }
                 else
                 {
@@ -616,7 +561,6 @@ namespace SNUL.Shared.Persistance.Seeding
                         }
                     await db.HelpArticles.AddRangeAsync(articles, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} help articles.", articles.Count);
                 }
                 if (!await db.FAQItems.AnyAsync(f => !f.IsDeleted, ct))
                 {
@@ -634,7 +578,6 @@ namespace SNUL.Shared.Persistance.Seeding
                     }).ToList();
                     await db.FAQItems.AddRangeAsync(faqs, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} FAQs.", faqs.Count);
                 }
                 if (!await db.TradeShowEvents.AnyAsync(t => !t.IsDeleted, ct))
                 {
@@ -656,7 +599,6 @@ namespace SNUL.Shared.Persistance.Seeding
                     }).ToList();
                     await db.TradeShowEvents.AddRangeAsync(shows, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} trade shows.", shows.Count);
                 }
                 if (!await db.ProductInquiries.AnyAsync(p => !p.IsDeleted, ct) && products.Count > 0)
                 {
@@ -674,7 +616,6 @@ namespace SNUL.Shared.Persistance.Seeding
                     }).ToList();
                     await db.ProductInquiries.AddRangeAsync(inquiries, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} product inquiries.", inquiries.Count);
                 }
                 if (!await db.OemInquiries.AnyAsync(o => !o.IsDeleted, ct))
                 {
@@ -690,7 +631,6 @@ namespace SNUL.Shared.Persistance.Seeding
                     }).ToList();
                     await db.OemInquiries.AddRangeAsync(oem, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} OEM inquiries.", oem.Count);
                 }
 
                 if (!await db.SupportTickets.AnyAsync(t => !t.IsDeleted, ct) && activeMembers.Count > 0)
@@ -715,7 +655,6 @@ namespace SNUL.Shared.Persistance.Seeding
                     }
                     await db.SupportTickets.AddRangeAsync(tickets, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} support tickets.", tickets.Count);
                 }
                 if (!await db.Notifications.AnyAsync(n => !n.IsDeleted, ct) && activeMembers.Count > 0)
                 {
@@ -733,13 +672,9 @@ namespace SNUL.Shared.Persistance.Seeding
                     }).ToList();
                     await db.Notifications.AddRangeAsync(notes, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} notifications.", notes.Count);
                 }
-                logger.LogInformation("Bogus seeded help content, shows, inquiries, tickets, notifications.");
 
-                // ── 7. Remaining tables (every table gets demo rows) ─────────
-                // Certifications (CertificateNumber is unique → insert missing only).
-                var demoCerts = new[]
+var demoCerts = new[]
                 {
                     ("ISO-13485-2024", "ISO 13485:2016 Quality Management", "BSI Group", 730),
                     ("CE-MDR-2024", "CE Mark — EU MDR 2017/745", "TÜV SÜD", 1095),
@@ -766,11 +701,8 @@ namespace SNUL.Shared.Persistance.Seeding
                     await db.Certifications.AddRangeAsync(certsToAdd, ct);
                     await db.SaveChangesAsync(ct);
                 }
-                logger.LogInformation("Bogus seeded {Count} certifications.", certsToAdd.Count);
 
-                // ExchangeRates (unique per base/target/date → insert missing only)
-                // + ExchangeRateSyncLogs.
-                var ratesAdded = 0;
+var ratesAdded = 0;
                 if (usd != null)
                 {
                     var targetCodes = new[] { "AED", "EUR", "SAR", "EGP", "GBP", "PKR", "JPY", "CAD", "TRY", "QAR" };
@@ -822,10 +754,8 @@ namespace SNUL.Shared.Persistance.Seeding
                     await db.ExchangeRateSyncLogs.AddRangeAsync(new[] { ok, failed }, ct);
                     await db.SaveChangesAsync(ct);
                 }
-                logger.LogInformation("Bogus seeded {Count} exchange rates (+sync logs).", ratesAdded);
 
-                // Carts + CartItems (user carts + guest session carts).
-                if (!await db.Carts.AnyAsync(c => !c.IsDeleted && c.CreatedBy == Marker, ct) && products.Count > 0)
+if (!await db.Carts.AnyAsync(c => !c.IsDeleted && c.CreatedBy == Marker, ct) && products.Count > 0)
                 {
                     var cartOwners = activeMembers.Take(6).ToList();
                     if (cartOwners.Count == 0)
@@ -868,11 +798,9 @@ namespace SNUL.Shared.Persistance.Seeding
                         await db.Carts.AddRangeAsync(carts, ct);
                         await db.SaveChangesAsync(ct);
                     }
-                    logger.LogInformation("Bogus seeded {Count} carts (+items).", carts.Count);
                 }
 
-                // UserProductInteractions (unique per user/product/type → skip taken).
-                var interactionUsers = activeMembers.Take(10).ToList();
+var interactionUsers = activeMembers.Take(10).ToList();
                 if (interactionUsers.Count == 0)
                     interactionUsers = await db.ApplicationUsers.Where(u => !u.IsDeleted).Take(10).ToListAsync(ct);
                 if (interactionUsers.Count > 0 && products.Count > 0
@@ -902,11 +830,9 @@ namespace SNUL.Shared.Persistance.Seeding
                         await db.UserProductInteractions.AddRangeAsync(interactions, ct);
                         await db.SaveChangesAsync(ct);
                     }
-                    logger.LogInformation("Bogus seeded {Count} product interactions.", interactions.Count);
                 }
 
-                // DistributorApplications.
-                if (!await db.DistributorApplications.AnyAsync(d => !d.IsDeleted, ct))
+if (!await db.DistributorApplications.AnyAsync(d => !d.IsDeleted, ct))
                 {
                     var bands = new[] { "Under $100K", "$100K - $500K", "$500K - $1M", "$1M - $5M", "Over $5M" };
                     var appStatuses = new[]
@@ -934,11 +860,9 @@ namespace SNUL.Shared.Persistance.Seeding
                     }
                     await db.DistributorApplications.AddRangeAsync(apps, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} distributor applications.", apps.Count);
                 }
 
-                // Documents (metadata + demo file URLs only, no blobs).
-                if (!await db.Documents.AnyAsync(d => !d.IsDeleted, ct))
+if (!await db.Documents.AnyAsync(d => !d.IsDeleted, ct))
                 {
                     var docTypes = new[] { "Catalog", "Brochure", "IFU", "Certificate" };
                     var docs = new List<Document>();
@@ -959,11 +883,9 @@ namespace SNUL.Shared.Persistance.Seeding
                     }
                     await db.Documents.AddRangeAsync(docs, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} documents.", docs.Count);
                 }
 
-                // BlogPosts.
-                if (!await db.BlogPosts.AnyAsync(b => !b.IsDeleted, ct))
+if (!await db.BlogPosts.AnyAsync(b => !b.IsDeleted, ct))
                 {
                     var titles = new[]
                     {
@@ -986,11 +908,9 @@ namespace SNUL.Shared.Persistance.Seeding
                     }).ToList();
                     await db.BlogPosts.AddRangeAsync(posts, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} blog posts.", posts.Count);
                 }
 
-                // SupportContacts (singleton row).
-                if (!await db.SupportContacts.AnyAsync(s => !s.IsDeleted, ct))
+if (!await db.SupportContacts.AnyAsync(s => !s.IsDeleted, ct))
                 {
                     var contact = new SupportContact
                     {
@@ -1001,11 +921,9 @@ namespace SNUL.Shared.Persistance.Seeding
                     contact.MarkAsCreated(Marker);
                     await db.SupportContacts.AddAsync(contact, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded support contact.");
                 }
 
-                // Extra landing pages (about-us comes from LandingPageSeeder).
-                if (!await db.LandingPages.AnyAsync(l => !l.IsDeleted && l.CreatedBy == Marker, ct))
+if (!await db.LandingPages.AnyAsync(l => !l.IsDeleted && l.CreatedBy == Marker, ct))
                 {
                     var existingSlugs = new HashSet<string>(
                         await db.LandingPages.Where(l => !l.IsDeleted).Select(l => l.Slug).ToListAsync(ct),
@@ -1034,11 +952,9 @@ namespace SNUL.Shared.Persistance.Seeding
                         await db.LandingPages.AddRangeAsync(pagesToAdd, ct);
                         await db.SaveChangesAsync(ct);
                     }
-                    logger.LogInformation("Bogus seeded {Count} landing pages.", pagesToAdd.Count);
                 }
 
-                // UserRefreshTokens (one valid token per demo org member).
-                var tokenUsers = activeMembers.Take(5).ToList();
+var tokenUsers = activeMembers.Take(5).ToList();
                 if (tokenUsers.Count == 0)
                     tokenUsers = await db.ApplicationUsers.Where(u => !u.IsDeleted).Take(5).ToListAsync(ct);
                 if (tokenUsers.Count > 0 && !await db.UserRefreshTokens.AnyAsync(t => t.CreatedBy == Marker, ct))
@@ -1051,23 +967,16 @@ namespace SNUL.Shared.Persistance.Seeding
                     }).ToList();
                     await db.UserRefreshTokens.AddRangeAsync(tokens, ct);
                     await db.SaveChangesAsync(ct);
-                    logger.LogInformation("Bogus seeded {Count} refresh tokens.", tokens.Count);
                 }
-
-                // AuditLogs are system-generated (captured on every SaveChanges above).
-                logger.LogInformation("AuditLogs auto-captured: {Count}.", await db.AuditLogs.CountAsync(ct));
-                logger.LogInformation("Bogus demo seeding complete.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                logger.LogError(ex, "Bogus demo seeding failed.");
                 throw;
             }
         }
 
         private static async Task<ApplicationUser?> EnsureUserAsync(
             UserManager<ApplicationUser> userManager,
-            ILogger logger,
             Faker faker,
             string email,
             string fullName,
@@ -1095,13 +1004,9 @@ namespace SNUL.Shared.Persistance.Seeding
             var result = await userManager.CreateAsync(user, password);
             if (!result.Succeeded)
             {
-                logger.LogError("Bogus user creation failed for {Email}: {Errors}",
-                    email, string.Join(", ", result.Errors.Select(e => e.Description)));
                 return null;
             }
             var roleResult = await userManager.AddToRoleAsync(user, userType.ToString());
-            if (!roleResult.Succeeded)
-                logger.LogWarning("Bogus role assignment failed for {Email}.", email);
             return user;
         }
     }

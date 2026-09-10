@@ -203,6 +203,21 @@
     "CodeAlreadyExists": "Currency code already exists.",
     "CurrencyIdRequired": "Currency ID is required."
   },
+  "ExchangeRate": {
+    "Fetched": "Exchange rate retrieved successfully.",
+    "ListFetched": "Exchange rates retrieved successfully.",
+    "NotFound": "Exchange rate not found.",
+    "FromAndToRequired": "Source and target currencies are required.",
+    "AmountNonNegative": "Amount must be greater than or equal to zero.",
+    "InvalidDateFormat": "Invalid date format, use yyyy-MM-dd.",
+    "SyncSuccess": "Exchange rates synchronized successfully.",
+    "SyncFailed": "Failed to synchronize exchange rates."
+  },
+  "Integration": {
+    "Timeout": "Integration request timed out.",
+    "Unavailable": "Integration service is unavailable. Please retry later.",
+    "Error": "Integration error occurred: {0}"
+  },
   "Product": {
     "Created": "Product created successfully.",
     "Updated": "Product updated successfully.",

@@ -8,6 +8,7 @@ using SNUL.Shared.Common.Interfaces;
 using SNUL.Shared.Controllers;
 using SNUL.Shared.Domain.Models;
 using SNUL.Shared.Enums;
+using SNUL.Shared.Localization;
 using SNUL.Shared.Results;
 
 namespace Product.Services.API.Controllers
@@ -19,107 +20,68 @@ namespace Product.Services.API.Controllers
 
         public ExchangeRatesController(IMediator mediator, IExchangeRateService service) : base(mediator) => _service = service;
 
-        /// <summary>Latest rates for default base (USD)</summary>
-        [HttpGet]
+                [HttpGet]
         [Route(ProductApiRoutes.ExchangeRates.Latest)]
         [AllowAnonymous]
         public async Task<IActionResult> GetLatest(CancellationToken ct)
         {
-            try
-            {
-                var rates = await _service.GetLatestRatesAsync("USD", ct);
-                return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Success(rates.ToList()));
-            }
-            catch (Exception ex)
-            {
-                return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Failure(ex.Message));
-            }
+            var rates = await _service.GetLatestRatesAsync("USD", ct);
+            return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Success(rates.ToList(), LocalizationKeys.ExchangeRate.ListFetched));
         }
 
-        /// <summary>Latest rates for baseCurrency</summary>
-        [HttpGet]
+                [HttpGet]
         [Route(ProductApiRoutes.ExchangeRates.LatestByBase)]
         [AllowAnonymous]
         public async Task<IActionResult> GetLatestByBase([FromRoute] string baseCurrency, CancellationToken ct)
         {
-            try
-            {
-                var rates = await _service.GetLatestRatesAsync(baseCurrency, ct);
-                return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Success(rates.ToList()));
-            }
-            catch (Exception ex)
-            {
-                return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Failure(ex.Message));
-            }
+            var rates = await _service.GetLatestRatesAsync(baseCurrency, ct);
+            return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Success(rates.ToList(), LocalizationKeys.ExchangeRate.ListFetched));
         }
 
-        /// <summary>Single pair rate</summary>
-        [HttpGet]
+                [HttpGet]
         [Route(ProductApiRoutes.ExchangeRates.Pair)]
         [AllowAnonymous]
         public async Task<IActionResult> GetPair([FromRoute] string from, [FromRoute] string to, CancellationToken ct)
         {
-            try
-            {
-                var rate = await _service.GetLatestRateAsync(from, to, ct);
-                if (rate == null) return ToActionResult(Result<ExchangeRateDto>.NotFound($"Rate not found for {from}->{to}"));
-                return ToActionResult(Result<ExchangeRateDto>.Success(rate));
-            }
-            catch (Exception ex)
-            {
-                return ToActionResult(Result<ExchangeRateDto>.Failure(ex.Message));
-            }
+            var rate = await _service.GetLatestRateAsync(from, to, ct);
+            if (rate == null) return ToActionResult(Result<ExchangeRateDto>.NotFound(LocalizationKeys.ExchangeRate.NotFound));
+            return ToActionResult(Result<ExchangeRateDto>.Success(rate, LocalizationKeys.ExchangeRate.Fetched));
         }
 
-        /// <summary>Convert amount</summary>
-        [HttpGet]
+                [HttpGet]
         [Route(ProductApiRoutes.ExchangeRates.Convert)]
         [AllowAnonymous]
         public async Task<IActionResult> Convert([FromQuery] string from, [FromQuery] string to, [FromQuery] decimal amount, CancellationToken ct)
         {
             if (string.IsNullOrWhiteSpace(from) || string.IsNullOrWhiteSpace(to))
-                return ToActionResult(Result<ConversionResultDto>.BadRequest("from and to are required"));
+                return ToActionResult(Result<ConversionResultDto>.BadRequest(LocalizationKeys.ExchangeRate.FromAndToRequired));
             if (amount < 0)
-                return ToActionResult(Result<ConversionResultDto>.BadRequest("amount must be >= 0"));
-            try
-            {
-                var result = await _service.ConvertWithDetailsAsync(amount, from, to, ct);
-                return ToActionResult(Result<ConversionResultDto>.Success(result));
-            }
-            catch (Exception ex)
-            {
-                return ToActionResult(Result<ConversionResultDto>.Failure(ex.Message));
-            }
+                return ToActionResult(Result<ConversionResultDto>.BadRequest(LocalizationKeys.ExchangeRate.AmountNonNegative));
+
+            var result = await _service.ConvertWithDetailsAsync(amount, from, to, ct);
+            return ToActionResult(Result<ConversionResultDto>.Success(result, LocalizationKeys.ExchangeRate.Fetched));
         }
 
-        /// <summary>Historical rates</summary>
-        [HttpGet]
+                [HttpGet]
         [Route(ProductApiRoutes.ExchangeRates.History)]
         [AllowAnonymous]
         public async Task<IActionResult> GetHistory([FromRoute] string baseCurrency, [FromRoute] string date, CancellationToken ct)
         {
             if (!DateOnly.TryParse(date, out var d))
-                return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.BadRequest("Invalid date format, use yyyy-MM-dd"));
-            try
-            {
-                var rates = await _service.GetHistoricalRatesAsync(baseCurrency, d, ct);
-                return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Success(rates.ToList()));
-            }
-            catch (Exception ex)
-            {
-                return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Failure(ex.Message));
-            }
+                return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.BadRequest(LocalizationKeys.ExchangeRate.InvalidDateFormat));
+
+            var rates = await _service.GetHistoricalRatesAsync(baseCurrency, d, ct);
+            return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Success(rates.ToList(), LocalizationKeys.ExchangeRate.ListFetched));
         }
 
-        /// <summary>Manual sync - Admin only</summary>
-        [HttpPost]
+                [HttpPost]
         [Route(ProductApiRoutes.ExchangeRates.Sync)]
         [RoleAuthorize(UserType.Admin)]
         public async Task<IActionResult> Sync(CancellationToken ct)
         {
             var result = await _service.SyncLatestRatesAsync(ct);
-            if (!result.Success) return ToActionResult(Result<ExchangeRateSyncResult>.Failure(result.ErrorMessage ?? "Sync failed", 502));
-            return ToActionResult(Result<ExchangeRateSyncResult>.Success(result));
+            if (!result.Success) return ToActionResult(Result<ExchangeRateSyncResult>.Failure(LocalizationKeys.ExchangeRate.SyncFailed, 502));
+            return ToActionResult(Result<ExchangeRateSyncResult>.Success(result, LocalizationKeys.ExchangeRate.SyncSuccess));
         }
 
         [HttpPost]
@@ -128,20 +90,19 @@ namespace Product.Services.API.Controllers
         public async Task<IActionResult> SyncHistory([FromRoute] string date, CancellationToken ct)
         {
             if (!DateOnly.TryParse(date, out var d))
-                return ToActionResult(Result<ExchangeRateSyncResult>.BadRequest("Invalid date"));
+                return ToActionResult(Result<ExchangeRateSyncResult>.BadRequest(LocalizationKeys.ExchangeRate.InvalidDateFormat));
             var result = await _service.SyncHistoricalRatesAsync(d, ct);
-            if (!result.Success) return ToActionResult(Result<ExchangeRateSyncResult>.Failure(result.ErrorMessage ?? "Sync failed", 502));
-            return ToActionResult(Result<ExchangeRateSyncResult>.Success(result));
+            if (!result.Success) return ToActionResult(Result<ExchangeRateSyncResult>.Failure(LocalizationKeys.ExchangeRate.SyncFailed, 502));
+            return ToActionResult(Result<ExchangeRateSyncResult>.Success(result, LocalizationKeys.ExchangeRate.SyncSuccess));
         }
 
-        /// <summary>Recent sync logs</summary>
-        [HttpGet]
+                [HttpGet]
         [Route(ProductApiRoutes.ExchangeRates.SyncLogs)]
         [AllowAnonymous]
         public async Task<IActionResult> GetSyncLogs([FromQuery] int take = 10, CancellationToken ct = default)
         {
             var logs = await _service.GetSyncLogsAsync(take, ct);
-            return ToActionResult(Result<IReadOnlyCollection<ExchangeRateSyncLog>>.Success(logs));
+            return ToActionResult(Result<IReadOnlyCollection<ExchangeRateSyncLog>>.Success(logs, LocalizationKeys.ExchangeRate.ListFetched));
         }
     }
 }

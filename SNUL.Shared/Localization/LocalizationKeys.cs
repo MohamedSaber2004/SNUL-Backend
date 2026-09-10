@@ -230,6 +230,25 @@ namespace SNUL.Shared.Localization
             public const string CurrencyIdRequired = "Currency.CurrencyIdRequired";
         }
 
+        public static class ExchangeRate
+        {
+            public const string Fetched = "ExchangeRate.Fetched";
+            public const string ListFetched = "ExchangeRate.ListFetched";
+            public const string NotFound = "ExchangeRate.NotFound";
+            public const string FromAndToRequired = "ExchangeRate.FromAndToRequired";
+            public const string AmountNonNegative = "ExchangeRate.AmountNonNegative";
+            public const string InvalidDateFormat = "ExchangeRate.InvalidDateFormat";
+            public const string SyncSuccess = "ExchangeRate.SyncSuccess";
+            public const string SyncFailed = "ExchangeRate.SyncFailed";
+        }
+
+        public static class Integration
+        {
+            public const string Timeout = "Integration.Timeout";
+            public const string Unavailable = "Integration.Unavailable";
+            public const string Error = "Integration.Error";
+        }
+
         public static class Product
         {
             public const string Created = "Product.Created";

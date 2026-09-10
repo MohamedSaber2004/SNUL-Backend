@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SNUL.Shared.Common.DTOs.Products;
 using SNUL.Shared.Common.Interfaces;
@@ -18,20 +17,17 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
         private readonly IExchangeRateProvider _provider;
         private readonly ExchangeRateSettings _settings;
         private readonly IMemoryCache _cache;
-        private readonly ILogger<ExchangeRateService> _logger;
 
         public ExchangeRateService(
             SnulDbContext db,
             IExchangeRateProvider provider,
             IOptions<ExchangeRateSettings> options,
-            IMemoryCache cache,
-            ILogger<ExchangeRateService> logger)
+            IMemoryCache cache)
         {
             _db = db;
             _provider = provider;
             _settings = options.Value;
             _cache = cache;
-            _logger = logger;
         }
 
         public async Task<ExchangeRateDto?> GetLatestRateAsync(string fromCurrency, string toCurrency, CancellationToken cancellationToken)
@@ -86,8 +82,7 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
             var baseCurrency = _settings.BaseCurrency.Trim().ToUpperInvariant();
             if (string.IsNullOrWhiteSpace(baseCurrency)) baseCurrency = "USD";
 
-            // Load latest rates for base currency (cached)
-            var rates = await GetLatestRatesInternalAsync(baseCurrency, cancellationToken);
+var rates = await GetLatestRatesInternalAsync(baseCurrency, cancellationToken);
 
             var fromRate = fromCurrency == baseCurrency ? 1m : GetRateForCurrency(rates, fromCurrency);
             var toRate = toCurrency == baseCurrency ? 1m : GetRateForCurrency(rates, toCurrency);
@@ -105,12 +100,10 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
             else
                 rate = toRate!.Value / fromRate!.Value;
 
-            // Financial precision: only round final converted amount per target currency
-            var decimalDigits = GetDecimalDigits(toCurrency);
+var decimalDigits = GetDecimalDigits(toCurrency);
             var converted = Decimal.Round(amount * rate, decimalDigits, MidpointRounding.AwayFromZero);
 
-            // Determine RateDate and Source from cached entry
-            var rateDate = rates.Values.FirstOrDefault()?.RateDate ?? DateOnly.FromDateTime(DateTime.UtcNow.Date);
+var rateDate = rates.Values.FirstOrDefault()?.RateDate ?? DateOnly.FromDateTime(DateTime.UtcNow.Date);
             var source = rates.Values.FirstOrDefault()?.Source ?? _provider.ProviderName;
 
             return new ConversionResultDto
@@ -159,7 +152,7 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
 
             if (rates.Count == 0)
             {
-                // Fallback to latest if no historical
+                
                 return await GetLatestRatesAsync(baseCurrency, cancellationToken);
             }
 
@@ -224,13 +217,11 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
                 if (response.Rates == null || response.Rates.Count == 0)
                     throw new InvalidOperationException("Provider returned empty rates");
 
-                // Validate base currency exists
-                var baseCurr = await _db.Currencies.FirstOrDefaultAsync(c => c.Code == baseCurrency && !c.IsDeleted, cancellationToken);
+var baseCurr = await _db.Currencies.FirstOrDefaultAsync(c => c.Code == baseCurrency && !c.IsDeleted, cancellationToken);
                 if (baseCurr == null)
                     throw new InvalidOperationException($"Base currency {baseCurrency} not found in Currencies table (seed required)");
 
-                // Validate and filter rates
-                var validRates = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
+var validRates = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
                 foreach (var kv in response.Rates)
                 {
                     var code = kv.Key?.Trim().ToUpperInvariant();
@@ -243,22 +234,16 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
                 if (validRates.Count == 0)
                     throw new InvalidOperationException("No valid rates after validation");
 
-                // Bulk upsert for today's RateDate (do not overwrite history)
-                var targetDate = response.Date;
+var targetDate = response.Date;
                 var currencies = await _db.Currencies.Where(c => !c.IsDeleted).ToDictionaryAsync(c => c.Code, c => c, StringComparer.OrdinalIgnoreCase, cancellationToken);
 
-                // Fetch all existing rates for base currency & targetDate in a single batch query
-                var existingRates = await _db.ExchangeRates
+var existingRates = await _db.ExchangeRates
                     .Where(r => r.BaseCurrencyId == baseCurr.Id && r.RateDate == targetDate && !r.IsDeleted)
                     .ToDictionaryAsync(r => r.TargetCurrencyId, cancellationToken);
 
                 var count = 0;
-                // NOTE: DbContext is configured with EnableRetryOnFailure, whose
-                // SqlServerRetryingExecutionStrategy forbids user-initiated
-                // transactions. All transactional work must run inside
-                // CreateExecutionStrategy().ExecuteAsync so retries wrap the
-                // whole transaction as a retriable unit.
-                var strategy = _db.Database.CreateExecutionStrategy();
+
+var strategy = _db.Database.CreateExecutionStrategy();
                 await strategy.ExecuteAsync(async () =>
                 {
                     using var tx = await _db.Database.BeginTransactionAsync(cancellationToken);
@@ -268,13 +253,12 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
                         {
                             if (!currencies.TryGetValue(kv.Key, out var targetCurr))
                             {
-                                _logger.LogWarning("Skipping unknown currency {Code} not in DB", kv.Key);
                                 continue;
                             }
 
                             if (existingRates.TryGetValue(targetCurr.Id, out var existing))
                             {
-                                // Update today's rate if changed (idempotent)
+                                
                                 if (existing.Rate != kv.Value || existing.Source != response.Source)
                                 {
                                     existing.Rate = kv.Value;
@@ -312,10 +296,9 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
                     }
                 });
 
-                // Invalidate cache
                 var cacheKey = CacheKey(baseCurrency, targetDate);
                 _cache.Remove(cacheKey);
-                // Also cache latest (today)
+                
                 var latestKey = CacheKey(baseCurrency, targetDate);
                 _cache.Remove(latestKey);
 
@@ -325,8 +308,6 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
                 log.Status = ExchangeRateSyncStatus.Success;
                 log.MarkAsUpdated("System");
                 await _db.SaveChangesAsync(cancellationToken);
-
-                _logger.LogInformation("ExchangeRate sync succeeded {Base} {Date} {Count} rates from {Source}", baseCurrency, targetDate, count, response.Source);
 
                 return new ExchangeRateSyncResult
                 {
@@ -339,7 +320,6 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ExchangeRate sync failed {Base} {Provider}", baseCurrency, _provider.ProviderName);
                 try
                 {
                     _db.ChangeTracker.Clear();
@@ -355,9 +335,8 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
                     }
                     await _db.SaveChangesAsync(CancellationToken.None);
                 }
-                catch (Exception logEx)
+                catch (Exception)
                 {
-                    _logger.LogError(logEx, "Failed to persist error state into ExchangeRateSyncLog {Id}", log.Id);
                 }
 
                 return new ExchangeRateSyncResult
@@ -374,13 +353,12 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
 
         private async Task<Dictionary<string, CachedRate>> GetLatestRatesInternalAsync(string baseCurrency, CancellationToken cancellationToken)
         {
-            // Try cache first: key for today
+            
             var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
             var cacheKey = CacheKey(baseCurrency, today);
             if (_cache.TryGetValue(cacheKey, out Dictionary<string, CachedRate>? cached) && cached != null)
                 return cached;
 
-            // DB: get latest RateDate for base
             var baseCurr = await _db.Currencies.AsNoTracking().FirstOrDefaultAsync(c => c.Code == baseCurrency && !c.IsDeleted, cancellationToken);
             if (baseCurr == null)
                 throw new InvalidOperationException($"Base currency {baseCurrency} not found");
@@ -393,7 +371,6 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
 
             if (latestDate == default)
             {
-                _logger.LogWarning("No exchange rates found for {Base}, attempting provider sync", baseCurrency);
                 var sync = await SyncLatestRatesAsync(cancellationToken);
                 if (!sync.Success)
                     throw new InvalidOperationException($"No rates available for {baseCurrency} and sync failed: {sync.ErrorMessage}");
@@ -419,9 +396,7 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
                 FetchedAt = r.FetchedAt
             }, StringComparer.OrdinalIgnoreCase);
 
-            // Also include base->self implied 1? Not stored.
-
-            _cache.Set(cacheKey, dict, TimeSpan.FromMinutes(_settings.CacheExpirationMinutes > 0 ? _settings.CacheExpirationMinutes : 60));
+_cache.Set(cacheKey, dict, TimeSpan.FromMinutes(_settings.CacheExpirationMinutes > 0 ? _settings.CacheExpirationMinutes : 60));
             return dict;
         }
 
@@ -433,9 +408,8 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
 
         private int GetDecimalDigits(string code)
         {
-            // Try to get from DB cache? For simplicity use 2, but we can lookup currency's DecimalDigits
-            // This is called sync; we do fast DB lookup fallback to 2
-            var cur = _db.Currencies.AsNoTracking().FirstOrDefault(c => c.Code == code && !c.IsDeleted);
+
+var cur = _db.Currencies.AsNoTracking().FirstOrDefault(c => c.Code == code && !c.IsDeleted);
             return cur?.DecimalDigits ?? 2;
         }
 

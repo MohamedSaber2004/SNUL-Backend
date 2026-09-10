@@ -17,18 +17,15 @@ namespace Auth.Services.API.Features.Auth.Queries.GetUserProfile
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<GetUserProfileQueryHandler> _logger;
 
         public GetUserProfileQueryHandler(
             UserManager<ApplicationUser> userManager,
             ICurrentUserService currentUserService,
-            IUnitOfWork unitOfWork,
-            ILogger<GetUserProfileQueryHandler> logger)
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
-            _logger = logger;
         }
 
         public async Task<Result<UserProfileDto>> Handle(GetUserProfileQuery request, CancellationToken cancellationToken)
@@ -84,9 +81,8 @@ namespace Auth.Services.API.Features.Auth.Queries.GetUserProfile
                     })
                     .ToListAsync(cancellationToken);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogWarning(ex, "Failed to load addresses for user {UserId}", user.Id);
             }
 
             string? phoneCode = null;
@@ -107,9 +103,8 @@ namespace Auth.Services.API.Features.Auth.Queries.GetUserProfile
                         phoneCode = matched.PhoneCode?.Trim();
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _logger.LogWarning(ex, "Failed to resolve phoneCode by country prefix for user {UserId}", user.Id);
                 }
 
                 if (phoneCode == null && user.CompanyId.HasValue && user.CompanyId.Value != Guid.Empty)
@@ -184,7 +179,7 @@ namespace Auth.Services.API.Features.Auth.Queries.GetUserProfile
                             countryNameEn = country?.NameEn;
                             countryNameAr = country?.NameAr;
                         }
-                        catch { /* optional */ }
+                        catch {  }
 
                         return new CompanyDto
                         {
@@ -203,14 +198,12 @@ namespace Auth.Services.API.Features.Auth.Queries.GetUserProfile
                         };
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _logger.LogWarning(ex, "Failed to load company {CompanyId} for profile", user.CompanyId);
                 }
             }
 
-            // Fallback: If user is an OrganizationUser without companyId yet, look up their DistributorApplication
-            if (user.UserType == UserType.OrganizationUser)
+if (user.UserType == UserType.OrganizationUser)
             {
                 try
                 {
@@ -230,7 +223,7 @@ namespace Auth.Services.API.Features.Auth.Queries.GetUserProfile
                             countryNameEn = country?.NameEn;
                             countryNameAr = country?.NameAr;
                         }
-                        catch { /* optional */ }
+                        catch {  }
 
                         return new CompanyDto
                         {
@@ -249,9 +242,8 @@ namespace Auth.Services.API.Features.Auth.Queries.GetUserProfile
                         };
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _logger.LogWarning(ex, "Failed to load distributor application for user {UserId}", user.Id);
                 }
             }
 

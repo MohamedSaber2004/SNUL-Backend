@@ -9,7 +9,7 @@ namespace SNUL.Shared.Domain.Models
         public string? Description { get; set; }
         public string? ImageName { get; set; }
         public Guid? ParentCategoryId { get; set; }
-        // Cross-system integration: Welco master category reference
+        
         public Guid? WelcoCategoryId { get; set; }
 
         public virtual Category? ParentCategory { get; set; }

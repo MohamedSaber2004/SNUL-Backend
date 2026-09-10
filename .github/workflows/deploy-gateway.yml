@@ -1,0 +1,43 @@
+name: Deploy API Gateway to MonsterASP
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'Welco.API/**'
+      - 'Welco.Shared/**'
+      - '.github/workflows/deploy-gateway.yml'
+      - '.github/workflows/ftp-deploy.py'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy Gateway Service
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish API Gateway
+        run: |
+          dotnet publish "Welco.API/Welco.Gateway.API.csproj" \
+            -c Release \
+            -o ./publish/gateway
+
+      - name: Deploy to MonsterASP via FTP
+        env:
+          FTP_SERVER: ${{ secrets.GATEWAY_FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.GATEWAY_FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.GATEWAY_FTP_PASSWORD }}
+          LOCAL_DIR: ./publish/gateway
+          REMOTE_DIR: /wwwroot
+        run: python .github/workflows/ftp-deploy.py

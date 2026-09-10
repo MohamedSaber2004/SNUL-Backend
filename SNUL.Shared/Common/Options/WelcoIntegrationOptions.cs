@@ -1,10 +1,6 @@
 namespace SNUL.Shared.Common.Options
 {
-    /// <summary>
-    /// Configuration for Snul's integration client calling Welco API.
-    /// Loaded from appsettings.json section "WelcoIntegration".
-    /// </summary>
-    public class WelcoIntegrationOptions
+        public class WelcoIntegrationOptions
     {
         public const string SectionName = "WelcoIntegration";
 
@@ -16,9 +12,6 @@ namespace SNUL.Shared.Common.Options
         public int TimeoutSeconds { get; set; } = 30;
         public int RetryCount { get; set; } = 3;
 
-        /// <summary>
-        /// Options pattern configuration for integration routes.
-        /// </summary>
-        public IntegrationRoutesOptions Routes { get; set; } = new();
+                public IntegrationRoutesOptions Routes { get; set; } = new();
     }
 }

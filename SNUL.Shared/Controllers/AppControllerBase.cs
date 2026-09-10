@@ -14,8 +14,7 @@ namespace SNUL.Shared.Controllers
     {
         protected readonly IMediator _mediator;
 
-
-        protected AppControllerBase(IMediator mediator)
+protected AppControllerBase(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -78,25 +77,12 @@ namespace SNUL.Shared.Controllers
 
             var localizedErrors = result.Errors?
                 .Select(e => !string.IsNullOrWhiteSpace(e) ? Localize(e) : e)
-                .ToList();
+                .ToList() ?? new List<string>();
 
-            var resultType = result.GetType();
-            if (resultType.IsGenericType && resultType.GetGenericTypeDefinition() == typeof(PaginatedResult<>))
-            {
-                return new ObjectResult(result)
-                {
-                    StatusCode = result.StatusCode
-                };
-            }
+            result.Message = localizedMessage;
+            result.Errors = localizedErrors;
 
-            var localizedResult = new Result<T>(
-                result.IsSuccess,
-                result.StatusCode,
-                localizedMessage,
-                result.Data,
-                localizedErrors);
-
-            return new ObjectResult(localizedResult)
+            return new ObjectResult(result)
             {
                 StatusCode = result.StatusCode
             };
@@ -117,19 +103,12 @@ namespace SNUL.Shared.Controllers
 
             var localizedErrors = result.Errors?
                 .Select(e => !string.IsNullOrWhiteSpace(e) ? Localize(e) : e)
-                .ToList();
+                .ToList() ?? new List<string>();
 
-            var localizedResult = new PaginatedResult<T>(
-                result.IsSuccess,
-                result.Data,
-                result.TotalCount,
-                result.PageNumber,
-                result.PageSize,
-                localizedMessage,
-                result.StatusCode,
-                localizedErrors);
+            result.Message = localizedMessage;
+            result.Errors = localizedErrors;
 
-            return new ObjectResult(localizedResult)
+            return new ObjectResult(result)
             {
                 StatusCode = result.StatusCode
             };

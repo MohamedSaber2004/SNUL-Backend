@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using SNUL.Shared.Common.Interfaces;
 using SNUL.Shared.Common.Services;
 using SNUL.Shared.Localization;
@@ -10,7 +9,6 @@ namespace Attachment.Services.API.Infrastructure
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<Messages> _localizer;
-        private readonly ILogger<BaseFileService> _logger;
 
         private string WebRootPath => UploadPaths.GetStorageRoot()
             ?? _webHostEnvironment.WebRootPath
@@ -18,18 +16,16 @@ namespace Attachment.Services.API.Infrastructure
 
         public BaseFileService(
             IWebHostEnvironment webHostEnvironment,
-            IStringLocalizer<Messages> localizer,
-            ILogger<BaseFileService> logger)
+            IStringLocalizer<Messages> localizer)
         {
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
-            _logger = logger;
         }
 
         public async Task<(bool Uploaded, string Result)> UploadFileAsync(IFormFile file, string folderPath)
         {
             if (file == null || file.Length == 0)
-                return (false, _localizer[LocalizationKeys.AttachmentMessages.FileEmpty]);
+                return (false, LocalizationKeys.AttachmentMessages.FileEmpty);
 
             try
             {
@@ -47,14 +43,12 @@ namespace Attachment.Services.API.Infrastructure
                 }
 
                 string relativePath = Path.Combine(folderPath, uniqueFileName).Replace("\\", "/");
-                _logger.LogInformation("Uploaded file '{FileName}' to '{RelativePath}'", uniqueFileName, relativePath);
 
                 return (true, relativePath);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Failed to upload file '{FileName}' to folder '{FolderPath}'", file.FileName, folderPath);
-                return (false, _localizer[LocalizationKeys.AttachmentMessages.UploadFailed]);
+                return (false, LocalizationKeys.AttachmentMessages.UploadFailed);
             }
         }
 
@@ -78,15 +72,13 @@ namespace Attachment.Services.API.Infrastructure
                 if (File.Exists(filePath))
                 {
                     File.Delete(filePath);
-                    _logger.LogInformation("Deleted file '{FilePath}'", filePath);
                     return true;
                 }
 
                 return false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Failed to delete file '{FileName}' from folder '{FolderPath}'", fileName, folderPath);
                 return false;
             }
         }
@@ -106,7 +98,7 @@ namespace Attachment.Services.API.Infrastructure
                 return Task.FromResult((true, relativePath));
             }
 
-            return Task.FromResult((false, _localizer[LocalizationKeys.AttachmentMessages.FileNotFound].Value));
+            return Task.FromResult((false, LocalizationKeys.AttachmentMessages.FileNotFound));
         }
 
         private string? GetSafeFilePath(string relativePath)

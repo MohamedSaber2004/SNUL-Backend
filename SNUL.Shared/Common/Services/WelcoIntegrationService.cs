@@ -2,44 +2,33 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SNUL.Shared.Common.DTOs.Integration;
 using SNUL.Shared.Common.Interfaces;
 using SNUL.Shared.Common.Options;
+using SNUL.Shared.Localization;
 using SNUL.Shared.Results;
 
 namespace SNUL.Shared.Common.Services
 {
-    /// <summary>
-    /// HTTP client service for calling Welco integration endpoints.
-    /// Binds endpoint routes from WelcoIntegrationOptions.Routes (Options pattern).
-    /// Uses external service authentication (signed machine-to-machine JWT).
-    /// </summary>
     public class WelcoIntegrationService : IWelcoIntegrationService
     {
         private readonly HttpClient _http;
         private readonly WelcoIntegrationOptions _options;
-        private readonly ILogger<WelcoIntegrationService> _logger;
-
         public WelcoIntegrationService(
             HttpClient http,
-            IOptions<WelcoIntegrationOptions> options,
-            ILogger<WelcoIntegrationService> logger)
+            IOptions<WelcoIntegrationOptions> options)
         {
             _http = http;
             _options = options.Value;
-            _logger = logger;
         }
-
 
         public Task<Result<List<ExternalProviderDto>>> GetProvidersAsync(CancellationToken ct = default)
         {
             var route = _options.Routes.ProvidersBase;
             return SendGetAsync<List<ExternalProviderDto>>(route, ct);
         }
-
 
         public Task<Result<List<ExternalProductDto>>> GetProductsAsync(int page = 1, int pageSize = 50, CancellationToken ct = default)
         {
@@ -54,7 +43,6 @@ namespace SNUL.Shared.Common.Services
             return SendGetAsync<ExternalProductDto>(route, ct);
         }
 
-
         public Task<Result<InventoryCheckResponse>> CheckInventoryAsync(InventoryCheckRequest request, CancellationToken ct = default)
         {
             var route = CombineRoute(_options.Routes.InventoryBase, _options.Routes.InventoryCheck);
@@ -66,7 +54,6 @@ namespace SNUL.Shared.Common.Services
             var route = CombineRoute(_options.Routes.InventoryBase, _options.Routes.InventoryReserve);
             return SendPostAsync<InventoryCheckRequest, InventoryCheckResponse>(route, request, ct);
         }
-
 
         public Task<Result<ExternalOrderResponse>> CreateOrderAsync(CreateExternalOrderRequest request, CancellationToken ct = default)
         {
@@ -88,7 +75,6 @@ namespace SNUL.Shared.Common.Services
             return SendPutAsync<UpdateExternalStatusRequest, bool>(route, request, ct);
         }
 
-
         public Task<Result<ExternalQuoteResponse>> CreateQuoteAsync(CreateExternalQuoteRequest request, CancellationToken ct = default)
         {
             var route = _options.Routes.QuotesBase;
@@ -102,7 +88,6 @@ namespace SNUL.Shared.Common.Services
             return SendPutAsync<UpdateExternalStatusRequest, bool>(route, request, ct);
         }
 
-
         public Task<Result<List<ExternalCategoryDto>>> GetCategoriesAsync(CancellationToken ct = default)
         {
             var route = _options.Routes.CategoriesBase;
@@ -115,9 +100,6 @@ namespace SNUL.Shared.Common.Services
             var route = CombineRoute(_options.Routes.CategoriesBase, subRoute);
             return SendGetAsync<ExternalCategoryDto>(route, ct);
         }
-
-
-        // ─── Distributors ───
 
         public Task<Result<DistributorApplicationDto>> SubmitDistributorApplicationAsync(ApplyDistributorRequest request, CancellationToken ct = default)
         {
@@ -152,9 +134,6 @@ namespace SNUL.Shared.Common.Services
             return SendPutAsync<object, bool>(route, new { Reason = reason }, ct);
         }
 
-
-        // ─── Support Tickets ───
-
         public Task<Result<List<ExternalSupportTicketDto>>> GetSupportTicketsAsync(string? status = null, CancellationToken ct = default)
         {
             var subRoute = _options.Routes.SupportTickets;
@@ -185,9 +164,6 @@ namespace SNUL.Shared.Common.Services
             return SendPostAsync<object?, bool>(route, null, ct);
         }
 
-
-        // ─── Help Center & FAQs ───
-
         public Task<Result<List<ExternalHelpArticleDto>>> GetHelpArticlesAsync(CancellationToken ct = default)
         {
             var subRoute = _options.Routes.HelpArticles;
@@ -202,9 +178,6 @@ namespace SNUL.Shared.Common.Services
             return SendGetAsync<List<ExternalFAQDto>>(route, ct);
         }
 
-
-        // ─── Certifications ───
-
         public Task<Result<List<ExternalCertificationDto>>> GetCertificationsAsync(CancellationToken ct = default)
         {
             var route = _options.Routes.CertificationsBase;
@@ -217,7 +190,6 @@ namespace SNUL.Shared.Common.Services
             var route = CombineRoute(_options.Routes.CertificationsBase, subRoute);
             return SendGetAsync<ExternalCertificationDto>(route, ct);
         }
-
 
         private static string CombineRoute(string baseRoute, string subRoute)
         {
@@ -232,7 +204,6 @@ namespace SNUL.Shared.Common.Services
                 using var req = new HttpRequestMessage(HttpMethod.Get, relativeUrl);
                 AttachHeaders(req);
 
-                _logger.LogInformation("[WelcoIntegration] GET {Url}", relativeUrl);
                 var resp = await _http.SendAsync(req, ct);
                 return await ParseResponseAsync<T>(resp, relativeUrl, ct);
             }
@@ -251,7 +222,6 @@ namespace SNUL.Shared.Common.Services
                 req.Content = JsonContent.Create(body);
                 AttachHeaders(req);
 
-                _logger.LogInformation("[WelcoIntegration] POST {Url}", relativeUrl);
                 var resp = await _http.SendAsync(req, ct);
                 return await ParseResponseAsync<TResponse>(resp, relativeUrl, ct);
             }
@@ -270,7 +240,6 @@ namespace SNUL.Shared.Common.Services
                 req.Content = JsonContent.Create(body);
                 AttachHeaders(req);
 
-                _logger.LogInformation("[WelcoIntegration] PUT {Url}", relativeUrl);
                 var resp = await _http.SendAsync(req, ct);
                 return await ParseResponseAsync<TResponse>(resp, relativeUrl, ct);
             }
@@ -295,8 +264,6 @@ namespace SNUL.Shared.Common.Services
             }
 
             var raw = await resp.Content.ReadAsStringAsync(ct);
-            _logger.LogError("[WelcoIntegration] Error response [{StatusCode}] for {Url}: {Body}",
-                resp.StatusCode, url, raw);
             return Result<T>.Failure($"Welco returned {(int)resp.StatusCode}: {resp.ReasonPhrase}",
                 (int)resp.StatusCode);
         }
@@ -305,11 +272,9 @@ namespace SNUL.Shared.Common.Services
         {
             if (ex is TaskCanceledException)
             {
-                _logger.LogWarning("[WelcoIntegration] Timeout for {Url}", url);
-                return Result<T>.Failure("Welco integration request timed out.", 504);
+                return Result<T>.Failure(LocalizationKeys.Integration.Timeout, 504);
             }
-            _logger.LogError(ex, "[WelcoIntegration] Connection error for {Url}", url);
-            return Result<T>.Failure("Welco integration is unavailable. Please retry later.", 502);
+            return Result<T>.Failure(LocalizationKeys.Integration.Unavailable, 502);
         }
 
         private void AttachHeaders(HttpRequestMessage req)

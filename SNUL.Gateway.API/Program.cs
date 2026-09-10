@@ -303,7 +303,6 @@ namespace SNUL.Gateway.API
                 }
             }
 
-
 #pragma warning disable ASP0014
             app.UseEndpoints(endpoints =>
             {

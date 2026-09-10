@@ -3,7 +3,6 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using SNUL.Shared.Common.Exceptions;
 using SNUL.Shared.Common.Interfaces;
 using SNUL.Shared.Enums;
@@ -16,12 +15,10 @@ namespace SNUL.Shared.Common.Middlewares
     public class CustomExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<CustomExceptionHandlerMiddleware> _logger;
 
-        public CustomExceptionHandlerMiddleware(RequestDelegate next, ILogger<CustomExceptionHandlerMiddleware> logger)
+        public CustomExceptionHandlerMiddleware(RequestDelegate next)
         {
             _next = next;
-            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -30,14 +27,32 @@ namespace SNUL.Shared.Common.Middlewares
             {
                 await _next(context);
             }
+            catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
+            {
+            }
             catch (Exception ex)
             {
+                if (context.Response.HasStarted)
+                {
+                    return;
+                }
+
                 await HandleExceptionAsync(context, ex);
             }
         }
 
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
+            if (context.Response.HasStarted)
+            {
+                return;
+            }
+
+            if (exception is OperationCanceledException)
+            {
+                return;
+            }
+
             var localizationProvider = context.RequestServices.GetService<ILocalizationProvider>();
             var culture = GetRequestCulture(context);
 
@@ -160,7 +175,6 @@ namespace SNUL.Shared.Common.Middlewares
                     break;
 
                 default:
-                    _logger.LogError(exception, "An unhandled exception occurred: {Message}", exception.Message);
                     statusCode = StatusCodes.Status500InternalServerError;
                     message = Localize(LocalizationKeys.ExceptionMessages.InternalServerError);
                     errors.Add(message);
@@ -194,8 +208,14 @@ namespace SNUL.Shared.Common.Middlewares
                 var hCulture = headers["Accept-Language"].FirstOrDefault()
                                ?? headers["Language"].FirstOrDefault()
                                ?? headers["language"].FirstOrDefault()
+                               ?? headers["Accept_Language"].FirstOrDefault()
+                               ?? headers["X-Language"].FirstOrDefault()
+                               ?? headers["x-language"].FirstOrDefault()
                                ?? headers["Culture"].FirstOrDefault()
-                               ?? headers["Lang"].FirstOrDefault();
+                               ?? headers["culture"].FirstOrDefault()
+                               ?? headers["X-Culture"].FirstOrDefault()
+                               ?? headers["Lang"].FirstOrDefault()
+                               ?? headers["lang"].FirstOrDefault();
 
                 if (!string.IsNullOrWhiteSpace(hCulture))
                 {
@@ -203,6 +223,7 @@ namespace SNUL.Shared.Common.Middlewares
                 }
 
                 var qCulture = req.Query["culture"].FirstOrDefault()
+                               ?? req.Query["ui-culture"].FirstOrDefault()
                                ?? req.Query["lang"].FirstOrDefault()
                                ?? req.Query["language"].FirstOrDefault();
 

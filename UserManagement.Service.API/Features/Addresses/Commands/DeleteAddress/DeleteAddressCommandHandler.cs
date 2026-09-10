@@ -37,8 +37,7 @@ namespace UserManagement.Service.API.Features.Addresses.Commands.DeleteAddress
             address.MarkAsDeleted(currentUserId);
             addressRepo.Update(address);
 
-            // If deleted was default, promote most recent remaining as new default
-            if (wasDefault)
+if (wasDefault)
             {
                 var remaining = await addressRepo.GetAllListAsync(a => a.UserId == address.UserId && a.Id != address.Id && !a.IsDeleted, cancellationToken);
                 var next = remaining.OrderByDescending(a => a.CreatedAt).FirstOrDefault();

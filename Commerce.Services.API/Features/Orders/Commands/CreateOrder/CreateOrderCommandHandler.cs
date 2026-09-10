@@ -2,7 +2,6 @@ using Commerce.Services.API.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SNUL.Shared.Common.DTOs.Commerce;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SNUL.Shared.Common.Interfaces;
 using SNUL.Shared.Common.Options;
@@ -24,15 +23,13 @@ namespace Commerce.Services.API.Features.Orders.Commands.CreateOrder
         private readonly ICurrentUserService _currentUser;
         private readonly IExchangeRateService _exchangeRateService;
         private readonly ExchangeRateSettings _fxSettings;
-        private readonly ILogger<CreateOrderCommandHandler> _logger;
 
-        public CreateOrderCommandHandler(IUnitOfWork uow, ICurrentUserService currentUser, IExchangeRateService exchangeRateService, IOptions<ExchangeRateSettings> fxOptions, ILogger<CreateOrderCommandHandler> logger)
+        public CreateOrderCommandHandler(IUnitOfWork uow, ICurrentUserService currentUser, IExchangeRateService exchangeRateService, IOptions<ExchangeRateSettings> fxOptions)
         {
             _uow = uow;
             _currentUser = currentUser;
             _exchangeRateService = exchangeRateService;
             _fxSettings = fxOptions.Value;
-            _logger = logger;
         }
 
         public async Task<Result<OrderDto>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -71,7 +68,6 @@ namespace Commerce.Services.API.Features.Orders.Commands.CreateOrder
 
             var currentUserId = _currentUser.UserId != Guid.Empty ? _currentUser.UserId.ToString() : "System";
 
-            // Snapshot exchange rate for historical financial consistency (do not recalculate old orders with today's rate)
             string? snapshotBase = null;
             string? snapshotCode = null;
             decimal? snapshotRate = null;
@@ -102,9 +98,8 @@ namespace Commerce.Services.API.Features.Orders.Commands.CreateOrder
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _logger.LogWarning(ex, "Failed to snapshot exchange rate for order currency {CurrencyId}", request.CurrencyId);
                 }
             }
 

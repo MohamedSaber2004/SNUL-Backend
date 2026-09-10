@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Text.Json;
-using Microsoft.Extensions.Logging;
 using SNUL.Shared.Enums;
 using SNUL.Shared.Localization.Interfaces;
 
@@ -8,12 +7,10 @@ namespace SNUL.Shared.Localization
 {
     public class JsonLocalizationProvider : ILocalizationProvider
     {
-        private readonly ILogger<JsonLocalizationProvider> _logger;
         private readonly Dictionary<string, Dictionary<string, string>> _localizations = new(StringComparer.OrdinalIgnoreCase);
 
-        public JsonLocalizationProvider(ILogger<JsonLocalizationProvider> logger, string? resourcesPath = null)
+        public JsonLocalizationProvider(string? resourcesPath = null)
         {
-            _logger = logger;
             LoadResources(resourcesPath);
         }
 
@@ -21,7 +18,6 @@ namespace SNUL.Shared.Localization
         {
             var assembly = typeof(JsonLocalizationProvider).Assembly;
 
-            // 1. Load from Embedded Resources (Always guaranteed to be available in-memory)
             foreach (var langCode in AppLanguageExtensions.GetAllCodes())
             {
                 var resourceName = $"SNUL.Shared.Localization.Resources.messages.{langCode}.json";
@@ -34,16 +30,13 @@ namespace SNUL.Shared.Localization
                         var cultureData = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                         FlattenJson(doc.RootElement, "", cultureData);
                         _localizations[langCode] = cultureData;
-                        _logger.LogInformation("Successfully loaded {Count} keys from embedded resource for language: {Language}", cultureData.Count, langCode);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        _logger.LogError(ex, "Error parsing embedded localization resource {ResourceName}", resourceName);
                     }
                 }
             }
 
-            // 2. Also check physical disk files if present
             var baseDirectory = AppContext.BaseDirectory;
             var assemblyLocation = Path.GetDirectoryName(assembly.Location);
 
@@ -68,11 +61,9 @@ namespace SNUL.Shared.Localization
                             var cultureData = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                             FlattenJson(doc.RootElement, "", cultureData);
                             _localizations[langCode] = cultureData;
-                            _logger.LogInformation("Successfully loaded {Count} keys from file {FilePath}", cultureData.Count, filePath);
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            _logger.LogError(ex, "Error loading localization file {FilePath}", filePath);
                         }
                     }
                 }
@@ -121,8 +112,7 @@ namespace SNUL.Shared.Localization
                 return value;
             }
 
-            // Fallback to English
-            var englishCode = AppLanguage.En.ToCode();
+var englishCode = AppLanguage.En.ToCode();
             if (normalizedCode != englishCode && _localizations.TryGetValue(englishCode, out var enData) && enData.TryGetValue(key, out var enValue))
             {
                 return enValue;

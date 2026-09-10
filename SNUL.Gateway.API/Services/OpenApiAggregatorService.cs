@@ -9,18 +9,15 @@ namespace SNUL.Gateway.API.Services
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IWebHostEnvironment _env;
-        private readonly ILogger<OpenApiAggregatorService> _logger;
         private readonly OpenApiAggregatorOptions _options;
 
         public OpenApiAggregatorService(
             IHttpClientFactory httpClientFactory,
             IWebHostEnvironment env,
-            ILogger<OpenApiAggregatorService> logger,
             IOptions<OpenApiAggregatorOptions> options)
         {
             _httpClientFactory = httpClientFactory;
             _env = env;
-            _logger = logger;
             _options = options.Value;
         }
 
@@ -30,7 +27,7 @@ namespace SNUL.Gateway.API.Services
             var cacheDir = Path.Combine(ocelotDir, "Cache");
             if (!Directory.Exists(cacheDir))
             {
-                try { Directory.CreateDirectory(cacheDir); } catch { /* ignore */ }
+                try { Directory.CreateDirectory(cacheDir); } catch {  }
             }
 
             var downstreamEndpoints = await GetDownstreamOpenApiEndpointsAsync(cancellationToken);
@@ -88,8 +85,7 @@ namespace SNUL.Gateway.API.Services
             {
                 if (serviceObj == null) continue;
 
-                // Merge Paths
-                if (serviceObj.TryGetPropertyValue("paths", out var pathsNode) && pathsNode is JsonObject pathsObj)
+if (serviceObj.TryGetPropertyValue("paths", out var pathsNode) && pathsNode is JsonObject pathsObj)
                 {
                     foreach (var (pathKey, pathValue) in pathsObj)
                     {
@@ -101,8 +97,7 @@ namespace SNUL.Gateway.API.Services
                     }
                 }
 
-                // Merge Components -> Schemas
-                if (serviceObj.TryGetPropertyValue("components", out var componentsNode) && componentsNode is JsonObject componentsObj)
+if (serviceObj.TryGetPropertyValue("components", out var componentsNode) && componentsNode is JsonObject componentsObj)
                 {
                     if (componentsObj.TryGetPropertyValue("schemas", out var schemasNode) && schemasNode is JsonObject schemasObj)
                     {
@@ -116,8 +111,7 @@ namespace SNUL.Gateway.API.Services
                     }
                 }
 
-                // Merge Tags
-                if (serviceObj.TryGetPropertyValue("tags", out var tagsNode) && tagsNode is JsonArray tagsArray)
+if (serviceObj.TryGetPropertyValue("tags", out var tagsNode) && tagsNode is JsonArray tagsArray)
                 {
                     foreach (var tag in tagsArray)
                     {
@@ -156,9 +150,8 @@ namespace SNUL.Gateway.API.Services
                         return AdjustServiceOpenApi(serviceObj.ToJsonString(), gatewayBaseUrl);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _logger.LogWarning(ex, "Could not reach downstream service at {Url}", endpointUrl);
                 }
             }
 
@@ -169,9 +162,8 @@ namespace SNUL.Gateway.API.Services
                     var cachedContent = await File.ReadAllTextAsync(cacheFile, cancellationToken);
                     return AdjustServiceOpenApi(cachedContent, gatewayBaseUrl);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _logger.LogWarning(ex, "Failed to load cached OpenAPI for {ServiceName}", targetServiceName);
                 }
             }
 
@@ -184,14 +176,13 @@ namespace SNUL.Gateway.API.Services
             var cacheDir = Path.Combine(ocelotDir, "Cache");
             if (!Directory.Exists(cacheDir))
             {
-                try { Directory.CreateDirectory(cacheDir); } catch { /* ignore */ }
+                try { Directory.CreateDirectory(cacheDir); } catch {  }
             }
 
             var endpoints = await GetDownstreamOpenApiEndpointsAsync(cancellationToken);
             foreach (var (serviceName, url) in endpoints)
             {
                 var cacheFile = Path.Combine(cacheDir, $"openapi.{serviceName}.json");
-                _logger.LogInformation("Pre-warming OpenAPI schema for '{ServiceName}' from {Url}", serviceName, url);
                 await FetchOpenApiWithCacheAsync(serviceName, url, cacheFile, cancellationToken);
             }
         }
@@ -239,9 +230,8 @@ namespace SNUL.Gateway.API.Services
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _logger.LogWarning(ex, "Failed to parse Ocelot file {File}", file);
                 }
             }
 
@@ -271,7 +261,7 @@ namespace SNUL.Gateway.API.Services
                         }
                         catch
                         {
-                            // ignore file caching errors
+                            
                         }
 
                         var serviceNode = JsonNode.Parse(content);
@@ -280,23 +270,16 @@ namespace SNUL.Gateway.API.Services
                             return serviceObj;
                         }
                     }
-                    else
-                    {
-                        _logger.LogWarning("Failed to fetch OpenAPI schema from {Url}. Status: {StatusCode}", url, response.StatusCode);
-                    }
                 }
                 catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
                 {
-                    _logger.LogWarning("Timed out fetching OpenAPI schema from {Url} (attempt {Attempt}/{Attempts}; downstream service may not be running).", url, attempt, attempts);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _logger.LogWarning(ex, "Could not reach downstream service at {Url} (attempt {Attempt}/{Attempts})", url, attempt, attempts);
                 }
             }
 
-            // Fallback to cached schema on disk if available
-            if (File.Exists(cacheFile))
+if (File.Exists(cacheFile))
             {
                 try
                 {
@@ -304,13 +287,11 @@ namespace SNUL.Gateway.API.Services
                     var cachedNode = JsonNode.Parse(cachedContent);
                     if (cachedNode is JsonObject cachedObj)
                     {
-                        _logger.LogInformation("Using cached OpenAPI specification for '{ServiceName}'.", serviceName);
                         return cachedObj;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _logger.LogWarning(ex, "Failed to load cached OpenAPI specification for '{ServiceName}'.", serviceName);
                 }
             }
 
@@ -344,7 +325,7 @@ namespace SNUL.Gateway.API.Services
             }
             catch
             {
-                // return raw if parsing fails
+                
             }
 
             return openApiJson;

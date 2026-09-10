@@ -94,7 +94,7 @@ namespace Sales.Services.API
             }
 
             app.UseCors("AllowAll");
-            // Downstream services re-validate the JWT forwarded by the SNUL.API Gateway (Ocelot).
+            
             app.UseAuthentication();
             app.UseAuthorization();
 

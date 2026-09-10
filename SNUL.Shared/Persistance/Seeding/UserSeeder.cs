@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using SNUL.Shared.Domain.Models;
 using SNUL.Shared.Enums;
 
@@ -14,7 +13,6 @@ namespace SNUL.Shared.Persistance.Seeding
 
         public static async Task SeedUsersAsync(
             UserManager<ApplicationUser> userManager,
-            ILogger? logger = null,
             string? jsonFilePath = null)
         {
             try
@@ -22,40 +20,35 @@ namespace SNUL.Shared.Persistance.Seeding
                 var json = ReadJson(jsonFilePath);
                 if (string.IsNullOrWhiteSpace(json))
                 {
-                    logger?.LogWarning("User seeding skipped: no User.json content found.");
                     return;
                 }
 
                 var seedUsers = DeserializeSeedUsers(json);
                 if (seedUsers == null || seedUsers.Count == 0)
                 {
-                    logger?.LogWarning("User seeding skipped: no users found in User.json.");
                     return;
                 }
 
                 foreach (var seedUser in seedUsers)
                 {
-                    await SeedUserAsync(userManager, seedUser, logger);
+                    await SeedUserAsync(userManager, seedUser);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                logger?.LogError(ex, "Error while seeding users from User.json");
             }
         }
 
-        private static async Task SeedUserAsync(UserManager<ApplicationUser> userManager, UserSeedModel seedUser, ILogger? logger)
+        private static async Task SeedUserAsync(UserManager<ApplicationUser> userManager, UserSeedModel seedUser)
         {
             if (string.IsNullOrWhiteSpace(seedUser.Email) || string.IsNullOrWhiteSpace(seedUser.Password))
             {
-                logger?.LogWarning("Skipping seed user with missing email or password.");
                 return;
             }
 
             var existingUser = await userManager.FindByEmailAsync(seedUser.Email);
             if (existingUser != null)
             {
-                logger?.LogInformation("Seed user already exists, skipping: {Email}", seedUser.Email);
                 return;
             }
 
@@ -73,24 +66,13 @@ namespace SNUL.Shared.Persistance.Seeding
             var createResult = await userManager.CreateAsync(user, seedUser.Password);
             if (!createResult.Succeeded)
             {
-                logger?.LogError("Failed to create seed user {Email}: {Errors}",
-                    seedUser.Email,
-                    string.Join(", ", createResult.Errors.Select(e => e.Description)));
                 return;
             }
 
             if (seedUser.Roles != null && seedUser.Roles.Count > 0)
             {
-                var addRolesResult = await userManager.AddToRolesAsync(user, seedUser.Roles);
-                if (!addRolesResult.Succeeded)
-                {
-                    logger?.LogError("Failed to assign roles to seed user {Email}: {Errors}",
-                        seedUser.Email,
-                        string.Join(", ", addRolesResult.Errors.Select(e => e.Description)));
-                }
+                await userManager.AddToRolesAsync(user, seedUser.Roles);
             }
-
-            logger?.LogInformation("Seeded user: {Email} with Id: {UserId}", user.Email, user.Id);
         }
 
         private static UserType ResolveUserType(IReadOnlyList<string>? roles)

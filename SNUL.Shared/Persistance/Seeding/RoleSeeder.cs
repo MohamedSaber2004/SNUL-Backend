@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using SNUL.Shared.Enums;
 
 namespace SNUL.Shared.Persistance.Seeding
 {
     public static class RoleSeeder
     {
-        public static async Task SeedRolesAsync(RoleManager<IdentityRole<Guid>> roleManager, ILogger? logger = null)
+        public static async Task SeedRolesAsync(RoleManager<IdentityRole<Guid>> roleManager)
         {
             try
             {
@@ -27,21 +26,17 @@ namespace SNUL.Shared.Persistance.Seeding
                         };
 
                         await roleManager.CreateAsync(identityRole);
-                        logger?.LogInformation("Seeded role: {RoleName} with Id: {RoleId}", roleName, identityRole.Id);
                     }
                 }
 
-                // Remove obsolete Customer role if it exists
                 var obsoleteCustomerRole = await roleManager.FindByNameAsync("Customer");
                 if (obsoleteCustomerRole != null)
                 {
                     await roleManager.DeleteAsync(obsoleteCustomerRole);
-                    logger?.LogInformation("Removed obsolete Customer role from Identity");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                logger?.LogError(ex, "Error while seeding roles from UserType enum");
             }
         }
     }

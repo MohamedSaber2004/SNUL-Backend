@@ -24,12 +24,6 @@ namespace Product.Services.API.Controllers
         {
         }
 
-        /// <summary>
-        /// Get All Categories
-        /// </summary>
-        /// <param name="query"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         [HttpGet]
         [Route(ProductApiRoutes.Categories.GetAll)]
         [AllowAnonymous]
@@ -40,12 +34,6 @@ namespace Product.Services.API.Controllers
             return ToActionResult(result);
         }
 
-        /// <summary>
-        /// Get Category By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         [HttpGet]
         [Route(ProductApiRoutes.Categories.GetById)]
         [AllowAnonymous]
@@ -57,13 +45,6 @@ namespace Product.Services.API.Controllers
             return ToActionResult(result);
         }
 
-
-        /// <summary>
-        /// Create Category
-        /// </summary>
-        /// <param name="command"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         [HttpPost]
         [Route(ProductApiRoutes.Categories.Create)]
         [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
@@ -75,13 +56,6 @@ namespace Product.Services.API.Controllers
             return ToActionResult(result);
         }
 
-        /// <summary>
-        /// Update Category
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="command"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         [HttpPut]
         [Route(ProductApiRoutes.Categories.Update)]
         [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
@@ -95,12 +69,6 @@ namespace Product.Services.API.Controllers
             return ToActionResult(result);
         }
 
-        /// <summary>
-        /// Delete  Category
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         [HttpDelete]
         [Route(ProductApiRoutes.Categories.Delete)]
         [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]

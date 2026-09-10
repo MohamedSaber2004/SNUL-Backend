@@ -21,9 +21,8 @@ namespace UserManagement.Service.API.Features.DistributorApplications.Commands.C
 
         public async Task<Result<DistributorApplicationDto>> Handle(CreateDistributorApplicationCommand request, CancellationToken cancellationToken)
         {
-            // OrganizationUser or Admin allowed — SnulStaff blocked via RoleAuthorize, but double-check
-            // Validate CountryId exists in DB (country found in database)
-            var countryRepo = _unitOfWork.GetRepository<Country, Guid>();
+
+var countryRepo = _unitOfWork.GetRepository<Country, Guid>();
             var country = await countryRepo.GetByIdAsync(request.CountryId, cancellationToken);
             if (country == null || country.IsDeleted)
             {

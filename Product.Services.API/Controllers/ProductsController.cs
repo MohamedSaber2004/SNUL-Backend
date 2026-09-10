@@ -25,13 +25,7 @@ namespace Product.Services.API.Controllers
         {
         }
 
-        /// <summary>
-        /// Get All Products
-        /// </summary>
-        /// <param name="query"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpGet]
+                [HttpGet]
         [Route(ProductApiRoutes.Products.GetAll)]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -41,13 +35,7 @@ namespace Product.Services.API.Controllers
             return ToActionResult(result);
         }
 
-        /// <summary>
-        /// Get Product By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpGet]
+                [HttpGet]
         [Route(ProductApiRoutes.Products.GetById)]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -58,11 +46,7 @@ namespace Product.Services.API.Controllers
             return ToActionResult(result);
         }
 
-
-        /// <summary>
-        /// Get Product Videos (real media)
-        /// </summary>
-        [HttpGet]
+[HttpGet]
         [Route(ProductApiRoutes.Products.GetVideos)]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -72,14 +56,7 @@ namespace Product.Services.API.Controllers
             return ToActionResult(result);
         }
 
-        /// <summary>
-        /// Replace Product Videos (bulk sync from catalog dashboard)
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="command"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpPut]
+                [HttpPut]
         [Route(ProductApiRoutes.Products.UpdateVideos)]
         [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -92,13 +69,7 @@ namespace Product.Services.API.Controllers
             return ToActionResult(result);
         }
 
-        /// <summary>
-        /// Create Product
-        /// </summary>
-        /// <param name="command"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpPost]
+                [HttpPost]
         [Route(ProductApiRoutes.Products.Create)]
         [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -109,14 +80,7 @@ namespace Product.Services.API.Controllers
             return ToActionResult(result);
         }
 
-        /// <summary>
-        /// Update Product
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="command"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpPut]
+                [HttpPut]
         [Route(ProductApiRoutes.Products.Update)]
         [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -129,13 +93,7 @@ namespace Product.Services.API.Controllers
             return ToActionResult(result);
         }
 
-        /// <summary>
-        /// Delete Product
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpDelete]
+                [HttpDelete]
         [Route(ProductApiRoutes.Products.Delete)]
         [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
         [ProducesResponseType(StatusCodes.Status200OK)]

@@ -1,0 +1,43 @@
+name: Deploy Auth Microservice to MonsterASP
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'Auth.Services.API/**'
+      - 'Welco.Shared/**'
+      - '.github/workflows/deploy-auth.yml'
+      - '.github/workflows/ftp-deploy.py'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy Auth Service
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish Auth Microservice
+        run: |
+          dotnet publish "Auth.Services.API/Auth.Services.API.csproj" \
+            -c Release \
+            -o ./publish/auth
+
+      - name: Deploy to MonsterASP via FTP
+        env:
+          FTP_SERVER: ${{ secrets.AUTH_FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.AUTH_FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.AUTH_FTP_PASSWORD }}
+          LOCAL_DIR: ./publish/auth
+          REMOTE_DIR: /wwwroot
+        run: python .github/workflows/ftp-deploy.py

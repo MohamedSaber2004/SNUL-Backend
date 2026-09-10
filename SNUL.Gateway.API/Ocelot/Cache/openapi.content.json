@@ -969,25 +969,6 @@
         }
       }
     },
-    "/api/v1/oem-services": {
-      "get": {
-        "tags": [
-          "OemServices"
-        ],
-        "parameters": [
-          {
-            "name": "Accept-Language",
-            "in": "header",
-            "description": "Preferred language for localized response messages ('en' or 'ar')"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/v1/support/contact": {
       "get": {
         "tags": [
@@ -1654,9 +1635,6 @@
     },
     {
       "name": "OemInquiries"
-    },
-    {
-      "name": "OemServices"
     },
     {
       "name": "SupportContact"

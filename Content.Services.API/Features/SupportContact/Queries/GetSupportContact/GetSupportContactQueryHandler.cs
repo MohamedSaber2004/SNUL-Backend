@@ -60,7 +60,7 @@ namespace Content.Services.API.Features.SupportContact.Queries.GetSupportContact
             }
             catch
             {
-                // Fallback graceful default if DB table not yet migrated
+                
                 var fallback = new SupportContactDto
                 {
                     Id = Guid.Empty,

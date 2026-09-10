@@ -2,7 +2,6 @@ using System.Reflection;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Scalar.AspNetCore;
 using SNUL.Shared;
 using SNUL.Shared.Common.Behaviors;
@@ -98,7 +97,7 @@ namespace Content.Services.API
             }
 
             app.UseCors("AllowAll");
-            // Downstream services re-validate the JWT forwarded by the SNUL.API Gateway (Ocelot).
+            
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -111,21 +110,17 @@ namespace Content.Services.API
             });
             app.MapControllers();
 
-            // Auto-migrate and seed the default about-us page - non-destructive
             if (!app.Environment.IsEnvironment("Test"))
             {
                 try
                 {
                     using var scope = app.Services.CreateScope();
                     var db = scope.ServiceProvider.GetRequiredService<SnulDbContext>();
-                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
                     await db.Database.MigrateAsync();
-                    await LandingPageSeeder.SeedAboutUsAsync(db, logger);
+                    await LandingPageSeeder.SeedAboutUsAsync(db);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    var logger = app.Services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "Seeding / migration failed");
                 }
             }
 

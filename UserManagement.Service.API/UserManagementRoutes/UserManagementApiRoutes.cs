@@ -78,7 +78,7 @@ namespace UserManagement.Service.API.UserManagementRoutes
             public const string Create = "";
             public const string Update = "{addressId}";
             public const string Delete = "{addressId}";
-            // fallback direct route for delete/update without companyId
+            
             public const string DirectBase = UserManagementApiRoutes.Base + "/company-addresses";
             public const string DirectGetById = "{id}";
             public const string DirectUpdate = "{id}";

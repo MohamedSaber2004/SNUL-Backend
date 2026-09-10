@@ -17,7 +17,7 @@ namespace SNUL.Shared.Domain.Models
         public decimal? LengthCm { get; set; }
         public Guid? CurrencyId { get; set; }
         public Guid CategoryId { get; set; }
-        // Cross-system integration: Welco master product ID reference
+        
         public Guid? WelcoProductId { get; set; }
 
         public virtual Currency? Currency { get; set; }

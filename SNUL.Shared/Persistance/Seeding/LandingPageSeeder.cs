@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SNUL.Shared.Domain.Models;
 using SNUL.Shared.Persistance;
 
@@ -9,13 +8,12 @@ namespace SNUL.Shared.Persistance.Seeding
     {
         public const string AboutUsSlug = "about-us";
 
-        public static async Task SeedAboutUsAsync(SnulDbContext db, ILogger logger)
+        public static async Task SeedAboutUsAsync(SnulDbContext db)
         {
             var exists = await db.LandingPages
                 .AnyAsync(x => !x.IsDeleted && x.Slug.ToLower() == AboutUsSlug);
             if (exists)
             {
-                logger.LogInformation("About-us landing page already seeded, skipping");
                 return;
             }
 
@@ -32,7 +30,6 @@ namespace SNUL.Shared.Persistance.Seeding
 
             await db.LandingPages.AddAsync(page);
             await db.SaveChangesAsync();
-            logger.LogInformation("Seeded about-us landing page");
         }
     }
 }

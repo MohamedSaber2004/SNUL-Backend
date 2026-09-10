@@ -14,7 +14,7 @@ namespace SNUL.Shared.Domain.Models
         public CompanyStatus Status { get; set; } = CompanyStatus.Pending;
         public Guid? AccountManagerId { get; set; }
         public bool IsProvider { get; set; }
-        // Cross-system integration: Welco master provider/company ID reference
+        
         public Guid? WelcoCompanyId { get; set; }
         public virtual ApplicationUser? AccountManager { get; set; }
         public virtual ICollection<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();

@@ -29,8 +29,7 @@ namespace Auth.Services.API
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-
-            var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
             {
                 Args = args,
                 EnvironmentName = environmentName,
@@ -158,9 +157,8 @@ namespace Auth.Services.API
                 {
                     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
                     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                    await RoleSeeder.SeedRolesAsync(roleManager, logger);
-                    await UserSeeder.SeedUsersAsync(userManager, logger);
+                    await RoleSeeder.SeedRolesAsync(roleManager);
+                    await UserSeeder.SeedUsersAsync(userManager);
                 }
                 catch (Exception)
                 {
