@@ -70,12 +70,12 @@ if (user.UserType == UserType.OrganizationUser)
                     var distRepo = _unitOfWork.GetRepository<DistributorApplication, Guid>();
                     var userEmail = (user.Email ?? "").Trim().ToLower();
                     var hasApproved = await distRepo.ExistsAsync(
-                        d => !d.IsDeleted && (d.ContactEmail.ToLower() == userEmail || d.CreatedBy.ToLower() == userEmail) && d.Status == DistributorApplicationStatus.Approved,
+                        d => !d.IsDeleted && ((d.ContactEmail != null && d.ContactEmail.ToLower() == userEmail) || (d.CreatedBy != null && d.CreatedBy.ToLower() == userEmail)) && d.Status == DistributorApplicationStatus.Approved,
                         cancellationToken);
                     if (!hasApproved)
                     {
                         var hasPending = await distRepo.ExistsAsync(
-                            d => !d.IsDeleted && (d.ContactEmail.ToLower() == userEmail || d.CreatedBy.ToLower() == userEmail) && d.Status == DistributorApplicationStatus.Pending,
+                            d => !d.IsDeleted && ((d.ContactEmail != null && d.ContactEmail.ToLower() == userEmail) || (d.CreatedBy != null && d.CreatedBy.ToLower() == userEmail)) && d.Status == DistributorApplicationStatus.Pending,
                             cancellationToken);
                         var key = hasPending ? LocalizationKeys.DistributorApplication.PendingApproval : LocalizationKeys.DistributorApplication.NotApplied;
                         return Result<AuthResponseDto>.Unauthorized(key, new List<string> { key });

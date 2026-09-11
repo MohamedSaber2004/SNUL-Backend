@@ -2,3 +2,7 @@
   "email": "mmms77990@gmail.com",
   "password": "Mo@123456"
 }
+
+
+Server:https://snul-gateway.runasp.net
+/api/v1/auth/login
