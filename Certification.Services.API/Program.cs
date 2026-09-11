@@ -18,6 +18,7 @@ namespace Certification.Services.API
         public static async Task Main(string[] args)
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
             if (string.IsNullOrWhiteSpace(environmentName))
             {
                 environmentName = "Development";

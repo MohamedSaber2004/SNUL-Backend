@@ -27,6 +27,7 @@ namespace SNUL.Gateway.API
             var env = builder.Environment;
             var port = Environment.GetEnvironmentVariable("PORT") 
                        ?? Environment.GetEnvironmentVariable("ASPNETCORE_HTTP_PORTS");
+
             if (!string.IsNullOrEmpty(port))
             {
                 builder.WebHost.UseUrls($"http://*:{port}");
