@@ -2,6 +2,7 @@ using System.Reflection;
 using FluentValidation;
 using MediatR;
 using Scalar.AspNetCore;
+using Serilog;
 using SNUL.Shared;
 using SNUL.Shared.Common.Behaviors;
 using SNUL.Shared.Common.Extensions;
@@ -44,6 +45,16 @@ namespace Commerce.Services.API
             }
 
             builder.Configuration.AddEnvironmentVariables().AddCommandLine(args);
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateBootstrapLogger();
+
+            Log.Information("SNUL Commerce Microservice is starting up at {Time}", DateTime.Now);
+            builder.Host.UseSerilog((context, services, configuration) => configuration
+                .ReadFrom.Configuration(context.Configuration)
+                .ReadFrom.Services(services)
+                .Enrich.FromLogContext());
 
             var port = Environment.GetEnvironmentVariable("PORT")
                        ?? Environment.GetEnvironmentVariable("ASPNETCORE_HTTP_PORTS");

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using Serilog;
 using System.Reflection;
 using System.Text;
 using SNUL.Shared;
@@ -51,6 +52,16 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
             }
 
             builder.Configuration.AddEnvironmentVariables().AddCommandLine(args);
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateBootstrapLogger();
+
+            Log.Information("SNUL Auth Microservice is starting up at {Time}", DateTime.Now);
+            builder.Host.UseSerilog((context, services, configuration) => configuration
+                .ReadFrom.Configuration(context.Configuration)
+                .ReadFrom.Services(services)
+                .Enrich.FromLogContext());
 
             var port = Environment.GetEnvironmentVariable("PORT") 
                        ?? Environment.GetEnvironmentVariable("ASPNETCORE_HTTP_PORTS");

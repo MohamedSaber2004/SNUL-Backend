@@ -1,6 +1,7 @@
 using FluentValidation;
 using MediatR;
 using Scalar.AspNetCore;
+using Serilog;
 using System.Reflection;
 using SNUL.Shared;
 using SNUL.Shared.Common.Behaviors;
@@ -45,6 +46,16 @@ namespace Attachment.Services.API
             }
 
             builder.Configuration.AddEnvironmentVariables().AddCommandLine(args);
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateBootstrapLogger();
+
+            Log.Information("SNUL Attachment Microservice is starting up at {Time}", DateTime.Now);
+            builder.Host.UseSerilog((context, services, configuration) => configuration
+                .ReadFrom.Configuration(context.Configuration)
+                .ReadFrom.Services(services)
+                .Enrich.FromLogContext());
 
             var port = Environment.GetEnvironmentVariable("PORT")
                        ?? Environment.GetEnvironmentVariable("ASPNETCORE_HTTP_PORTS");
