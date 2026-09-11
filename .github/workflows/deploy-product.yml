@@ -7,7 +7,7 @@ on:
       - master
     paths:
       - 'Product.Services.API/**'
-      - 'Welco.Shared/**'
+      - 'SNUL.Shared/**'
       - '.github/workflows/deploy-product.yml'
       - '.github/workflows/ftp-deploy.py'
   workflow_dispatch:
@@ -40,4 +40,4 @@ jobs:
           FTP_PASSWORD: ${{ secrets.PRODUCT_FTP_PASSWORD }}
           LOCAL_DIR: ./publish/product
           REMOTE_DIR: /wwwroot
-        run: python .github/workflows/ftp-deploy.py
+        run: python3 .github/workflows/ftp-deploy.py

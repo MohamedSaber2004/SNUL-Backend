@@ -6,8 +6,8 @@ on:
       - main
       - master
     paths:
-      - 'Welco.API/**'
-      - 'Welco.Shared/**'
+      - 'SNUL.Gateway.API/**'
+      - 'SNUL.Shared/**'
       - '.github/workflows/deploy-gateway.yml'
       - '.github/workflows/ftp-deploy.py'
   workflow_dispatch:
@@ -29,7 +29,7 @@ jobs:
 
       - name: Publish API Gateway
         run: |
-          dotnet publish "Welco.API/Welco.Gateway.API.csproj" \
+          dotnet publish "SNUL.Gateway.API/SNUL.Gateway.API.csproj" \
             -c Release \
             -o ./publish/gateway
 
@@ -40,4 +40,4 @@ jobs:
           FTP_PASSWORD: ${{ secrets.GATEWAY_FTP_PASSWORD }}
           LOCAL_DIR: ./publish/gateway
           REMOTE_DIR: /wwwroot
-        run: python .github/workflows/ftp-deploy.py
+        run: python3 .github/workflows/ftp-deploy.py

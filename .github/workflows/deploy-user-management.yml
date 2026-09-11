@@ -6,8 +6,8 @@ on:
       - main
       - master
     paths:
-      - 'UserManamgent.Service.API/**'
-      - 'Welco.Shared/**'
+      - 'UserManagement.Service.API/**'
+      - 'SNUL.Shared/**'
       - '.github/workflows/deploy-user-management.yml'
       - '.github/workflows/ftp-deploy.py'
   workflow_dispatch:
@@ -29,7 +29,7 @@ jobs:
 
       - name: Publish User Management Microservice
         run: |
-          dotnet publish "UserManamgent.Service.API/UserManamgent.Service.API.csproj" \
+          dotnet publish "UserManagement.Service.API/UserManagement.Service.API.csproj" \
             -c Release \
             -o ./publish/user-management
 
@@ -40,4 +40,4 @@ jobs:
           FTP_PASSWORD: ${{ secrets.USER_MGMT_FTP_PASSWORD }}
           LOCAL_DIR: ./publish/user-management
           REMOTE_DIR: /wwwroot
-        run: python .github/workflows/ftp-deploy.py
+        run: python3 .github/workflows/ftp-deploy.py
