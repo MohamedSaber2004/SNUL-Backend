@@ -28,7 +28,17 @@ namespace SNUL.Shared.Common.Extensions
             var validIssuers = jwtSettings.GetAllValidIssuers().ToList();
             var validAudiences = jwtSettings.GetAllValidAudiences().ToList();
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            // NOTE: Must set each default explicitly. AddIdentity() (called before this
+            // via AddSnulIdentity) explicitly sets Authenticate/Challenge/Forbid schemes to
+            // cookies — the one-arg AddAuthentication(scheme) overload only sets DefaultScheme
+            // (fallback) and does NOT override those, which left every API challenging via
+            // cookies (401 + Location: /Account/Login) even with a valid Admin JWT.
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddJwtBearer(options =>
                 {
                     options.SaveToken = true;
