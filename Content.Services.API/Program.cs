@@ -2,6 +2,8 @@ using System.Reflection;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Scalar.AspNetCore;
 using SNUL.Shared;
 using SNUL.Shared.Common.Behaviors;
@@ -119,8 +121,11 @@ namespace Content.Services.API
                     await db.Database.MigrateAsync();
                     await LandingPageSeeder.SeedAboutUsAsync(db);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    var logger = app.Services.GetService<ILogger<Program>>();
+                    logger?.LogError(ex, "Content startup migration/seeding failed. DB may be unreachable.");
+                    Console.Error.WriteLine($"[Content] Startup migration/seeding failed: {ex.GetType().Name}: {ex.Message}");
                 }
             }
 

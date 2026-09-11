@@ -6,6 +6,8 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Product.Services.API.Filters;
 using Product.Services.API.Jobs;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Scalar.AspNetCore;
 using SNUL.Shared;
 using SNUL.Shared.Common.Behaviors;
@@ -167,8 +169,11 @@ var connectionString = builder.Configuration.GetConnectionString("DatabaseConnec
                         await BogusDemoSeeder.SeedDemoAsync(scope.ServiceProvider);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    var logger = app.Services.GetService<ILogger<Program>>();
+                    logger?.LogError(ex, "Product startup migration/seeding failed. DB may be unreachable. This explains 500.30 startup failure.");
+                    Console.Error.WriteLine($"[Product] Startup migration/seeding failed: {ex.GetType().Name}: {ex.Message}");
                 }
             }
 
@@ -195,8 +200,11 @@ var connectionString = builder.Configuration.GetConnectionString("DatabaseConnec
                             cronExpression);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    var logger = app.Services.GetService<ILogger<Program>>();
+                    logger?.LogWarning(ex, "Product Hangfire recurring job setup failed.");
+                    Console.Error.WriteLine($"[Product] Hangfire setup failed: {ex.GetType().Name}: {ex.Message}");
                 }
             }
 

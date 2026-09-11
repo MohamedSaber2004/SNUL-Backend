@@ -6,3 +6,6 @@
 
 Server:https://snul-gateway.runasp.net
 /api/v1/auth/login
+
+i want to analyze why login with that prompt.txt  credentials from remote server with that link always return with not found
+  credentials internal server error 500 although in local server here return 401 unauthorized

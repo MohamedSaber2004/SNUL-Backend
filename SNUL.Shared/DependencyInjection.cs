@@ -73,17 +73,21 @@ namespace SNUL.Shared
                     ?? config.GetConnectionString("DefaultConnection")
                     ?? config.GetConnectionString("DatabaseConnection");
 
-                if (!string.IsNullOrWhiteSpace(connectionString))
+                if (string.IsNullOrWhiteSpace(connectionString))
                 {
-                    options.UseSqlServer(connectionString, sqlOptions =>
-                    {
-                        sqlOptions.MigrationsAssembly(typeof(SnulDbContext).Assembly.FullName);
-                        sqlOptions.EnableRetryOnFailure(
-                            maxRetryCount: 5,
-                            maxRetryDelay: TimeSpan.FromSeconds(30),
-                            errorNumbersToAdd: null);
-                    });
+                    throw new InvalidOperationException(
+                        $"Missing connection string '{connectionStringName}' (also checked 'DefaultConnection'/'DatabaseConnection'). " +
+                        "Check appsettings.{Environment}.json, user-secrets, or ConnectionStrings__DatabaseConnection env var.");
                 }
+
+                options.UseSqlServer(connectionString, sqlOptions =>
+                {
+                    sqlOptions.MigrationsAssembly(typeof(SnulDbContext).Assembly.FullName);
+                    sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorNumbersToAdd: null);
+                });
             });
 
             services.AddMemoryCache();

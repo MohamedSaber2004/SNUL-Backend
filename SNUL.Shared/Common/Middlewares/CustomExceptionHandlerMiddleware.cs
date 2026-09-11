@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SNUL.Shared.Common.Exceptions;
 using SNUL.Shared.Common.Interfaces;
 using SNUL.Shared.Enums;
@@ -52,6 +53,13 @@ namespace SNUL.Shared.Common.Middlewares
             {
                 return;
             }
+
+            var logger = context.RequestServices.GetService<ILogger<CustomExceptionHandlerMiddleware>>();
+            logger?.LogError(exception, "Unhandled exception {ExceptionType} on {Method} {Path}. TraceId: {TraceId}",
+                exception.GetType().FullName,
+                context.Request?.Method,
+                context.Request?.Path.Value,
+                context.TraceIdentifier);
 
             var localizationProvider = context.RequestServices.GetService<ILocalizationProvider>();
             var culture = GetRequestCulture(context);

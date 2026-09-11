@@ -160,8 +160,11 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
                     await RoleSeeder.SeedRolesAsync(roleManager);
                     await UserSeeder.SeedUsersAsync(userManager);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    var logger = scope.ServiceProvider.GetService<ILogger<Program>>();
+                    logger?.LogError(ex, "Auth startup seeding failed. DB may be unreachable. This will cause login/DB calls to return 500 until fixed.");
+                    Console.Error.WriteLine($"[Auth] Startup seeding failed: {ex.GetType().Name}: {ex.Message}");
                 }
             }
 

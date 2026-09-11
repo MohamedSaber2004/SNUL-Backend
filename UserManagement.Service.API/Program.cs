@@ -2,6 +2,8 @@ using System.Reflection;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Scalar.AspNetCore;
 using SNUL.Shared;
 using SNUL.Shared.Common.Behaviors;
@@ -88,8 +90,11 @@ namespace UserManagement.Service.API
                     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
                     await RoleSeeder.SeedRolesAsync(roleManager);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    var logger = scope.ServiceProvider.GetService<ILogger<Program>>();
+                    logger?.LogError(ex, "UserManagement startup seeding failed. DB may be unreachable.");
+                    Console.Error.WriteLine($"[UserManagement] Startup seeding failed: {ex.GetType().Name}: {ex.Message}");
                 }
             }
 
