@@ -5,8 +5,8 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7280
+                                                          "Host":  "snul-attachment.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/attachments/{everything}",
@@ -29,8 +29,8 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7280
+                                                          "Host":  "snul-attachment.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/files/{everything}",
@@ -44,8 +44,8 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7280
+                                                          "Host":  "snul-attachment.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/attachment/openapi.json",
@@ -59,8 +59,8 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7280
+                                                          "Host":  "snul-attachment.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/attachment",
@@ -70,34 +70,12 @@
                        "DangerousAcceptAnyServerCertificateValidator":  true
                    },
                    {
-                       "DownstreamPathTemplate":  "/api/v1/auth/profile",
-                       "DownstreamScheme":  "https",
-                       "DownstreamHostAndPorts":  [
-                                                      {
-                                                          "Host":  "localhost",
-                                                          "Port":  7303
-                                                      }
-                                                  ],
-                       "UpstreamPathTemplate":  "/api/v1/auth/profile",
-                       "UpstreamHttpMethod":  [
-                                                  "GET",
-                                                  "PUT"
-                                              ],
-                       "AuthenticationOptions":  {
-                                                     "AuthenticationProviderKey":  "Bearer",
-                                                     "AllowedScopes":  [
-
-                                                                       ]
-                                                 },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
-                   },
-                   {
                        "DownstreamPathTemplate":  "/api/v1/auth/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7303
+                                                          "Host":  "snul-auth.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/auth/{everything}",
@@ -114,8 +92,8 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7303
+                                                          "Host":  "snul-auth.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/auth/openapi.json",
@@ -129,8 +107,8 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7303
+                                                          "Host":  "snul-auth.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/auth",
@@ -144,8 +122,8 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7201
+                                                          "Host":  "snul-certification.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/certifications/{everything}",
@@ -159,8 +137,8 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7201
+                                                          "Host":  "snul-certification.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/certifications/{everything}",
@@ -182,8 +160,8 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7201
+                                                          "Host":  "snul-certification.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/certification/openapi.json",
@@ -197,8 +175,8 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7201
+                                                          "Host":  "snul-certification.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/certification",
@@ -212,8 +190,8 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7145
+                                                          "Host":  "snul-commerce.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/carts/{everything}",
@@ -229,15 +207,15 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/orders/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7145
+                                                          "Host":  "snul-commerce.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/orders/{everything}",
@@ -253,15 +231,15 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/integration/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7145
+                                                          "Host":  "snul-commerce.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/integration/{everything}",
@@ -277,15 +255,15 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/integration",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7145
+                                                          "Host":  "snul-commerce.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/integration",
@@ -301,60 +279,60 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/openapi/v1.json",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7145
+                                                          "Host":  "snul-commerce.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/commerce/openapi.json",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/scalar/v1",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7145
+                                                          "Host":  "snul-commerce.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/commerce",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/landing-pages",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/landing-pages",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/landing-pages",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/landing-pages",
@@ -368,30 +346,30 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/documents/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/documents/{everything}",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/documents/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/documents/{everything}",
@@ -406,30 +384,30 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/landing-pages/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/landing-pages/{everything}",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/landing-pages/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/landing-pages/{everything}",
@@ -444,30 +422,30 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/help/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/help/{everything}",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/help/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/help/{everything}",
@@ -482,30 +460,30 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/trade-shows/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/trade-shows/{everything}",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/trade-shows/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/trade-shows/{everything}",
@@ -520,30 +498,30 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/support/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/support/{everything}",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/support/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/support/{everything}",
@@ -558,30 +536,30 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/oem-inquiries/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/oem-inquiries/{everything}",
                        "UpstreamHttpMethod":  [
                                                   "POST"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/oem-inquiries/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/oem-inquiries/{everything}",
@@ -595,60 +573,60 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/openapi/v1.json",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/content/openapi.json",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/scalar/v1",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7147
+                                                          "Host":  "snul-content.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/content",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/products",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/products",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/products",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/products",
@@ -661,30 +639,30 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/categories",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/categories",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/categories",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/categories",
@@ -697,30 +675,30 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/currencies",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/currencies",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/currencies",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/currencies",
@@ -733,30 +711,30 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/categories/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/categories/{everything}",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/categories/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/categories/{everything}",
@@ -771,30 +749,30 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/products/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/products/{everything}",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/products/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/products/{everything}",
@@ -809,30 +787,30 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/currencies/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/currencies/{everything}",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/currencies/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/currencies/{everything}",
@@ -847,30 +825,30 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/exchange-rates/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/exchange-rates/{everything}",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/exchange-rates/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/exchange-rates/{everything}",
@@ -885,15 +863,15 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/wishlist",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/wishlist",
@@ -906,15 +884,15 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/wishlist/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/wishlist/{everything}",
@@ -929,45 +907,45 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/openapi/v1.json",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/product/openapi.json",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/scalar/v1",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7154
+                                                          "Host":  "snul-product.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/product",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/rfqs/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7146
+                                                          "Host":  "snul-sales.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/rfqs/{everything}",
@@ -983,52 +961,15 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
-                   },
-                   {
-                       "DownstreamPathTemplate":  "/api/v1/product-inquiries/{everything}",
-                       "DownstreamScheme":  "https",
-                       "DownstreamHostAndPorts":  [
-                                                      {
-                                                          "Host":  "localhost",
-                                                          "Port":  7146
-                                                      }
-                                                  ],
-                       "UpstreamPathTemplate":  "/api/v1/product-inquiries/{everything}",
-                       "UpstreamHttpMethod":  [
-                                                  "POST"
-                                              ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
-                   },
-                   {
-                       "DownstreamPathTemplate":  "/api/v1/product-inquiries/{everything}",
-                       "DownstreamScheme":  "https",
-                       "DownstreamHostAndPorts":  [
-                                                      {
-                                                          "Host":  "localhost",
-                                                          "Port":  7146
-                                                      }
-                                                  ],
-                       "UpstreamPathTemplate":  "/api/v1/product-inquiries/{everything}",
-                       "UpstreamHttpMethod":  [
-                                                  "GET",
-                                                  "DELETE"
-                                              ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true,
-                       "AuthenticationOptions":  {
-                                                     "AuthenticationProviderKey":  "Bearer",
-                                                     "AllowedScopes":  [
-
-                                                                       ]
-                                                 }
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/quotes/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7146
+                                                          "Host":  "snul-sales.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/quotes/{everything}",
@@ -1044,157 +985,194 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
+                   },
+                   {
+                       "DownstreamPathTemplate":  "/api/v1/product-inquiries/{everything}",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "snul-sales.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/product-inquiries/{everything}",
+                       "UpstreamHttpMethod":  [
+                                                  "POST"
+                                              ],
+                       "DangerousAcceptAnyServerCertificateValidator":  false
+                   },
+                   {
+                       "DownstreamPathTemplate":  "/api/v1/product-inquiries/{everything}",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "snul-sales.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/product-inquiries/{everything}",
+                       "UpstreamHttpMethod":  [
+                                                  "GET",
+                                                  "DELETE"
+                                              ],
+                       "DangerousAcceptAnyServerCertificateValidator":  false,
+                       "AuthenticationOptions":  {
+                                                     "AuthenticationProviderKey":  "Bearer",
+                                                     "AllowedScopes":  [
+
+                                                                       ]
+                                                 }
                    },
                    {
                        "DownstreamPathTemplate":  "/openapi/v1.json",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7146
+                                                          "Host":  "snul-sales.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/sales/openapi.json",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/scalar/v1",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7146
+                                                          "Host":  "snul-sales.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/sales",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/user-management/countries",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7304
+                                                          "Host":  "snul-user.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/user-management/countries",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/user-management/countries/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7304
+                                                          "Host":  "snul-user.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/user-management/countries/{everything}",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/user-management/cities",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7304
+                                                          "Host":  "snul-user.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/user-management/cities",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/user-management/cities/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7304
+                                                          "Host":  "snul-user.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/user-management/cities/{everything}",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/user-management/zones",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7304
+                                                          "Host":  "snul-user.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/user-management/zones",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/user-management/zones/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7304
+                                                          "Host":  "snul-user.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/user-management/zones/{everything}",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/user-management/companies",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7304
+                                                          "Host":  "snul-user.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/user-management/companies",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/api/v1/user-management/distributor-applications",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7304
+                                                          "Host":  "snul-user.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/user-management/distributor-applications",
                        "UpstreamHttpMethod":  [
                                                   "POST"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true,
+                       "DangerousAcceptAnyServerCertificateValidator":  false,
                        "AuthenticationOptions":  {
                                                      "AuthenticationProviderKey":  "Bearer",
                                                      "AllowedScopes":  [
@@ -1207,8 +1185,8 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7304
+                                                          "Host":  "snul-user.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/user-management/{everything}",
@@ -1224,37 +1202,37 @@
 
                                                                        ]
                                                  },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/openapi/v1.json",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7304
+                                                          "Host":  "snul-user.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/usermanagement/openapi.json",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    },
                    {
                        "DownstreamPathTemplate":  "/scalar/v1",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "localhost",
-                                                          "Port":  7304
+                                                          "Host":  "snul-user.runasp.net",
+                                                          "Port":  443
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/usermanagement",
                        "UpstreamHttpMethod":  [
                                                   "GET"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
+                       "DangerousAcceptAnyServerCertificateValidator":  false
                    }
                ]
 }
