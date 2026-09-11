@@ -1,11 +1,294 @@
-{
-  "email": "mmms77990@gmail.com",
-  "password": "Mo@123456"
-}
-
-
-Server:https://snul-gateway.runasp.net
-/api/v1/auth/login
-
-i want to analyze why login with that prompt.txt  credentials from remote server with that link always return with not found
-  credentials internal server error 500 although in local server here return 401 unauthorized
+[23:04:13 INF] SNUL API Gateway is starting up at 09/11/2026 23:04:13
+[23:04:13 INF] Ocelot file ocelot.attachment.Test.json contributed 4 routes
+[23:04:13 INF] Ocelot file ocelot.auth.Test.json contributed 4 routes
+[23:04:13 INF] Ocelot file ocelot.certification.Test.json contributed 4 routes
+[23:04:13 INF] Ocelot file ocelot.commerce.Test.json contributed 6 routes
+[23:04:13 INF] Ocelot file ocelot.content.Test.json contributed 16 routes
+[23:04:13 INF] Ocelot file ocelot.product.Test.json contributed 18 routes
+[23:04:13 INF] Ocelot file ocelot.sales.Test.json contributed 6 routes
+[23:04:13 INF] Ocelot file ocelot.usermanagement.Test.json contributed 11 routes
+[23:04:13 INF] Merged 69 Ocelot routes from ocelot.attachment.Test.json, ocelot.auth.Test.json, ocelot.certification.Test.json, ocelot.commerce.Test.json, ocelot.content.Test.json, ocelot.product.Test.json, ocelot.sales.Test.json, ocelot.usermanagement.Test.json into ocelot.merged.Test.json
+[23:04:14 WRN] Using an in-memory repository. Keys will not be persisted to storage.
+[23:04:14 WRN] Neither user profile nor HKLM registry available. Using an ephemeral key repository. Protected data will be unavailable when application exits.
+[23:04:14 WRN] No XML encryptor configured. Key {c27c4714-5768-440a-a6fc-2e80e0452073} may be persisted to storage in unencrypted form.
+[23:04:15 INF] Start processing HTTP request GET https://snul-attachment.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-attachment.runasp.net/openapi/v1.json
+[23:04:15 INF] Start processing HTTP request GET https://snul-auth.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-auth.runasp.net/openapi/v1.json
+[23:04:15 INF] Start processing HTTP request GET https://snul-certification.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-certification.runasp.net/openapi/v1.json
+[23:04:15 INF] Start processing HTTP request GET https://snul-commerce.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-commerce.runasp.net/openapi/v1.json
+[23:04:15 INF] Start processing HTTP request GET https://snul-content.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-content.runasp.net/openapi/v1.json
+[23:04:15 INF] Start processing HTTP request GET https://snul-product.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-product.runasp.net/openapi/v1.json
+[23:04:15 INF] Start processing HTTP request GET https://snul-sales.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-sales.runasp.net/openapi/v1.json
+[23:04:15 INF] Start processing HTTP request GET https://snul-user.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-user.runasp.net/openapi/v1.json
+[23:04:15 INF] HTTP request failed after 81.9175ms
+System.Net.Http.HttpRequestException: No such host is known. (snul-user.runasp.net:443)
+ ---> System.Net.Sockets.SocketException (11001): No such host is known.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.SocketsHttpHandler.<SendAsync>g__CreateHandlerAndSendAsync|115_0(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+[23:04:15 INF] HTTP request failed after 89.8831ms
+System.Net.Http.HttpRequestException: No such host is known. (snul-user.runasp.net:443)
+ ---> System.Net.Sockets.SocketException (11001): No such host is known.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.SocketsHttpHandler.<SendAsync>g__CreateHandlerAndSendAsync|115_0(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+[23:04:15 INF] Start processing HTTP request GET https://snul-user.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-user.runasp.net/openapi/v1.json
+[23:04:15 INF] HTTP request failed after 2.2639ms
+System.Net.Http.HttpRequestException: No such host is known. (snul-user.runasp.net:443)
+ ---> System.Net.Sockets.SocketException (11001): No such host is known.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+[23:04:15 INF] HTTP request failed after 3.3401ms
+System.Net.Http.HttpRequestException: No such host is known. (snul-user.runasp.net:443)
+ ---> System.Net.Sockets.SocketException (11001): No such host is known.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+[23:04:15 INF] Start processing HTTP request GET https://snul-product.runasp.net/openapi/v1.json
+[23:04:15 INF] Start processing HTTP request GET https://snul-sales.runasp.net/openapi/v1.json
+[23:04:15 INF] Start processing HTTP request GET https://snul-content.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-product.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-sales.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-content.runasp.net/openapi/v1.json
+[23:04:15 INF] Start processing HTTP request GET https://snul-commerce.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-commerce.runasp.net/openapi/v1.json
+[23:04:15 INF] Start processing HTTP request GET https://snul-auth.runasp.net/openapi/v1.json
+[23:04:15 INF] Start processing HTTP request GET https://snul-certification.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-certification.runasp.net/openapi/v1.json
+[23:04:15 INF] Start processing HTTP request GET https://snul-attachment.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-attachment.runasp.net/openapi/v1.json
+[23:04:15 INF] Sending HTTP request GET https://snul-auth.runasp.net/openapi/v1.json
+[23:04:19 INF] Start processing HTTP request GET https://snul-attachment.runasp.net/openapi/v1.json
+[23:04:19 INF] Sending HTTP request GET https://snul-attachment.runasp.net/openapi/v1.json
+[23:04:19 INF] Received HTTP response headers after 55.0783ms - 200
+[23:04:19 INF] End processing HTTP request after 63.6335ms - 200
+[23:04:19 INF] Start processing HTTP request GET https://snul-auth.runasp.net/openapi/v1.json
+[23:04:19 INF] Sending HTTP request GET https://snul-auth.runasp.net/openapi/v1.json
+[23:04:19 INF] Received HTTP response headers after 290.9219ms - 200
+[23:04:19 INF] End processing HTTP request after 291.5595ms - 200
+[23:04:19 INF] Start processing HTTP request GET https://snul-certification.runasp.net/openapi/v1.json
+[23:04:19 INF] Sending HTTP request GET https://snul-certification.runasp.net/openapi/v1.json
+[23:04:19 INF] Received HTTP response headers after 44.0095ms - 200
+[23:04:19 INF] End processing HTTP request after 44.5978ms - 200
+[23:04:19 INF] Start processing HTTP request GET https://snul-commerce.runasp.net/openapi/v1.json
+[23:04:19 INF] Sending HTTP request GET https://snul-commerce.runasp.net/openapi/v1.json
+[23:04:19 INF] Received HTTP response headers after 44.9421ms - 200
+[23:04:19 INF] End processing HTTP request after 45.3743ms - 200
+[23:04:19 INF] Start processing HTTP request GET https://snul-content.runasp.net/openapi/v1.json
+[23:04:19 INF] Sending HTTP request GET https://snul-content.runasp.net/openapi/v1.json
+[23:04:19 INF] Received HTTP response headers after 46.7779ms - 200
+[23:04:19 INF] End processing HTTP request after 47.5854ms - 200
+[23:04:19 INF] Start processing HTTP request GET https://snul-product.runasp.net/openapi/v1.json
+[23:04:19 INF] Sending HTTP request GET https://snul-product.runasp.net/openapi/v1.json
+[23:04:19 INF] Received HTTP response headers after 11.4523ms - 500
+[23:04:19 INF] End processing HTTP request after 12.177ms - 500
+[23:04:19 INF] Start processing HTTP request GET https://snul-product.runasp.net/openapi/v1.json
+[23:04:19 INF] Sending HTTP request GET https://snul-product.runasp.net/openapi/v1.json
+[23:04:19 INF] Received HTTP response headers after 1.9398ms - 500
+[23:04:19 INF] End processing HTTP request after 2.5775ms - 500
+[23:04:19 INF] Start processing HTTP request GET https://snul-sales.runasp.net/openapi/v1.json
+[23:04:19 INF] Sending HTTP request GET https://snul-sales.runasp.net/openapi/v1.json
+[23:04:19 INF] Received HTTP response headers after 43.4891ms - 200
+[23:04:19 INF] End processing HTTP request after 44.0707ms - 200
+[23:04:19 INF] Start processing HTTP request GET https://snul-user.runasp.net/openapi/v1.json
+[23:04:19 INF] Sending HTTP request GET https://snul-user.runasp.net/openapi/v1.json
+[23:04:19 INF] HTTP request failed after 17.94ms
+System.Net.Http.HttpRequestException: No such host is known. (snul-user.runasp.net:443)
+ ---> System.Net.Sockets.SocketException (11001): No such host is known.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+[23:04:19 INF] HTTP request failed after 19.2829ms
+System.Net.Http.HttpRequestException: No such host is known. (snul-user.runasp.net:443)
+ ---> System.Net.Sockets.SocketException (11001): No such host is known.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+[23:04:19 INF] Start processing HTTP request GET https://snul-user.runasp.net/openapi/v1.json
+[23:04:19 INF] Sending HTTP request GET https://snul-user.runasp.net/openapi/v1.json
+[23:04:19 INF] HTTP request failed after 1.8391ms
+System.Net.Http.HttpRequestException: No such host is known. (snul-user.runasp.net:443)
+ ---> System.Net.Sockets.SocketException (11001): No such host is known.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+[23:04:19 INF] HTTP request failed after 4.5477ms
+System.Net.Http.HttpRequestException: No such host is known. (snul-user.runasp.net:443)
+ ---> System.Net.Sockets.SocketException (11001): No such host is known.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+[23:04:30 INF] Start processing HTTP request GET https://snul-attachment.runasp.net/openapi/v1.json
+[23:04:30 INF] Sending HTTP request GET https://snul-attachment.runasp.net/openapi/v1.json
+[23:04:30 INF] Start processing HTTP request GET https://snul-auth.runasp.net/openapi/v1.json
+[23:04:30 INF] Sending HTTP request GET https://snul-auth.runasp.net/openapi/v1.json
+[23:04:30 INF] Start processing HTTP request GET https://snul-certification.runasp.net/openapi/v1.json
+[23:04:30 INF] Sending HTTP request GET https://snul-certification.runasp.net/openapi/v1.json
+[23:04:30 INF] Start processing HTTP request GET https://snul-commerce.runasp.net/openapi/v1.json
+[23:04:30 INF] Sending HTTP request GET https://snul-commerce.runasp.net/openapi/v1.json
+[23:04:30 INF] Start processing HTTP request GET https://snul-content.runasp.net/openapi/v1.json
+[23:04:30 INF] Sending HTTP request GET https://snul-content.runasp.net/openapi/v1.json
+[23:04:30 INF] Start processing HTTP request GET https://snul-product.runasp.net/openapi/v1.json
+[23:04:30 INF] Sending HTTP request GET https://snul-product.runasp.net/openapi/v1.json
+[23:04:30 INF] Start processing HTTP request GET https://snul-sales.runasp.net/openapi/v1.json
+[23:04:30 INF] Sending HTTP request GET https://snul-sales.runasp.net/openapi/v1.json
+[23:04:30 INF] Start processing HTTP request GET https://snul-user.runasp.net/openapi/v1.json
+[23:04:30 INF] Sending HTTP request GET https://snul-user.runasp.net/openapi/v1.json
+[23:04:30 INF] Received HTTP response headers after 1.6139ms - 500
+[23:04:30 INF] End processing HTTP request after 1.7819ms - 500
+[23:04:30 INF] Start processing HTTP request GET https://snul-product.runasp.net/openapi/v1.json
+[23:04:30 INF] Sending HTTP request GET https://snul-product.runasp.net/openapi/v1.json
+[23:04:30 INF] Received HTTP response headers after 2.1336ms - 500
+[23:04:30 INF] End processing HTTP request after 2.4031ms - 500
+[23:04:30 INF] Received HTTP response headers after 13.682ms - 200
+[23:04:30 INF] End processing HTTP request after 13.8237ms - 200
+[23:04:30 INF] Received HTTP response headers after 15.9127ms - 200
+[23:04:30 INF] End processing HTTP request after 16.2435ms - 200
+[23:04:30 INF] HTTP request failed after 16.4316ms
+System.Net.Http.HttpRequestException: No such host is known. (snul-user.runasp.net:443)
+ ---> System.Net.Sockets.SocketException (11001): No such host is known.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+[23:04:30 INF] HTTP request failed after 17.2131ms
+System.Net.Http.HttpRequestException: No such host is known. (snul-user.runasp.net:443)
+ ---> System.Net.Sockets.SocketException (11001): No such host is known.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+[23:04:30 INF] Start processing HTTP request GET https://snul-user.runasp.net/openapi/v1.json
+[23:04:30 INF] Sending HTTP request GET https://snul-user.runasp.net/openapi/v1.json
+[23:04:30 INF] HTTP request failed after 1.7688ms
+System.Net.Http.HttpRequestException: No such host is known. (snul-user.runasp.net:443)
+ ---> System.Net.Sockets.SocketException (11001): No such host is known.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+[23:04:30 INF] HTTP request failed after 2.5961ms
+System.Net.Http.HttpRequestException: No such host is known. (snul-user.runasp.net:443)
+ ---> System.Net.Sockets.SocketException (11001): No such host is known.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System
