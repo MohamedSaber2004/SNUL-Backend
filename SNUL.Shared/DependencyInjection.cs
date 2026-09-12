@@ -24,6 +24,7 @@ namespace SNUL.Shared
             string connectionStringName = "DatabaseConnection")
         {
             services.AddHttpContextAccessor();
+            services.AddSingleton<IWelcoSystemResolver, WelcoSystemResolver>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
