@@ -5,11 +5,12 @@ using SNUL.Shared.Results;
 
 namespace Commerce.Services.API.Features.Integration.Quotes.Commands.UpdateExternalQuoteStatus
 {
-    public class UpdateExternalQuoteStatusCommand : IRequest<Result<bool>>
+    public class UpdateExternalQuoteStatusCommand : IRequest<Result<bool>>, IWelcoSystemRequest
     {
         public Guid WelcoQuoteId { get; set; }
         public string Status { get; set; } = null!;
         public string? Notes { get; set; }
+        public string? System { get; set; }
     }
 
     public class UpdateExternalQuoteStatusCommandHandler : IRequestHandler<UpdateExternalQuoteStatusCommand, Result<bool>>
@@ -28,7 +29,7 @@ namespace Commerce.Services.API.Features.Integration.Quotes.Commands.UpdateExter
                 Status = request.Status,
                 Notes = request.Notes
             };
-            return _welcoService.UpdateQuoteStatusAsync(request.WelcoQuoteId, req, ct);
+            return _welcoService.UpdateQuoteStatusAsync(request.WelcoQuoteId, req, ct, request.System);
         }
     }
 }

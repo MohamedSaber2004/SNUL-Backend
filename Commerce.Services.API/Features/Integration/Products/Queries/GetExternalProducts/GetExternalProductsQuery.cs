@@ -5,10 +5,11 @@ using SNUL.Shared.Results;
 
 namespace Commerce.Services.API.Features.Integration.Products.Queries.GetExternalProducts
 {
-    public class GetExternalProductsQuery : IRequest<Result<List<ExternalProductDto>>>
+    public class GetExternalProductsQuery : IRequest<Result<List<ExternalProductDto>>>, IWelcoSystemRequest
     {
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 50;
+        public string? System { get; set; }
     }
 
     public class GetExternalProductsQueryHandler : IRequestHandler<GetExternalProductsQuery, Result<List<ExternalProductDto>>>
@@ -21,6 +22,6 @@ namespace Commerce.Services.API.Features.Integration.Products.Queries.GetExterna
         }
 
         public Task<Result<List<ExternalProductDto>>> Handle(GetExternalProductsQuery request, CancellationToken ct)
-            => _welcoService.GetProductsAsync(request.Page, request.PageSize, ct);
+            => _welcoService.GetProductsAsync(request.Page, request.PageSize, ct, request.System);
     }
 }

@@ -5,9 +5,10 @@ using SNUL.Shared.Results;
 
 namespace Commerce.Services.API.Features.Integration.Inventory.Commands.ReserveExternalInventory
 {
-    public class ReserveExternalInventoryCommand : IRequest<Result<InventoryCheckResponse>>
+    public class ReserveExternalInventoryCommand : IRequest<Result<InventoryCheckResponse>>, IWelcoSystemRequest
     {
         public List<InventoryCheckItem> Items { get; set; } = new();
+        public string? System { get; set; }
     }
 
     public class ReserveExternalInventoryCommandHandler : IRequestHandler<ReserveExternalInventoryCommand, Result<InventoryCheckResponse>>
@@ -20,6 +21,6 @@ namespace Commerce.Services.API.Features.Integration.Inventory.Commands.ReserveE
         }
 
         public Task<Result<InventoryCheckResponse>> Handle(ReserveExternalInventoryCommand request, CancellationToken ct)
-            => _welcoService.ReserveInventoryAsync(new InventoryCheckRequest { Items = request.Items }, ct);
+            => _welcoService.ReserveInventoryAsync(new InventoryCheckRequest { Items = request.Items }, ct, request.System);
     }
 }

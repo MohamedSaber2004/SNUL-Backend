@@ -5,7 +5,10 @@ using SNUL.Shared.Results;
 
 namespace Commerce.Services.API.Features.Integration.Certifications
 {
-    public class GetExternalCertificationsQuery : IRequest<Result<List<ExternalCertificationDto>>> { }
+    public class GetExternalCertificationsQuery : IRequest<Result<List<ExternalCertificationDto>>>, IWelcoSystemRequest
+    {
+        public string? System { get; set; }
+    }
 
     public class GetExternalCertificationsQueryHandler : IRequestHandler<GetExternalCertificationsQuery, Result<List<ExternalCertificationDto>>>
     {
@@ -13,12 +16,13 @@ namespace Commerce.Services.API.Features.Integration.Certifications
         public GetExternalCertificationsQueryHandler(IWelcoIntegrationService welcoService) => _welcoService = welcoService;
 
         public Task<Result<List<ExternalCertificationDto>>> Handle(GetExternalCertificationsQuery request, CancellationToken cancellationToken)
-            => _welcoService.GetCertificationsAsync(cancellationToken);
+            => _welcoService.GetCertificationsAsync(cancellationToken, request.System);
     }
 
-    public class GetExternalCertificationByIdQuery : IRequest<Result<ExternalCertificationDto>>
+    public class GetExternalCertificationByIdQuery : IRequest<Result<ExternalCertificationDto>>, IWelcoSystemRequest
     {
         public Guid Id { get; set; }
+        public string? System { get; set; }
     }
 
     public class GetExternalCertificationByIdQueryHandler : IRequestHandler<GetExternalCertificationByIdQuery, Result<ExternalCertificationDto>>
@@ -27,6 +31,6 @@ namespace Commerce.Services.API.Features.Integration.Certifications
         public GetExternalCertificationByIdQueryHandler(IWelcoIntegrationService welcoService) => _welcoService = welcoService;
 
         public Task<Result<ExternalCertificationDto>> Handle(GetExternalCertificationByIdQuery request, CancellationToken cancellationToken)
-            => _welcoService.GetCertificationByIdAsync(request.Id, cancellationToken);
+            => _welcoService.GetCertificationByIdAsync(request.Id, cancellationToken, request.System);
     }
 }

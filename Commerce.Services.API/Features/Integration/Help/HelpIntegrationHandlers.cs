@@ -5,7 +5,10 @@ using SNUL.Shared.Results;
 
 namespace Commerce.Services.API.Features.Integration.Help
 {
-    public class GetExternalHelpArticlesQuery : IRequest<Result<List<ExternalHelpArticleDto>>> { }
+    public class GetExternalHelpArticlesQuery : IRequest<Result<List<ExternalHelpArticleDto>>>, IWelcoSystemRequest
+    {
+        public string? System { get; set; }
+    }
 
     public class GetExternalHelpArticlesQueryHandler : IRequestHandler<GetExternalHelpArticlesQuery, Result<List<ExternalHelpArticleDto>>>
     {
@@ -13,10 +16,13 @@ namespace Commerce.Services.API.Features.Integration.Help
         public GetExternalHelpArticlesQueryHandler(IWelcoIntegrationService welcoService) => _welcoService = welcoService;
 
         public Task<Result<List<ExternalHelpArticleDto>>> Handle(GetExternalHelpArticlesQuery request, CancellationToken cancellationToken)
-            => _welcoService.GetHelpArticlesAsync(cancellationToken);
+            => _welcoService.GetHelpArticlesAsync(cancellationToken, request.System);
     }
 
-    public class GetExternalFaqsQuery : IRequest<Result<List<ExternalFAQDto>>> { }
+    public class GetExternalFaqsQuery : IRequest<Result<List<ExternalFAQDto>>>, IWelcoSystemRequest
+    {
+        public string? System { get; set; }
+    }
 
     public class GetExternalFaqsQueryHandler : IRequestHandler<GetExternalFaqsQuery, Result<List<ExternalFAQDto>>>
     {
@@ -24,6 +30,6 @@ namespace Commerce.Services.API.Features.Integration.Help
         public GetExternalFaqsQueryHandler(IWelcoIntegrationService welcoService) => _welcoService = welcoService;
 
         public Task<Result<List<ExternalFAQDto>>> Handle(GetExternalFaqsQuery request, CancellationToken cancellationToken)
-            => _welcoService.GetFaqsAsync(cancellationToken);
+            => _welcoService.GetFaqsAsync(cancellationToken, request.System);
     }
 }

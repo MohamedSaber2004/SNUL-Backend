@@ -5,9 +5,10 @@ using SNUL.Shared.Results;
 
 namespace Commerce.Services.API.Features.Integration.Orders.Queries.GetExternalOrderById
 {
-    public class GetExternalOrderByIdQuery : IRequest<Result<ExternalOrderResponse>>
+    public class GetExternalOrderByIdQuery : IRequest<Result<ExternalOrderResponse>>, IWelcoSystemRequest
     {
         public Guid WelcoOrderId { get; set; }
+        public string? System { get; set; }
     }
 
     public class GetExternalOrderByIdQueryHandler : IRequestHandler<GetExternalOrderByIdQuery, Result<ExternalOrderResponse>>
@@ -20,6 +21,6 @@ namespace Commerce.Services.API.Features.Integration.Orders.Queries.GetExternalO
         }
 
         public Task<Result<ExternalOrderResponse>> Handle(GetExternalOrderByIdQuery request, CancellationToken ct)
-            => _welcoService.GetOrderByIdAsync(request.WelcoOrderId, ct);
+            => _welcoService.GetOrderByIdAsync(request.WelcoOrderId, ct, request.System);
     }
 }

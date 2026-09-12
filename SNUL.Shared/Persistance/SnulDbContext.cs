@@ -56,6 +56,7 @@ public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
         public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
         public DbSet<SupportContact> SupportContacts => Set<SupportContact>();
         public DbSet<OemInquiry> OemInquiries => Set<OemInquiry>();
+        public DbSet<WelcoProviderMap> WelcoProviderMaps => Set<WelcoProviderMap>();
         public SnulDbContext(DbContextOptions<SnulDbContext> options, ICurrentUserService? currentUserService = null)
             : base(options)
         {

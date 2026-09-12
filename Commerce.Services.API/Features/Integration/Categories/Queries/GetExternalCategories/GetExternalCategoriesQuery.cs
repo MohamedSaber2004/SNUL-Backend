@@ -5,8 +5,9 @@ using SNUL.Shared.Results;
 
 namespace Commerce.Services.API.Features.Integration.Categories.Queries.GetExternalCategories
 {
-    public class GetExternalCategoriesQuery : IRequest<Result<List<ExternalCategoryDto>>>
+    public class GetExternalCategoriesQuery : IRequest<Result<List<ExternalCategoryDto>>>, IWelcoSystemRequest
     {
+        public string? System { get; set; }
     }
 
     public class GetExternalCategoriesQueryHandler : IRequestHandler<GetExternalCategoriesQuery, Result<List<ExternalCategoryDto>>>
@@ -19,6 +20,6 @@ namespace Commerce.Services.API.Features.Integration.Categories.Queries.GetExter
         }
 
         public Task<Result<List<ExternalCategoryDto>>> Handle(GetExternalCategoriesQuery request, CancellationToken ct)
-            => _welcoService.GetCategoriesAsync(ct);
+            => _welcoService.GetCategoriesAsync(ct, request.System);
     }
 }

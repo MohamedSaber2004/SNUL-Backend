@@ -5,11 +5,12 @@ using SNUL.Shared.Results;
 
 namespace Commerce.Services.API.Features.Integration.Orders.Commands.UpdateExternalOrderStatus
 {
-    public class UpdateExternalOrderStatusCommand : IRequest<Result<bool>>
+    public class UpdateExternalOrderStatusCommand : IRequest<Result<bool>>, IWelcoSystemRequest
     {
         public Guid WelcoOrderId { get; set; }
         public string Status { get; set; } = null!;
         public string? Notes { get; set; }
+        public string? System { get; set; }
     }
 
     public class UpdateExternalOrderStatusCommandHandler : IRequestHandler<UpdateExternalOrderStatusCommand, Result<bool>>
@@ -28,7 +29,7 @@ namespace Commerce.Services.API.Features.Integration.Orders.Commands.UpdateExter
                 Status = request.Status,
                 Notes = request.Notes
             };
-            return _welcoService.UpdateOrderStatusAsync(request.WelcoOrderId, req, ct);
+            return _welcoService.UpdateOrderStatusAsync(request.WelcoOrderId, req, ct, request.System);
         }
     }
 }
