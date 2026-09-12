@@ -27,9 +27,10 @@ namespace SNUL.Shared.Common.Services
                 if (_options.Systems.ContainsKey(key))
                     return key;
                 // Accept unconfigured keys only when they match the default (legacy single-tenant).
+                // ArgumentException maps to 400 via CustomExceptionHandlerMiddleware (not 500).
                 if (string.Equals(key, _options.DefaultSystem, StringComparison.OrdinalIgnoreCase))
                     return _options.DefaultSystem;
-                throw new InvalidOperationException($"Unknown integration system '{key}'.");
+                throw new ArgumentException($"Unknown integration system '{key}'.", nameof(system));
             }
 
             return string.IsNullOrWhiteSpace(_options.DefaultSystem) ? "snul" : _options.DefaultSystem.Trim();
