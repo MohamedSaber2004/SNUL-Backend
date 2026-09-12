@@ -5,9 +5,10 @@ using SNUL.Shared.Results;
 
 namespace Commerce.Services.API.Features.Integration.Products.Queries.GetExternalProductById
 {
-    public class GetExternalProductByIdQuery : IRequest<Result<ExternalProductDto>>
+    public class GetExternalProductByIdQuery : IRequest<Result<ExternalProductDto>>, IWelcoSystemRequest
     {
         public Guid WelcoProductId { get; set; }
+        public string? System { get; set; }
     }
 
     public class GetExternalProductByIdQueryHandler : IRequestHandler<GetExternalProductByIdQuery, Result<ExternalProductDto>>
@@ -20,6 +21,6 @@ namespace Commerce.Services.API.Features.Integration.Products.Queries.GetExterna
         }
 
         public Task<Result<ExternalProductDto>> Handle(GetExternalProductByIdQuery request, CancellationToken ct)
-            => _welcoService.GetProductByIdAsync(request.WelcoProductId, ct);
+            => _welcoService.GetProductByIdAsync(request.WelcoProductId, ct, request.System);
     }
 }

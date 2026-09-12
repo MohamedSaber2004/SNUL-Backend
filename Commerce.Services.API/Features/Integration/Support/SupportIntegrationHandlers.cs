@@ -5,9 +5,10 @@ using SNUL.Shared.Results;
 
 namespace Commerce.Services.API.Features.Integration.Support
 {
-    public class GetExternalSupportTicketsQuery : IRequest<Result<List<ExternalSupportTicketDto>>>
+    public class GetExternalSupportTicketsQuery : IRequest<Result<List<ExternalSupportTicketDto>>>, IWelcoSystemRequest
     {
         public string? Status { get; set; }
+        public string? System { get; set; }
     }
 
     public class GetExternalSupportTicketsQueryHandler : IRequestHandler<GetExternalSupportTicketsQuery, Result<List<ExternalSupportTicketDto>>>
@@ -16,12 +17,13 @@ namespace Commerce.Services.API.Features.Integration.Support
         public GetExternalSupportTicketsQueryHandler(IWelcoIntegrationService welcoService) => _welcoService = welcoService;
 
         public Task<Result<List<ExternalSupportTicketDto>>> Handle(GetExternalSupportTicketsQuery request, CancellationToken cancellationToken)
-            => _welcoService.GetSupportTicketsAsync(request.Status, cancellationToken);
+            => _welcoService.GetSupportTicketsAsync(request.Status, cancellationToken, request.System);
     }
 
-    public class GetExternalSupportTicketByIdQuery : IRequest<Result<ExternalSupportTicketDto>>
+    public class GetExternalSupportTicketByIdQuery : IRequest<Result<ExternalSupportTicketDto>>, IWelcoSystemRequest
     {
         public Guid Id { get; set; }
+        public string? System { get; set; }
     }
 
     public class GetExternalSupportTicketByIdQueryHandler : IRequestHandler<GetExternalSupportTicketByIdQuery, Result<ExternalSupportTicketDto>>
@@ -30,13 +32,14 @@ namespace Commerce.Services.API.Features.Integration.Support
         public GetExternalSupportTicketByIdQueryHandler(IWelcoIntegrationService welcoService) => _welcoService = welcoService;
 
         public Task<Result<ExternalSupportTicketDto>> Handle(GetExternalSupportTicketByIdQuery request, CancellationToken cancellationToken)
-            => _welcoService.GetSupportTicketByIdAsync(request.Id, cancellationToken);
+            => _welcoService.GetSupportTicketByIdAsync(request.Id, cancellationToken, request.System);
     }
 
-    public class ReplyExternalSupportTicketCommand : IRequest<Result<bool>>
+    public class ReplyExternalSupportTicketCommand : IRequest<Result<bool>>, IWelcoSystemRequest
     {
         public Guid Id { get; set; }
         public string Reply { get; set; } = null!;
+        public string? System { get; set; }
     }
 
     public class ReplyExternalSupportTicketCommandHandler : IRequestHandler<ReplyExternalSupportTicketCommand, Result<bool>>
@@ -45,12 +48,13 @@ namespace Commerce.Services.API.Features.Integration.Support
         public ReplyExternalSupportTicketCommandHandler(IWelcoIntegrationService welcoService) => _welcoService = welcoService;
 
         public Task<Result<bool>> Handle(ReplyExternalSupportTicketCommand request, CancellationToken cancellationToken)
-            => _welcoService.ReplySupportTicketAsync(request.Id, request.Reply, cancellationToken);
+            => _welcoService.ReplySupportTicketAsync(request.Id, request.Reply, cancellationToken, request.System);
     }
 
-    public class CloseExternalSupportTicketCommand : IRequest<Result<bool>>
+    public class CloseExternalSupportTicketCommand : IRequest<Result<bool>>, IWelcoSystemRequest
     {
         public Guid Id { get; set; }
+        public string? System { get; set; }
     }
 
     public class CloseExternalSupportTicketCommandHandler : IRequestHandler<CloseExternalSupportTicketCommand, Result<bool>>
@@ -59,6 +63,6 @@ namespace Commerce.Services.API.Features.Integration.Support
         public CloseExternalSupportTicketCommandHandler(IWelcoIntegrationService welcoService) => _welcoService = welcoService;
 
         public Task<Result<bool>> Handle(CloseExternalSupportTicketCommand request, CancellationToken cancellationToken)
-            => _welcoService.CloseSupportTicketAsync(request.Id, cancellationToken);
+            => _welcoService.CloseSupportTicketAsync(request.Id, cancellationToken, request.System);
     }
 }

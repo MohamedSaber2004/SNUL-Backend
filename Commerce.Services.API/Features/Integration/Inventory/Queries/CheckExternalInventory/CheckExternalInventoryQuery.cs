@@ -5,9 +5,10 @@ using SNUL.Shared.Results;
 
 namespace Commerce.Services.API.Features.Integration.Inventory.Queries.CheckExternalInventory
 {
-    public class CheckExternalInventoryQuery : IRequest<Result<InventoryCheckResponse>>
+    public class CheckExternalInventoryQuery : IRequest<Result<InventoryCheckResponse>>, IWelcoSystemRequest
     {
         public List<InventoryCheckItem> Items { get; set; } = new();
+        public string? System { get; set; }
     }
 
     public class CheckExternalInventoryQueryHandler : IRequestHandler<CheckExternalInventoryQuery, Result<InventoryCheckResponse>>
@@ -20,6 +21,6 @@ namespace Commerce.Services.API.Features.Integration.Inventory.Queries.CheckExte
         }
 
         public Task<Result<InventoryCheckResponse>> Handle(CheckExternalInventoryQuery request, CancellationToken ct)
-            => _welcoService.CheckInventoryAsync(new InventoryCheckRequest { Items = request.Items }, ct);
+            => _welcoService.CheckInventoryAsync(new InventoryCheckRequest { Items = request.Items }, ct, request.System);
     }
 }

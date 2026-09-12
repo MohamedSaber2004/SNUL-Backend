@@ -18,11 +18,18 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SNUL.Shared.Common.DTOs.Integration;
+using SNUL.Shared.Common.Extensions;
 using SNUL.Shared.Controllers;
 
 namespace Commerce.Services.API.Controllers
 {
-        [Authorize(Roles = "Admin")]
+    /// <summary>
+    /// Single dashboard for both systems. Tenant comes from ?system= / X-System
+    /// ("snul" | "welo", one market each, defaults to configured default).
+    /// Unknown systems fail with 400; providers are filtered through
+    /// WelcoProviderMaps so each system only sees its own clients/providers.
+    /// </summary>
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/v1/integration")]
     [Tags("Welco Integration (Internal Admin Dashboard)")]
@@ -30,33 +37,44 @@ namespace Commerce.Services.API.Controllers
     {
         public IntegrationController(IMediator mediator) : base(mediator) { }
 
+        private string? System => HttpContext.Request.GetWelcoSystem();
+
 [HttpGet("providers")]
         public async Task<IActionResult> GetProviders(CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalProvidersQuery(), ct));
+            => ToActionResult(await _mediator.Send(new GetExternalProvidersQuery { System = System }, ct));
 
 [HttpGet("products")]
         public async Task<IActionResult> GetProducts([FromQuery] int page = 1, [FromQuery] int pageSize = 50, CancellationToken ct = default)
-            => ToActionResult(await _mediator.Send(new GetExternalProductsQuery { Page = page, PageSize = pageSize }, ct));
+            => ToActionResult(await _mediator.Send(new GetExternalProductsQuery { Page = page, PageSize = pageSize, System = System }, ct));
 
                 [HttpGet("products/{welcoProductId:guid}")]
         public async Task<IActionResult> GetProduct([FromRoute] Guid welcoProductId, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalProductByIdQuery { WelcoProductId = welcoProductId }, ct));
+            => ToActionResult(await _mediator.Send(new GetExternalProductByIdQuery { WelcoProductId = welcoProductId, System = System }, ct));
 
 [HttpPost("inventory/check")]
         public async Task<IActionResult> CheckInventory([FromBody] CheckExternalInventoryQuery query, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(query, ct));
+        {
+            query.System = System;
+            return ToActionResult(await _mediator.Send(query, ct));
+        }
 
                 [HttpPost("inventory/reserve")]
         public async Task<IActionResult> ReserveInventory([FromBody] ReserveExternalInventoryCommand command, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(command, ct));
+        {
+            command.System = System;
+            return ToActionResult(await _mediator.Send(command, ct));
+        }
 
 [HttpPost("orders")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateExternalOrderCommand command, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(command, ct));
+        {
+            command.System = System;
+            return ToActionResult(await _mediator.Send(command, ct));
+        }
 
                 [HttpGet("orders/{welcoOrderId:guid}")]
         public async Task<IActionResult> GetOrder([FromRoute] Guid welcoOrderId, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalOrderByIdQuery { WelcoOrderId = welcoOrderId }, ct));
+            => ToActionResult(await _mediator.Send(new GetExternalOrderByIdQuery { WelcoOrderId = welcoOrderId, System = System }, ct));
 
                 [HttpPut("orders/{welcoOrderId:guid}/status")]
         public async Task<IActionResult> UpdateOrderStatus(
@@ -67,12 +85,16 @@ namespace Commerce.Services.API.Controllers
             {
                 WelcoOrderId = welcoOrderId,
                 Status = request.Status,
-                Notes = request.Notes
+                Notes = request.Notes,
+                System = System
             }, ct));
 
 [HttpPost("quotes")]
         public async Task<IActionResult> CreateQuote([FromBody] CreateExternalQuoteCommand command, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(command, ct));
+        {
+            command.System = System;
+            return ToActionResult(await _mediator.Send(command, ct));
+        }
 
                 [HttpPut("quotes/{welcoQuoteId:guid}/status")]
         public async Task<IActionResult> UpdateQuoteStatus(
@@ -83,67 +105,68 @@ namespace Commerce.Services.API.Controllers
             {
                 WelcoQuoteId = welcoQuoteId,
                 Status = request.Status,
-                Notes = request.Notes
+                Notes = request.Notes,
+                System = System
             }, ct));
 
 [HttpGet("categories")]
         public async Task<IActionResult> GetCategories(CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalCategoriesQuery(), ct));
+            => ToActionResult(await _mediator.Send(new GetExternalCategoriesQuery { System = System }, ct));
 
                 [HttpGet("categories/{welcoCategoryId:guid}")]
         public async Task<IActionResult> GetCategory([FromRoute] Guid welcoCategoryId, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalCategoryByIdQuery { WelcoCategoryId = welcoCategoryId }, ct));
+            => ToActionResult(await _mediator.Send(new GetExternalCategoryByIdQuery { WelcoCategoryId = welcoCategoryId, System = System }, ct));
 
 [HttpPost("distributors/apply")]
         public async Task<IActionResult> ApplyDistributor([FromBody] ApplyDistributorRequest request, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new ApplyExternalDistributorCommand { Request = request }, ct));
+            => ToActionResult(await _mediator.Send(new ApplyExternalDistributorCommand { Request = request, System = System }, ct));
 
                 [HttpGet("distributors")]
         public async Task<IActionResult> GetDistributors(CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalDistributorsQuery(), ct));
+            => ToActionResult(await _mediator.Send(new GetExternalDistributorsQuery { System = System }, ct));
 
                 [HttpGet("distributors/{id:guid}")]
         public async Task<IActionResult> GetDistributorById([FromRoute] Guid id, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalDistributorByIdQuery { Id = id }, ct));
+            => ToActionResult(await _mediator.Send(new GetExternalDistributorByIdQuery { Id = id, System = System }, ct));
 
                 [HttpPut("distributors/{id:guid}/approve")]
         public async Task<IActionResult> ApproveDistributor([FromRoute] Guid id, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new ApproveExternalDistributorCommand { Id = id }, ct));
+            => ToActionResult(await _mediator.Send(new ApproveExternalDistributorCommand { Id = id, System = System }, ct));
 
                 [HttpPut("distributors/{id:guid}/reject")]
         public async Task<IActionResult> RejectDistributor([FromRoute] Guid id, [FromBody] UpdateDistributorStatusRequest? request, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new RejectExternalDistributorCommand { Id = id, Reason = request?.Reason }, ct));
+            => ToActionResult(await _mediator.Send(new RejectExternalDistributorCommand { Id = id, Reason = request?.Reason, System = System }, ct));
 
 [HttpGet("support/tickets")]
         public async Task<IActionResult> GetSupportTickets([FromQuery] string? status, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalSupportTicketsQuery { Status = status }, ct));
+            => ToActionResult(await _mediator.Send(new GetExternalSupportTicketsQuery { Status = status, System = System }, ct));
 
                 [HttpGet("support/tickets/{id:guid}")]
         public async Task<IActionResult> GetSupportTicketById([FromRoute] Guid id, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalSupportTicketByIdQuery { Id = id }, ct));
+            => ToActionResult(await _mediator.Send(new GetExternalSupportTicketByIdQuery { Id = id, System = System }, ct));
 
                 [HttpPost("support/tickets/{id:guid}/reply")]
         public async Task<IActionResult> ReplySupportTicket([FromRoute] Guid id, [FromBody] ReplySupportTicketRequest request, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new ReplyExternalSupportTicketCommand { Id = id, Reply = request.Reply }, ct));
+            => ToActionResult(await _mediator.Send(new ReplyExternalSupportTicketCommand { Id = id, Reply = request.Reply, System = System }, ct));
 
                 [HttpPost("support/tickets/{id:guid}/close")]
         public async Task<IActionResult> CloseSupportTicket([FromRoute] Guid id, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new CloseExternalSupportTicketCommand { Id = id }, ct));
+            => ToActionResult(await _mediator.Send(new CloseExternalSupportTicketCommand { Id = id, System = System }, ct));
 
 [HttpGet("help/articles")]
         public async Task<IActionResult> GetHelpArticles(CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalHelpArticlesQuery(), ct));
+            => ToActionResult(await _mediator.Send(new GetExternalHelpArticlesQuery { System = System }, ct));
 
                 [HttpGet("help/faqs")]
         public async Task<IActionResult> GetFaqs(CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalFaqsQuery(), ct));
+            => ToActionResult(await _mediator.Send(new GetExternalFaqsQuery { System = System }, ct));
 
 [HttpGet("certifications")]
         public async Task<IActionResult> GetCertifications(CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalCertificationsQuery(), ct));
+            => ToActionResult(await _mediator.Send(new GetExternalCertificationsQuery { System = System }, ct));
 
                 [HttpGet("certifications/{id:guid}")]
         public async Task<IActionResult> GetCertificationById([FromRoute] Guid id, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalCertificationByIdQuery { Id = id }, ct));
+            => ToActionResult(await _mediator.Send(new GetExternalCertificationByIdQuery { Id = id, System = System }, ct));
     }
 }
