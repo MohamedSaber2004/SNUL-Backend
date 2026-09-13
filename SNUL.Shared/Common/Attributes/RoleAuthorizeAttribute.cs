@@ -54,7 +54,7 @@ namespace SNUL.Shared.Common.Attributes
 
             var user = context.HttpContext.User;
             var localizationProvider = context.HttpContext.RequestServices.GetService<ILocalizationProvider>();
-            var culture = GetRequestCulture(context.HttpContext);
+            var culture = RequestCultureHelper.GetRequestCulture(context.HttpContext);
 
             string Localize(string key)
             {
@@ -112,37 +112,6 @@ namespace SNUL.Shared.Common.Attributes
                     StatusCode = StatusCodes.Status403Forbidden
                 };
             }
-        }
-
-        private static string GetRequestCulture(HttpContext context)
-        {
-            var req = context?.Request;
-            if (req != null)
-            {
-                var headers = req.Headers;
-                var hCulture = headers["Accept-Language"].FirstOrDefault()
-                               ?? headers["Language"].FirstOrDefault()
-                               ?? headers["language"].FirstOrDefault()
-                               ?? headers["Culture"].FirstOrDefault()
-                               ?? headers["Lang"].FirstOrDefault();
-
-                if (!string.IsNullOrWhiteSpace(hCulture))
-                {
-                    return AppLanguageExtensions.FromCode(hCulture).ToCode();
-                }
-
-                var qCulture = req.Query["culture"].FirstOrDefault()
-                               ?? req.Query["lang"].FirstOrDefault()
-                               ?? req.Query["language"].FirstOrDefault();
-
-                if (!string.IsNullOrWhiteSpace(qCulture))
-                {
-                    return AppLanguageExtensions.FromCode(qCulture).ToCode();
-                }
-            }
-
-            var current = System.Globalization.CultureInfo.CurrentUICulture?.Name;
-            return AppLanguageExtensions.FromCode(current).ToCode();
         }
     }
 }

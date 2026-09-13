@@ -4,7 +4,9 @@ namespace SNUL.Shared.Common.Options
     {
         public const string SectionName = "IntegrationRoutes";
 
-public string OrdersBase { get; set; } = "api/integration/orders";
+ public string TokenRoute { get; set; } = "api/integration/token";
+
+ public string OrdersBase { get; set; } = "api/integration/orders";
         public string OrdersCreate { get; set; } = "";
         public string OrdersGetById { get; set; } = "{0}";
         public string OrdersUpdateStatus { get; set; } = "{0}/status";

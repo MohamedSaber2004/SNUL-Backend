@@ -1467,6 +1467,12 @@
             "items": {
               "$ref": "#/components/schemas/InventoryCheckItem"
             }
+          },
+          "system": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -1531,6 +1537,12 @@
             "items": {
               "$ref": "#/components/schemas/ExternalOrderItemRequest"
             }
+          },
+          "system": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -1548,6 +1560,12 @@
             "items": {
               "$ref": "#/components/schemas/ExternalQuoteItemRequest"
             }
+          },
+          "system": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -1711,6 +1729,12 @@
             "items": {
               "$ref": "#/components/schemas/InventoryCheckItem"
             }
+          },
+          "system": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

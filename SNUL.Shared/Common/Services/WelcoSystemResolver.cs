@@ -47,6 +47,8 @@ namespace SNUL.Shared.Common.Services
             return new WelcoSystemTarget
             {
                 BaseUrl = _options.BaseUrl,
+                ClientId = _options.ClientId,
+                ClientSecret = _options.ClientSecret,
                 ServiceSecret = _options.ServiceSecret,
                 ServiceIssuer = _options.ServiceIssuer,
                 ServiceAudience = _options.ServiceAudience,

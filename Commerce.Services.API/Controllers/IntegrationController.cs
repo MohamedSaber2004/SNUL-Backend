@@ -15,8 +15,8 @@ using Commerce.Services.API.Features.Integration.Quotes.Commands.CreateExternalQ
 using Commerce.Services.API.Features.Integration.Quotes.Commands.UpdateExternalQuoteStatus;
 using Commerce.Services.API.Features.Integration.Support;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SNUL.Shared.Common.Attributes;
 using SNUL.Shared.Common.DTOs.Integration;
 using SNUL.Shared.Common.Extensions;
 using SNUL.Shared.Controllers;
@@ -29,7 +29,7 @@ namespace Commerce.Services.API.Controllers
     /// Unknown systems fail with 400; providers are filtered through
     /// WelcoProviderMaps so each system only sees its own clients/providers.
     /// </summary>
-    [Authorize(Roles = "Admin")]
+    [ServiceAuth]
     [ApiController]
     [Route("api/v1/integration")]
     [Tags("Welco Integration (Internal Admin Dashboard)")]

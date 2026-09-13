@@ -24,7 +24,6 @@
       "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 7145 }],
       "UpstreamPathTemplate": "/api/v1/integration/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer", "AllowedScopes": [] },
       "DangerousAcceptAnyServerCertificateValidator": true
     },
     {
@@ -33,7 +32,6 @@
       "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 7145 }],
       "UpstreamPathTemplate": "/api/v1/integration",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer", "AllowedScopes": [] },
       "DangerousAcceptAnyServerCertificateValidator": true
     },
     {
