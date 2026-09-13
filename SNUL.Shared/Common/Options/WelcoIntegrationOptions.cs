@@ -16,16 +16,6 @@ namespace SNUL.Shared.Common.Options
         public string BaseUrl { get; set; } = string.Empty;
         public string ServiceSecret { get; set; } = string.Empty;
         public string ClientId { get; set; } = "snul";
-        /// <summary>
-        /// Flat-level client secret for the legacy single-tenant fallback.
-        /// Only the KEY is committed (empty); the VALUE must come from the
-        /// <c>WelcoIntegration__ClientSecret</c> environment variable
-        /// (e.g. <c>WelcoIntegration__ClientSecret=YOUR_MIN_32_CHAR_SECRET</c>)
-        /// and must never be committed.
-        /// Empty in JSON means the legacy <see cref="ServiceSecret"/> signs the token instead.
-        /// Precedence: per-system <see cref="Systems"/> entry wins, else this flat value,
-        /// else <see cref="ServiceSecret"/> as the signing fallback.
-        /// </summary>
         public string ClientSecret { get; set; } = string.Empty;
         public string ServiceIssuer { get; set; } = "snul-integration";
         public string ServiceAudience { get; set; } = "welco-integration";
