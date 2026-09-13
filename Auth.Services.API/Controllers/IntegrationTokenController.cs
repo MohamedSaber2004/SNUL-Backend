@@ -6,7 +6,6 @@ using SNUL.Shared.Controllers;
 
 namespace Auth.Services.API.Controllers
 {
-    [AllowAnonymous]
     [ApiController]
     [Route("api/integration/token")]
     public class IntegrationTokenController : AppControllerBase
