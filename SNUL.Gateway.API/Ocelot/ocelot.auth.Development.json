@@ -1,6 +1,19 @@
 {
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/integration/token",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7303
+        }
+      ],
+      "UpstreamPathTemplate": "/api/integration/token",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DangerousAcceptAnyServerCertificateValidator": true
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/auth/profile",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
