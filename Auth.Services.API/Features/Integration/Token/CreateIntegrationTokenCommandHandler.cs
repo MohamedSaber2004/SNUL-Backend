@@ -17,8 +17,6 @@ namespace Auth.Services.API.Features.Integration.Token
         public const int ExpiresInSeconds = 3300;
 
         private readonly WelcoIntegrationOptions _options;
-        private readonly ILogger<CreateIntegrationTokenCommandHandler> _logger;
-
         public CreateIntegrationTokenCommandHandler(
             IOptions<WelcoIntegrationOptions> options)
         {

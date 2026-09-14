@@ -1,13 +1,31 @@
 {
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/v1/carts",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [{ "Host": "snul-commerce.runasp.net", "Port": 443 }],
+      "UpstreamPathTemplate": "/api/v1/carts",
+      "UpstreamHttpMethod": [ "GET", "POST", "DELETE" ],
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer", "AllowedScopes": [] },
+      "DangerousAcceptAnyServerCertificateValidator": true
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/carts/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [{ "Host": "snul-commerce.runasp.net", "Port": 443 }],
       "UpstreamPathTemplate": "/api/v1/carts/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer", "AllowedScopes": [] },
-      "DangerousAcceptAnyServerCertificateValidator": false
+      "DangerousAcceptAnyServerCertificateValidator": true
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/orders",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [{ "Host": "snul-commerce.runasp.net", "Port": 443 }],
+      "UpstreamPathTemplate": "/api/v1/orders",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer", "AllowedScopes": [] },
+      "DangerousAcceptAnyServerCertificateValidator": true
     },
     {
       "DownstreamPathTemplate": "/api/v1/orders/{everything}",
@@ -16,7 +34,7 @@
       "UpstreamPathTemplate": "/api/v1/orders/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer", "AllowedScopes": [] },
-      "DangerousAcceptAnyServerCertificateValidator": false
+      "DangerousAcceptAnyServerCertificateValidator": true
     },
     {
       "DownstreamPathTemplate": "/api/v1/integration/{everything}",
@@ -24,7 +42,7 @@
       "DownstreamHostAndPorts": [{ "Host": "snul-commerce.runasp.net", "Port": 443 }],
       "UpstreamPathTemplate": "/api/v1/integration/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "DangerousAcceptAnyServerCertificateValidator": false
+      "DangerousAcceptAnyServerCertificateValidator": true
     },
     {
       "DownstreamPathTemplate": "/api/v1/integration",
@@ -32,7 +50,7 @@
       "DownstreamHostAndPorts": [{ "Host": "snul-commerce.runasp.net", "Port": 443 }],
       "UpstreamPathTemplate": "/api/v1/integration",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "DangerousAcceptAnyServerCertificateValidator": false
+      "DangerousAcceptAnyServerCertificateValidator": true
     },
     {
       "DownstreamPathTemplate": "/openapi/v1.json",
@@ -40,7 +58,7 @@
       "DownstreamHostAndPorts": [{ "Host": "snul-commerce.runasp.net", "Port": 443 }],
       "UpstreamPathTemplate": "/api/docs/commerce/openapi.json",
       "UpstreamHttpMethod": [ "GET" ],
-      "DangerousAcceptAnyServerCertificateValidator": false
+      "DangerousAcceptAnyServerCertificateValidator": true
     },
     {
       "DownstreamPathTemplate": "/scalar/v1",
@@ -48,7 +66,7 @@
       "DownstreamHostAndPorts": [{ "Host": "snul-commerce.runasp.net", "Port": 443 }],
       "UpstreamPathTemplate": "/api/docs/commerce",
       "UpstreamHttpMethod": [ "GET" ],
-      "DangerousAcceptAnyServerCertificateValidator": false
+      "DangerousAcceptAnyServerCertificateValidator": true
     }
   ]
 }
