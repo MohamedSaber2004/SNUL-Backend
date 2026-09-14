@@ -247,6 +247,9 @@ namespace SNUL.Shared.Localization
             public const string Timeout = "Integration.Timeout";
             public const string Unavailable = "Integration.Unavailable";
             public const string Error = "Integration.Error";
+            public const string ClientIdRequired = "Integration.ClientIdRequired";
+            public const string ClientSecretRequired = "Integration.ClientSecretRequired";
+            public const string InvalidCredientials = "Integration.InvalidCredientials";
         }
 
         public static class Product

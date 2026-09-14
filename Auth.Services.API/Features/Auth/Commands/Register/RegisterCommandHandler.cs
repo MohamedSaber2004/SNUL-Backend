@@ -1,7 +1,9 @@
 using System.Security.Cryptography;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SNUL.Shared.Common.DTOs.Integration;
 using SNUL.Shared.Common.Interfaces;
 using SNUL.Shared.Common.Options;
 using SNUL.Shared.Common.Repositories.Interfaces.Base;
@@ -18,26 +20,29 @@ namespace Auth.Services.API.Features.Auth.Commands.Register
         private readonly IEmailService _emailService;
         private readonly EmailSettings _emailSettings;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWelcoIntegrationService _welcoIntegrationService;
 
         public RegisterCommandHandler(
             UserManager<ApplicationUser> userManager,
             IEmailService emailService,
             IOptions<EmailSettings> emailSettings,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IWelcoIntegrationService welcoIntegrationService)
         {
             _userManager = userManager;
             _emailService = emailService;
             _emailSettings = emailSettings.Value;
             _unitOfWork = unitOfWork;
+            _welcoIntegrationService = welcoIntegrationService;
         }
 
         public async Task<Result<string>> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
-            
+
             if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
             {
                 var phone = request.PhoneNumber.Trim();
-                
+
                 if (request.PhoneCountryId.HasValue && request.PhoneCountryId.Value != Guid.Empty)
                 {
                     var countryRepo = _unitOfWork.GetRepository<Country, Guid>();
@@ -49,7 +54,7 @@ namespace Auth.Services.API.Features.Auth.Commands.Register
                     if (!string.IsNullOrWhiteSpace(phoneCountry.PhoneCode))
                     {
                         var code = phoneCountry.PhoneCode.Trim();
-                        
+
                         var normalized = phone.Replace(" ", "").Replace("-", "");
                         var codeNorm = code.Replace(" ", "");
                         if (!normalized.StartsWith(codeNorm, StringComparison.Ordinal))
@@ -63,18 +68,18 @@ namespace Auth.Services.API.Features.Auth.Commands.Register
                 else
                 {
 
-var countryRepo = _unitOfWork.GetRepository<Country, Guid>();
-                    
+                    var countryRepo = _unitOfWork.GetRepository<Country, Guid>();
+
                     var allCountries = await countryRepo.GetAllListAsync(c => !c.IsDeleted && c.PhoneCode != null, cancellationToken);
                     var matched = allCountries
                         .Where(c => !string.IsNullOrWhiteSpace(c.PhoneCode) && phone.Replace(" ", "").StartsWith(c.PhoneCode!.Trim().Replace(" ", ""), StringComparison.Ordinal))
                         .OrderByDescending(c => c.PhoneCode!.Length)
                         .FirstOrDefault();
-                    
+
                 }
             }
 
-DistributorApplication? pendingApp = null;
+            DistributorApplication? pendingApp = null;
             if (request.UserType == UserType.OrganizationUser)
             {
                 if (string.IsNullOrWhiteSpace(request.CompanyName) || request.DistributorCountryId == null || request.DistributorCountryId == Guid.Empty || string.IsNullOrWhiteSpace(request.SalesVolumeBand))
@@ -135,7 +140,7 @@ DistributorApplication? pendingApp = null;
                 EmailConfirmationOtpExpiry = DateTime.UtcNow.AddMinutes(expiryMinutes)
             };
 
-var createResult = await _userManager.CreateAsync(user, request.Password);
+            var createResult = await _userManager.CreateAsync(user, request.Password);
             if (!createResult.Succeeded)
             {
                 var errors = createResult.Errors.Select(e => e.Description).ToList();
@@ -146,13 +151,38 @@ var createResult = await _userManager.CreateAsync(user, request.Password);
 
             await _userManager.AddToRoleAsync(user, request.UserType.ToString());
 
+            if (pendingApp != null)
+            {
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                try
+                {
+                    var applyReq = new ApplyDistributorRequest
+                    {
+                        CompanyName = pendingApp.CompanyName,
+                        ContactPerson = pendingApp.ContactPerson,
+                        Email = pendingApp.ContactEmail,
+                        Phone = pendingApp.Phone,
+                        CountryId = pendingApp.CountryId,
+                        SalesVolumeBand = pendingApp.SalesVolumeBand,
+                        CategoryInterest = pendingApp.CategoryInterest,
+                        Website = pendingApp.Website,
+                        SourceMarket = "Egypt"
+                    };
+                    await _welcoIntegrationService.SubmitDistributorApplicationAsync(applyReq, cancellationToken);
+                }
+                catch (Exception)
+                {
+                }
+            }
+
             try
             {
                 await _emailService.SendVerificationEmailAsync(user.Email!, emailOtp, user.Language.ToString().ToLower(), cancellationToken);
             }
             catch (Exception)
             {
-                
+
             }
 
             return Result<string>.Success(user.Email!, LocalizationKeys.Auth.RegisterSuccess);

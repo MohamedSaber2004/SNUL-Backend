@@ -216,7 +216,10 @@
   "Integration": {
     "Timeout": "Integration request timed out.",
     "Unavailable": "Integration service is unavailable. Please retry later.",
-    "Error": "Integration error occurred: {0}"
+    "Error": "Integration error occurred: {0}",
+    "ClientIdRequired": "Client id is required.",
+    "ClientSecretRequired": "Client secret is required.",
+    "InvalidCredientials": "Invalid client credentials."
   },
   "Product": {
     "Created": "Product created successfully.",

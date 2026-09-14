@@ -216,7 +216,10 @@
   "Integration": {
     "Timeout": "انتهت مهلة طلب الربط.",
     "Unavailable": "خدمة الربط غير متوفرة حالياً. يرجى المحاولة لاحقاً.",
-    "Error": "حدث خطأ في الربط: {0}"
+    "Error": "حدث خطأ في الربط: {0}",
+    "ClientIdRequired": "المُعرف مطلوب",
+    "ClientSecretRequired": "المفتاح السري مطلوب",
+    "InvalidCredientials": "البيانات غير صالحة"
   },
   "Product": {
     "Created": "تم إنشاء المنتج بنجاح.",

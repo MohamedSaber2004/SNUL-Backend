@@ -1,5 +1,7 @@
 using MediatR;
-using SNUL.Shared.Common.DTOs.UserManagement;
+using Microsoft.Extensions.Logging;
+using SNUL.Shared.Common.DTOs.Integration;
+using UserManagementDto = SNUL.Shared.Common.DTOs.UserManagement.DistributorApplicationDto;
 using SNUL.Shared.Common.Interfaces;
 using SNUL.Shared.Common.Repositories.Interfaces.Base;
 using SNUL.Shared.Domain.Models;
@@ -8,25 +10,33 @@ using SNUL.Shared.Results;
 
 namespace UserManagement.Service.API.Features.DistributorApplications.Commands.CreateDistributorApplication
 {
-    public class CreateDistributorApplicationCommandHandler : IRequestHandler<CreateDistributorApplicationCommand, Result<DistributorApplicationDto>>
+    public class CreateDistributorApplicationCommandHandler : IRequestHandler<CreateDistributorApplicationCommand, Result<UserManagementDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IWelcoIntegrationService _welcoIntegrationService;
+        private readonly ILogger<CreateDistributorApplicationCommandHandler> _logger;
 
-        public CreateDistributorApplicationCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+        public CreateDistributorApplicationCommandHandler(
+            IUnitOfWork unitOfWork,
+            ICurrentUserService currentUserService,
+            IWelcoIntegrationService welcoIntegrationService,
+            ILogger<CreateDistributorApplicationCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
+            _welcoIntegrationService = welcoIntegrationService;
+            _logger = logger;
         }
 
-        public async Task<Result<DistributorApplicationDto>> Handle(CreateDistributorApplicationCommand request, CancellationToken cancellationToken)
+        public async Task<Result<UserManagementDto>> Handle(CreateDistributorApplicationCommand request, CancellationToken cancellationToken)
         {
 
 var countryRepo = _unitOfWork.GetRepository<Country, Guid>();
             var country = await countryRepo.GetByIdAsync(request.CountryId, cancellationToken);
             if (country == null || country.IsDeleted)
             {
-                return Result<DistributorApplicationDto>.NotFound(LocalizationKeys.Country.NotFound);
+                return Result<UserManagementDto>.NotFound(LocalizationKeys.Country.NotFound);
             }
 
             var currentUserId = _currentUserService.UserId != Guid.Empty
@@ -52,7 +62,29 @@ var countryRepo = _unitOfWork.GetRepository<Country, Guid>();
             await repo.AddAsync(app, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var dto = new DistributorApplicationDto
+            // Sync to Welco via IWelcoIntegrationService
+            try
+            {
+                var applyReq = new ApplyDistributorRequest
+                {
+                    CompanyName = app.CompanyName,
+                    ContactPerson = app.ContactPerson,
+                    Email = app.ContactEmail,
+                    Phone = app.Phone,
+                    CountryId = app.CountryId,
+                    SalesVolumeBand = app.SalesVolumeBand,
+                    CategoryInterest = app.CategoryInterest,
+                    Website = app.Website,
+                    SourceMarket = "Egypt"
+                };
+                await _welcoIntegrationService.SubmitDistributorApplicationAsync(applyReq, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to sync distributor application to Welco for company {CompanyName}", app.CompanyName);
+            }
+
+            var dto = new UserManagementDto
             {
                 Id = app.Id,
                 CompanyName = app.CompanyName,
@@ -68,7 +100,7 @@ var countryRepo = _unitOfWork.GetRepository<Country, Guid>();
                 CreatedAt = app.CreatedAt
             };
 
-            return Result<DistributorApplicationDto>.Created(dto, "Distributor application submitted");
+            return Result<UserManagementDto>.Created(dto, "Distributor application submitted");
         }
     }
 }

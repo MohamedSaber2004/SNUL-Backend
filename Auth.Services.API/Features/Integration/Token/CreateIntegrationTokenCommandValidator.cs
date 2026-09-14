@@ -1,4 +1,5 @@
 using FluentValidation;
+using SNUL.Shared.Localization;
 
 namespace Auth.Services.API.Features.Integration.Token
 {
@@ -7,10 +8,10 @@ namespace Auth.Services.API.Features.Integration.Token
         public CreateIntegrationTokenCommandValidator()
         {
             RuleFor(x => x.ClientId)
-                .NotEmpty().WithMessage("ClientId is required.");
+                .NotEmpty().WithMessage(LocalizationKeys.Integration.ClientIdRequired);
 
             RuleFor(x => x.ClientSecret)
-                .NotEmpty().WithMessage("ClientSecret is required.");
+                .NotEmpty().WithMessage(LocalizationKeys.Integration.ClientSecretRequired);
         }
     }
 }

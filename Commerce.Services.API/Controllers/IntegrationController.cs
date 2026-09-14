@@ -5,14 +5,9 @@ using Commerce.Services.API.Features.Integration.Distributors;
 using Commerce.Services.API.Features.Integration.Help;
 using Commerce.Services.API.Features.Integration.Inventory.Commands.ReserveExternalInventory;
 using Commerce.Services.API.Features.Integration.Inventory.Queries.CheckExternalInventory;
-using Commerce.Services.API.Features.Integration.Orders.Commands.CreateExternalOrder;
-using Commerce.Services.API.Features.Integration.Orders.Commands.UpdateExternalOrderStatus;
-using Commerce.Services.API.Features.Integration.Orders.Queries.GetExternalOrderById;
 using Commerce.Services.API.Features.Integration.Products.Queries.GetExternalProductById;
 using Commerce.Services.API.Features.Integration.Products.Queries.GetExternalProducts;
 using Commerce.Services.API.Features.Integration.Providers.Queries.GetExternalProviders;
-using Commerce.Services.API.Features.Integration.Quotes.Commands.CreateExternalQuote;
-using Commerce.Services.API.Features.Integration.Quotes.Commands.UpdateExternalQuoteStatus;
 using Commerce.Services.API.Features.Integration.Support;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -64,50 +59,6 @@ namespace Commerce.Services.API.Controllers
             command.System = System;
             return ToActionResult(await _mediator.Send(command, ct));
         }
-
-[HttpPost("orders")]
-        public async Task<IActionResult> CreateOrder([FromBody] CreateExternalOrderCommand command, CancellationToken ct)
-        {
-            command.System = System;
-            return ToActionResult(await _mediator.Send(command, ct));
-        }
-
-                [HttpGet("orders/{welcoOrderId:guid}")]
-        public async Task<IActionResult> GetOrder([FromRoute] Guid welcoOrderId, CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new GetExternalOrderByIdQuery { WelcoOrderId = welcoOrderId, System = System }, ct));
-
-                [HttpPut("orders/{welcoOrderId:guid}/status")]
-        public async Task<IActionResult> UpdateOrderStatus(
-            [FromRoute] Guid welcoOrderId,
-            [FromBody] UpdateExternalStatusRequest request,
-            CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new UpdateExternalOrderStatusCommand
-            {
-                WelcoOrderId = welcoOrderId,
-                Status = request.Status,
-                Notes = request.Notes,
-                System = System
-            }, ct));
-
-[HttpPost("quotes")]
-        public async Task<IActionResult> CreateQuote([FromBody] CreateExternalQuoteCommand command, CancellationToken ct)
-        {
-            command.System = System;
-            return ToActionResult(await _mediator.Send(command, ct));
-        }
-
-                [HttpPut("quotes/{welcoQuoteId:guid}/status")]
-        public async Task<IActionResult> UpdateQuoteStatus(
-            [FromRoute] Guid welcoQuoteId,
-            [FromBody] UpdateExternalStatusRequest request,
-            CancellationToken ct)
-            => ToActionResult(await _mediator.Send(new UpdateExternalQuoteStatusCommand
-            {
-                WelcoQuoteId = welcoQuoteId,
-                Status = request.Status,
-                Notes = request.Notes,
-                System = System
-            }, ct));
 
 [HttpGet("categories")]
         public async Task<IActionResult> GetCategories(CancellationToken ct)
