@@ -19,25 +19,25 @@ namespace Commerce.Services.API.Controllers
     {
         public OrdersController(IMediator mediator) : base(mediator) { }
 
-                [HttpGet]
+        [HttpGet]
         [Route(CommerceApiRoutes.Orders.GetAll)]
-        [RoleAuthorize(UserType.OrganizationUser, UserType.Admin, UserType.SnulStaff)]
+        [RoleAuthorize(UserType.Client, UserType.Admin, UserType.SnulStaff)]
         public async Task<IActionResult> GetAll([FromQuery] GetOrdersQuery q, CancellationToken ct) => ToActionResult(await _mediator.Send(q, ct));
 
-                [HttpGet]
+        [HttpGet]
         [Route(CommerceApiRoutes.Orders.GetById)]
-        [RoleAuthorize(UserType.OrganizationUser, UserType.Admin, UserType.SnulStaff)]
+        [RoleAuthorize(UserType.Client, UserType.Admin, UserType.SnulStaff)]
         public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct) => ToActionResult(await _mediator.Send(new GetOrderByIdQuery { Id = id }, ct));
 
-                [HttpGet]
+        [HttpGet]
         [Route(CommerceApiRoutes.Orders.Track)]
         [RoleAuthorize]
         public async Task<IActionResult> Track([FromRoute] string orderNumber, CancellationToken ct)
             => ToActionResult(await _mediator.Send(new TrackOrderQuery { OrderNumber = orderNumber }, ct));
 
-                [HttpPost]
+        [HttpPost]
         [Route(CommerceApiRoutes.Orders.Create)]
-        [RoleAuthorize(UserType.OrganizationUser, UserType.Admin, UserType.SnulStaff)]
+        [RoleAuthorize(UserType.Client, UserType.Admin, UserType.SnulStaff)]
         public async Task<IActionResult> Create([FromBody] CreateOrderCommand cmd, CancellationToken ct) => ToActionResult(await _mediator.Send(cmd, ct));
 
                 [HttpPut]

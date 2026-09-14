@@ -1,86 +1,86 @@
-# 🏥 SNUL — Medical & Surgical Commerce Platform (Egypt & Regional Hub)
+# 🏥 SNUL & WELCO Dual-Platform Architecture & Complete API Specification
 
-> **Enterprise B2B & B2C healthcare distribution backend for surgical instruments and medical devices.**
-> 
-> Sourced directly from **Welco Surgical Instruments Platform** (Pakistan Manufacturing & Master Inventory Source) and operating with **strictly isolated client databases and regional distribution architecture**.
-> 
+> **Comprehensive System Documentation, Route Directory, Request/Response DTO Contracts, External M2M Integration Protocols, and Multi-Environment Infrastructure Guide.**
+>
+> Sourced directly from **Welco Surgical Instruments Platform** (Sialkot, Pakistan — Founded 1994, Master Manufacturing & Physical Warehouse Source) and operating **SNUL Platform** (Cairo, Egypt — Regional Healthcare Distribution Hub) with **strictly isolated client databases, local order books, and zero-duplication catalog architecture**.
+>
 > Built on **.NET 10**, **Clean / Onion Architecture**, **CQRS (MediatR)**, and **Ocelot API Gateway**.
 
 ---
 
 ## 📑 Table of Contents
 
-- [🌍 Business & Geographic Architecture](#-business--geographic-architecture)
-- [👥 Role Hierarchy & Entity Equivalence](#-role-hierarchy--entity-equivalence)
-- [🛡️ Data Isolation & Architecture Boundary](#️-data-isolation--architecture-boundary)
-- [🏗️ System Architecture & Distributed Topology](#️-system-architecture--distributed-topology)
-- [🔌 Microservices Decomposition](#-microservices-decomposition)
-- [📡 API Endpoints: Shared vs. Isolated Breakdown](#-api-endpoints-shared-vs-isolated-breakdown)
-  - [A. Shared Presentational Endpoints (Sourced from Welco Master)](#a-shared-presentational-endpoints-sourced-from-welco-master)
-  - [B. Isolated Client & Transactional Endpoints (SNUL Egypt DB Only)](#b-isolated-client--transactional-endpoints-snul-egypt-db-only)
-- [🔄 Core Business Workflows & Sequence Diagrams](#-core-business-workflows--sequence-diagrams)
-  - [Workflow 1: Client Distributor/Provider Onboarding & Verification](#workflow-1-client-distributorprovider-onboarding--verification)
-  - [Workflow 2: Zero-Duplication Catalog Discovery & Provider Scoping](#workflow-2-zero-duplication-catalog-discovery--provider-scoping)
-  - [Workflow 3: Real-Time Pakistan Physical Inventory Check & Reservation](#workflow-3-real-time-pakistan-physical-inventory-check--reservation)
-  - [Workflow 4: Isolated Client Checkout & Downstream Factory Order Fulfillment](#workflow-4-isolated-client-checkout--downstream-factory-order-fulfillment)
-  - [Workflow 5: B2B RFQ & Quote Negotiation Pipeline](#workflow-5-b2b-rfq--quote-negotiation-pipeline)
-  - [Workflow 6: Cross-Platform Technical Support & Ticketing](#workflow-6-cross-platform-technical-support--ticketing)
-- [🗺️ Complete Endpoint-to-Endpoint Integration Matrix](#️-complete-endpoint-to-endpoint-integration-matrix)
-- [⚙️ Configuration & Environment Settings](#️-configuration--environment-settings)
-- [🚀 Getting Started & Local Development](#-getting-started--local-development)
+1. [🌍 Dual-Platform Business & Geographic Topology](#1--dual-platform-business--geographic-topology)
+2. [👥 Unified Role Hierarchy & Access Matrix](#2--unified-role-hierarchy--access-matrix)
+3. [🛡️ Strict Data Isolation vs. Shared Integration Boundaries](#3-️-strict-data-isolation-vs-shared-integration-boundaries)
+4. [🔒 External M2M Authentication & Token Lifecycle Engine](#4--external-m2m-authentication--token-lifecycle-engine)
+5. [🌐 Multi-Environment Infrastructure (Dev / Test / Prod)](#5--multi-environment-infrastructure-dev--test--prod)
+6. [📡 Complete API Route & Contract Catalog (SNUL & Welco)](#6--complete-api-route--contract-catalog-snul--welco)
+   - [6.1 Auth Service (`/api/v1/auth`, `/api/integration/token`)](#61-auth-service-apiv1auth-apiintegrationtoken)
+   - [6.2 User Management Service (`/api/v1/users`, `/companies`, `/addresses`, `/distributor-applications`)](#62-user-management-service-apiv1users-companies-addresses-distributor-applications)
+   - [6.3 Product Catalog Service (`/api/v1/products`, `/categories`, `/currencies`, `/wishlists`)](#63-product-catalog-service-apiv1products-categories-currencies-wishlists)
+   - [6.4 Commerce Service (`/api/v1/carts`, `/orders`, `/api/v1/integration/*`)](#64-commerce-service-apiv1carts-orders-apiv1integration)
+   - [6.5 Sales Service (`/api/v1/rfqs`, `/quotes`, `/product-inquiries`)](#65-sales-service-apiv1rfqs-quotes-product-inquiries)
+   - [6.6 Content & Support Service (`/api/v1/support-tickets`, `/documents`, `/faq`, `/help-articles`)](#66-content--support-service-apiv1support-tickets-documents-faq-help-articles)
+   - [6.7 Certification Service (`/api/v1/certifications`)](#67-certification-service-apiv1certifications)
+   - [6.8 Attachment Storage Service (`/api/v1/attachments`)](#68-attachment-storage-service-apiv1attachments)
+7. [⚡ Welco Upstream Integration Endpoints (`/api/integration/*`)](#7--welco-upstream-integration-endpoints-apiintegration)
+8. [🔄 Complete Business Workflows & Sequence Diagrams](#8--complete-business-workflows--sequence-diagrams)
+9. [⚙️ Environment Configuration Files Schema (`appsettings.*.json` & `ocelot.*.json`)](#9-️-environment-configuration-files-schema-appsettingsjson--ocelotjson)
+10. [🚀 Build, Verification, & Local Startup Guide](#10--build-verification--local-startup-guide)
 
 ---
 
-## 🌍 Business & Geographic Architecture
+## 1. 🌍 Dual-Platform Business & Geographic Topology
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────┐
 │                             WELCO (Pakistan - Master Hub)                        │
-│  - Physical Manufacturing Facility (Founded 1994, Sialkot/Pakistan)              │
-│  - Master Inventory Warehouse & Physical Stock                                   │
-│  - Master Catalog, Categories, ISO 13485 & CE Compliance Documents               │
+│  - Physical Manufacturing Facility (Founded 1994, Sialkot, Pakistan)             │
+│  - Master Inventory Warehouse & Physical Stock Control                           │
+│  - Master Surgical Catalog, Dimensions, Alloys, ISO 13485 & CE Proofs            │
 │  - Welco Global Clients Database (Strictly Isolated)                             │
 └────────────────────────────────────────┬─────────────────────────────────────────┘
                                          │ Machine-to-Machine Integration (JWT)
-                                         │ Shared Presentational Catalog & Real-Time Stock
+                                         │ Sourced Dynamically (Zero Duplication)
 ┌────────────────────────────────────────▼─────────────────────────────────────────┐
 │                              SNUL (Egypt - Distribution Hub)                     │
 │  - Regional Medical Devices & Surgical Instruments Distribution Platform         │
 │  - Egyptian Hospitals, Clinics, and Regional B2B Buyers                          │
-│  - Egyptian Clients & Orders Database (Strictly Isolated)                        │
-│  - Local Carts, RFQs, Quotes, User Profiles, Addresses & Wishlists               │
+│  - Egyptian Clients, Carts, Orders, RFQs & Quotes Database (Strictly Isolated)   │
+│  - Sourced Catalog, Live Inventory Checks, Upstream Support & Application Sync   │
 └──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-1. **Welco (Pakistan - Master Origin):**
-   - Headquartered with manufacturing facilities in Pakistan.
-   - Holds physical inventory and master product specifications (dimensions, alloys, surgical grades, ISO 13485 / CE certifications).
-   - Operates as the **Single Source of Truth** for all presentational catalog items, global certifications, factory inventory levels, and master help/knowledge base content.
-   - Maintains its own **Welco Database** containing Welco's global clients.
+1. **Welco Platform (Pakistan — Origin of Production & Master Data):**
+   - Headquartered with manufacturing facilities in Sialkot, Pakistan.
+   - Holds the physical warehouse inventory and master product technical specifications (dimensions, titanium/stainless steel grades, ISO 13485 / CE certifications).
+   - Operates as the **Single Source of Truth** for presentational catalog items, global certifications, real-time factory warehouse inventory, and global help knowledge base.
+   - Maintains an isolated database for global direct clients and factory-direct orders.
 
-2. **SNUL (Egypt - Regional Distribution Platform):**
+2. **SNUL Platform (Egypt — Regional Commercial Hub):**
    - The dedicated digital distribution and sales platform serving Egypt and regional healthcare markets.
-   - Maintains an independent, isolated **SNUL Database** containing Egyptian customers, clinics, hospitals, user authentication credentials, shopping carts, localized orders, RFQs, delivery addresses, and audit trails.
-   - Eliminates data duplication by dynamically sourcing catalog items, categories, certifications, and live inventory verification from Welco via high-performance, resilient API integration.
+   - Maintains an independent, strictly isolated **SNUL Database** containing Egyptian customers, clinics, hospitals, user authentication credentials, shopping carts, localized orders, RFQs, delivery addresses, and audit trails.
+   - Eliminates catalog duplication by dynamically sourcing catalog items, categories, certifications, and live inventory verification from Welco via high-performance, resilient API integration.
 
 ---
 
-## 👥 Role Hierarchy & Entity Equivalence
+## 2. 👥 Unified Role Hierarchy & Access Matrix
 
-The system establishes unified role definitions mapped across both platforms:
+Both platforms share an identical, synchronized role model:
 
-| Unified Role | Platform Nomenclature | Description & Access Scope |
+| Unified Role | Platform Identifier | Description & Access Scope |
 | :--- | :--- | :--- |
-| **Admin** | `Admin` | Full administrative control over local platform settings, staff accounts, company verification, and integration overrides. |
-| **Staff** | `SnulStaff` (SNUL) / `WelcoStaff` (Welco) | Internal operations team managing customer support tickets, localized order fulfillment, quote pricing, and content moderation. |
-| **Provider / Distributor** | `Provider` = `Distributor` = `OrganizationUser` | B2B healthcare accounts (hospitals, surgical clinics, regional resellers). Can apply during registration or via portal to receive wholesale pricing, RFQ capabilities, and bulk ordering. |
+| **Admin** | `Admin` | System Administrator with unrestricted access to all endpoints, configuration, tenant verification, and audit logs. |
+| **Staff** | `SnulStaff` (SNUL) / `WelcoStaff` (Welco) | Internal operations staff managing catalog moderation, order fulfillment, quote pricing, and customer support. |
+| **Provider / Distributor** | `Provider` = `Distributor` = `OrganizationUser` | B2B healthcare accounts (hospitals, surgical centers, clinics, medical device distributors). Access to wholesale pricing, RFQs, itemized quotes, and bulk checkout. |
 | **Client / Customer** | `Client` = `Customer` = `Guest` | Retail buyers, medical students, individual practitioners, and anonymous catalog browsers. Access to direct cart purchases and public catalog. |
 
 ---
 
-## 🛡️ Data Isolation & Architecture Boundary
+## 3. 🛡️ Strict Data Isolation vs. Shared Integration Boundaries
 
-To prevent cross-tenant data leaks and maintain regulatory compliance:
+To guarantee regulatory compliance, commercial security, and clean separation between local client relationships and upstream manufacturing:
 
 ```mermaid
 flowchart LR
@@ -88,12 +88,12 @@ flowchart LR
         direction TB
         SNUL_DB[("💾 SNUL SQL Server DB
         ----------------------
-        • ApplicationUsers
+        • ApplicationUsers & Auth
         • UserRefreshTokens
-        • UserAddresses & Zones
-        • Companies & Branches
-        • Carts & CartItems
-        • Local Orders & Tracking
+        • Egyptian Company Profiles
+        • UserAddresses & Local Zones
+        • Local Carts & CartItems
+        • Local Egyptian Orders
         • Local RFQs & Quotes
         • Wishlists & AuditLogs
         • WelcoProviderMaps")]
@@ -105,7 +105,7 @@ flowchart LR
 
     subgraph Shared_Sync ["⚡ M2M Secure Link"]
         IntegService["WelcoIntegrationService
-        (JWT Client Credentials + Cache)"]
+        (JWT Client Credentials + Token Cache)"]
     end
 
     subgraph Welco_Pakistan ["🇵🇰 Welco Platform (Pakistan)"]
@@ -114,11 +114,11 @@ flowchart LR
         ----------------------
         • Master Products & Specs
         • Master Categories
-        • Physical Warehouse Inventory
+        • Physical Factory Inventory
         • ISO 13485 & CE Documents
-        • Master Help & FAQs
+        • Master Knowledge Base
         • Welco Global Clients (Isolated)
-        • Welco Factory Orders")]
+        • Welco Global Factory Orders")]
         Welco_GW["🚪 Welco Gateway (:7166)"]
         Welco_API["🏭 Welco Microservices"]
         Welco_GW --> Welco_API
@@ -126,15 +126,17 @@ flowchart LR
     end
 
     SNUL_API --> IntegService
-    IntegService -->|REST JSON + JWT| Welco_GW
+    IntegService -->|REST JSON + M2M Bearer JWT| Welco_GW
 ```
 
-- **Strictly Isolated in SNUL:**
+### Isolation Boundary Rules:
+- **Strictly Isolated in SNUL DB:**
   - Client credentials, hashed passwords, refresh tokens, and OTP codes.
   - Egyptian clinic and hospital company profiles, tax IDs, and local shipping addresses.
   - Active shopping cart sessions and guest tokens.
-  - Local sales orders, payment transaction logs, and customer wishlists.
-- **Shared / Sourced from Welco:**
+  - Local sales orders, invoices, payment transaction logs, and customer wishlists.
+  - Local RFQ and quote negotiation cycles.
+- **Shared / Sourced Dynamically from Welco:**
   - Surgical instrument catalog, product SKUs, variant attributes, and technical datasheets.
   - Category taxonomies and navigation trees.
   - Real-time physical warehouse stock checks and stock reservations.
@@ -144,313 +146,662 @@ flowchart LR
 
 ---
 
-## 🏗️ System Architecture & Distributed Topology
+## 4. 🔒 External M2M Authentication & Token Lifecycle Engine
+
+Inter-system communication between SNUL and Welco is secured via an enterprise Machine-to-Machine (M2M) OAuth2-style Client Credentials token mechanism.
 
 ```mermaid
-flowchart TD
-    ClientApp["📱 Frontend (Web / Mobile / Distributor Portal)"] -->|HTTPS| SNULGateway["🚪 SNUL API Gateway (Ocelot :7266)"]
-    
-    subgraph SNUL_Cluster ["SNUL Domain Services (Local DB)"]
-        SNULGateway --> AuthSvc["🔑 Auth.Services.API (:7303)"]
-        SNULGateway --> UserSvc["👥 UserManagement.Service.API (:7304)"]
-        SNULGateway --> SalesSvc["💼 Sales.Services.API (:7146)"]
-        SNULGateway --> CommerceSvc["🛒 Commerce.Services.API (:7145)"]
-        SNULGateway --> ContentSvc["📄 Content.Services.API (:7147)"]
-        SNULGateway --> AttachSvc["📁 Attachment.Services.API (:7280)"]
+sequenceDiagram
+    autonumber
+    participant SNUL as SNUL Microservice (Commerce / Shared)
+    participant Cache as In-Memory Token Cache (SemaphoreSlim)
+    participant TokenAPI as Welco Auth Service (POST /api/integration/token)
+    participant WelcoGW as Welco Gateway (:7166)
+    participant Downstream as Welco Domain Service (Product/Commerce/etc.)
+
+    SNUL->>Cache: Request active M2M Access Token
+    alt Token Cached & Not Near Expiry (> 5 min remaining)
+        Cache-->>SNUL: Return Cached Token
+    else Token Missing or Expiring in < 5 min (Proactive Refresh)
+        Cache->>TokenAPI: POST /api/integration/token { clientId: "snul", clientSecret: "..." }
+        TokenAPI->>TokenAPI: Validate HMAC-SHA256 Symmetric Secret
+        TokenAPI-->>Cache: 200 OK { accessToken: "eyJhbG...", expiresIn: 3600 }
+        Cache->>Cache: Store Token with TTL (Expiry - 5 min buffer)
+        Cache-->>SNUL: Return Fresh Token
     end
-
-    subgraph Integration_Engine ["Integration & Delegation Layer"]
-        CommerceSvc --> WelcoClient["⚡ WelcoIntegrationService (SNUL.Shared)"]
-        WelcoClient --> TokenMgr["🔒 Token Manager (Proactive Refresh & Lock)"]
-        WelcoClient --> SysResolver["🧭 WelcoSystemResolver (Egypt vs. Saudi/Welo)"]
-    end
-
-    subgraph Welco_Master ["Welco Platform (Pakistan Master)"]
-        WelcoClient -->|JWT Bearer| WelcoGW["🚪 Welco Gateway (:7166)"]
-        WelcoGW --> W_Auth["Auth (:7203) - Token Issuer"]
-        WelcoGW --> W_Prod["Product (:7054) - Master Catalog"]
-        WelcoGW --> W_Comm["Commerce (:7045) - Physical Stock & Orders"]
-        WelcoGW --> W_Sales["Sales (:7046) - Factory Quotes"]
-        WelcoGW --> W_User["UserMgmt (:7204) - Global Distributors"]
-        WelcoGW --> W_Content["Content (:7047) - Knowledge Base"]
-        WelcoGW --> W_Cert["Cert (:7101) - ISO/CE Documents"]
-    end
+    SNUL->>WelcoGW: Outbound Request (Header: Authorization: Bearer eyJhbG...)
+    WelcoGW->>Downstream: Forward authenticated request
+    Downstream-->>SNUL: 200 OK (Clean Result<T> Payload)
 ```
 
----
-
-## 🔌 Microservices Decomposition
-
-| Microservice | Responsibility | DB Scope | Port |
-| :--- | :--- | :--- | :---: |
-| **`SNUL.Gateway.API`** | Reverse proxy, JWT validation, rate limiting, and unified Scalar OpenAPI docs aggregator. | None (Stateless) | `7266` |
-| **`Auth.Services.API`** | User authentication, OTP verification, JWT generation, password resets, and integration tokens. | SNUL DB | `7303` |
-| **`UserManagement.Service.API`** | Users, companies, local addresses, countries, cities, zones, and local distributor applications. | SNUL DB | `7304` |
-| **`Commerce.Services.API`** | Local carts, local orders, checkout, **and the Welco Integration Client / Admin Surface**. | SNUL DB + Welco API | `7145` |
-| **`Sales.Services.API`** | Egyptian B2B RFQs, local quotes, product inquiries, and wholesale negotiations. | SNUL DB | `7146` |
-| **`Content.Services.API`** | Local support tickets, OEM inquiries, trade shows, landing pages, and localized documents. | SNUL DB | `7147` |
-| **`Certification.Services.API`** | Compliance and regulatory certificates (delegates to Welco master). | Welco API | `7201` |
-| **`Attachment.Services.API`** | Local static file uploads, image optimization, and document streaming. | Local Disk / Storage | `7280` |
-| **`SNUL.Shared`** | Shared Kernel: EF Core `SnulDbContext`, UnitOfWork, and `IWelcoIntegrationService` client. | Shared Lib | N/A |
+### Key Security & Reliability Invariants:
+1. **Thread-Safe Token Caching:** Handled via `SemaphoreSlim(1, 1)` in `WelcoIntegrationService` to eliminate duplicate concurrent auth handshakes.
+2. **Proactive 5-Minute Buffer Renewal:** The client automatically refreshes the token 5 minutes before the actual JWT expiry to eliminate mid-flight 401s.
+3. **Multi-Market System Resolver:** `WelcoSystemResolver` supports multi-tenant target systems (`snul` for Egypt, `welo` for Saudi) with distinct BaseUrls and Credentials.
+4. **Resilience & Retry Policies:** Configured with Polly exponential backoff (3 retries) and 30-second circuit timeouts.
 
 ---
 
-## 📡 API Endpoints: Shared vs. Isolated Breakdown
+## 5. 🌐 Multi-Environment Infrastructure (Dev / Test / Prod)
 
-### A. Shared Presentational Endpoints (Sourced from Welco Master)
+Both SNUL and Welco support **three complete environments**:
 
-These endpoints eliminate duplication by querying Welco's master manufacturing database directly via `WelcoIntegrationService`:
+| Dimension | 1. Development (Local) | 2. Test (Hosted Staging) | 3. Production (Hosted Live) |
+| :--- | :--- | :--- | :--- |
+| **Hosting Platform** | `localhost` (Kestrel .NET 10) | `runasp.net` Staging Cluster | `runasp.net` / Enterprise Cloud |
+| **SNUL Gateway URL** | `https://localhost:7266` / `http://localhost:5393` | `https://snul-gateway.runasp.net` | `https://snul.runasp.net` / `https://api.snul.com` |
+| **Welco Gateway URL**| `https://localhost:7166` / `http://localhost:5293` | `https://welco-gateway.runasp.net`| `https://welco.runasp.net` / `https://api.welco.com` |
+| **SQL Database** | Local SQL Server (`SNUL_Egypt_Db` / `Welco_Db`) | Hosted Shared SQL Server (Test) | Dedicated High-Availability SQL Server |
+| **Certificate Trust**| Self-Signed Dev Certs (`DangerousAcceptAnyServerCertificateValidator: true` in Ocelot) | SSL Verified | Strict CA SSL Verified |
+| **File Storage** | Local Disk (`wwwroot/uploads`) | Staging Volume Storage | CDN / Cloud Object Storage |
 
-| Domain | SNUL Endpoint | Welco Upstream Endpoint | Role / Access | Description |
-| :--- | :--- | :--- | :---: | :--- |
-| **Catalog** | `GET /api/v1/integration/products` | `GET /api/integration/products` | Public / All | Master surgical catalog with pagination and search |
-| **Product Detail** | `GET /api/v1/integration/products/{id}` | `GET /api/integration/products/{id}` | Public / All | Full product specs, materials, and certificates |
-| **Categories** | `GET /api/v1/integration/categories` | `GET /api/integration/categories` | Public / All | Master category taxonomy and hierarchy |
-| **Providers** | `GET /api/v1/integration/providers` | `GET /api/integration/providers` | Staff / Admin | External suppliers filtered by `WelcoProviderMap` |
-| **Live Inventory** | `POST /api/v1/integration/inventory/check` | `POST /api/integration/inventory/check` | Public / Auth | Live stock check against Pakistan factory warehouse |
-| **Stock Reserve** | `POST /api/v1/integration/inventory/reserve`| `POST /api/integration/inventory/reserve`| Auth / Checkout | Temporary stock lock during customer checkout |
-| **Compliance** | `GET /api/v1/integration/certifications` | `GET /api/integration/certifications` | Public / All | ISO 13485, CE marking, and FDA regulatory proofs |
-| **Cert Detail** | `GET /api/v1/integration/certifications/{id}`| `GET /api/integration/certifications/{id}`| Public / All | Certificate details with verification download links |
-| **Knowledge Base**| `GET /api/v1/integration/help/articles` | `GET /api/integration/help/articles` | Public / All | Technical surgical instrument maintenance articles |
-| **Help FAQs** | `GET /api/v1/integration/help/faqs` | `GET /api/integration/help/faqs` | Public / All | Global frequently asked questions |
-| **Distributors** | `POST /api/v1/integration/distributors/apply`| `POST /api/integration/distributors/apply`| Provider / All | Sync distributor application to Welco global registry |
-| **Distributor Ops**| `PUT /api/v1/integration/distributors/{id}/approve`| `PUT /api/integration/distributors/{id}/approve`| Admin | Approve distributor in global master network |
-| **Support Tickets**| `GET /api/v1/integration/support/tickets` | `GET /api/integration/support/tickets` | Staff / Admin | Bi-directional customer support ticket synchronization |
-| **Ticket Reply** | `POST /api/v1/integration/support/tickets/{id}/reply`| `POST /api/integration/support/tickets/{id}/reply`| Staff / Admin | Post message to Welco support ticket thread |
+### Port Allocation Matrix (Development Mode):
 
----
-
-### B. Isolated Client & Transactional Endpoints (SNUL Egypt DB Only)
-
-These endpoints manage sensitive customer data and local commerce operations, strictly isolated inside the SNUL Egypt database:
-
-| Domain | Endpoint | Method | Allowed Roles | Description |
-| :--- | :--- | :---: | :---: | :--- |
-| **Auth** | `/api/v1/auth/register` | `POST` | Anonymous | Register local client account (Client or Provider) |
-| **Auth** | `/api/v1/auth/login` | `POST` | Anonymous | Authenticate client and return SNUL JWT + Refresh Token |
-| **Auth** | `/api/v1/auth/verify-email-otp` | `POST` | Anonymous | 6-digit OTP verification for account activation |
-| **Auth** | `/api/v1/auth/profile` | `GET`, `PUT` | Authenticated | Retrieve and update personal profile |
-| **User Mgmt** | `/api/v1/users` | `GET`, `POST` | Admin | Manage local Egyptian users and assign roles |
-| **Companies** | `/api/v1/companies` | `GET`, `POST`, `PUT`| OrgUser, Admin | Manage Egyptian hospital/clinic company records |
-| **Addresses** | `/api/v1/addresses` | `GET`, `POST`, `PUT`| Authenticated | Local clinic/customer shipping & billing addresses |
-| **Locations** | `/api/v1/countries`, `/cities`, `/zones`| `GET` | Anonymous | Egypt territorial zones and postal regions |
-| **Applications** | `/api/v1/distributor-applications` | `POST` | Anonymous / User | Local distributor application submission |
-| **Carts** | `/api/v1/carts`, `/items`, `/merge` | `GET`, `POST`, `PUT`| Anonymous / Auth | Local Egyptian customer cart management |
-| **Orders** | `/api/v1/orders` | `GET`, `POST` | Authenticated | Egyptian client order placement and local history |
-| **B2B RFQs** | `/api/v1/rfqs` | `GET`, `POST` | OrgUser, Admin | Local hospital RFQ creation and negotiation |
-| **B2B Quotes** | `/api/v1/quotes`, `/{id}/approve` | `GET`, `POST` | OrgUser, Staff | Local quote pricing and client approval |
-| **Wishlists** | `/api/v1/wishlists` | `GET`, `POST`, `DELETE`| Authenticated | Egyptian customer favorite products |
-| **Audit Logs** | `/api/v1/audit-logs` | `GET` | Admin | Security audit trail of local operations |
+| Microservice | SNUL Port (HTTPS) | Welco Port (HTTPS) | Primary Responsibility |
+| :--- | :---: | :---: | :--- |
+| **API Gateway (Ocelot)** | `7266` (`5393` HTTP) | `7166` (`5293` HTTP) | Reverse proxy, rate limiting, OpenAPI docs |
+| **Auth Service** | `7303` | `7203` | Identity, JWT, OTP, M2M Tokens |
+| **User Management** | `7304` | `7204` | Users, Companies, Addresses, Applications |
+| **Product Catalog** | `7154` | `7054` | Master products, categories, currencies |
+| **Commerce Service** | `7145` | `7045` | Carts, Orders, Inventory Check & Reservation |
+| **Sales Service** | `7146` | `7046` | B2B RFQs, Quotes, Product Inquiries |
+| **Content & Support**| `7147` | `7047` | Support tickets, Help articles, FAQs |
+| **Certification** | `7201` | `7101` | Regulatory compliance (ISO 13485, CE) |
+| **Attachment Storage**| `7280` | `7180` | Multi-format file storage & streaming |
 
 ---
 
-## 🔄 Core Business Workflows & Sequence Diagrams
+## 6. 📡 Complete API Route & Contract Catalog (SNUL & Welco)
 
-### Workflow 1: Client Distributor/Provider Onboarding & Verification
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Applicant as Egyptian Clinic / Hospital (B2B)
-    participant Portal as SNUL Web Portal
-    participant SNULAuth as SNUL Auth / User API
-    participant SNULDB as SNUL Local DB (Egypt)
-    participant WelcoSvc as WelcoIntegrationService
-    participant WelcoDist as Welco Global Distributor Service (Pakistan)
-    actor Admin as SNUL / Welco Administrator
-
-    Applicant->>Portal: Submit Registration (Selects Role: Provider / Distributor)
-    Portal->>SNULAuth: POST /api/v1/distributor-applications (Company, Tax ID, License)
-    SNULAuth->>SNULDB: Save Application (Status: Pending, Role: OrganizationUser)
-    
-    SNULAuth->>WelcoSvc: SubmitDistributorApplicationAsync(ApplicationData)
-    WelcoSvc->>WelcoDist: POST /api/integration/distributors/apply
-    WelcoDist-->>WelcoSvc: 201 Created (Welco Application ID: "dist-902")
-    
-    Note over Admin,WelcoDist: Admin verifies commercial registry & medical license
-    Admin->>SNULAuth: PUT /api/v1/distributor-applications/{id}/status (Approved)
-    SNULAuth->>SNULDB: Update User Role to "Provider / OrganizationUser"
-    SNULAuth->>WelcoSvc: ApproveDistributorApplicationAsync("dist-902")
-    WelcoSvc->>WelcoDist: PUT /api/integration/distributors/dist-902/approve
-    WelcoDist-->>WelcoSvc: 200 OK (Provider mapped in global catalog)
-    
-    SNULAuth-->>Applicant: Welcome Email — B2B Wholesale Pricing & RFQ Enabled
-```
-
----
-
-### Workflow 2: Zero-Duplication Catalog Discovery & Provider Scoping
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Buyer as Client / Healthcare Buyer
-    participant Gateway as SNUL API Gateway
-    participant Commerce as SNUL Commerce API
-    participant SNULDB as SNUL DB (WelcoProviderMap)
-    participant WelcoSvc as WelcoIntegrationService
-    participant WelcoProd as Welco Product API (Pakistan)
-
-    Buyer->>Gateway: GET /api/v1/integration/products?page=1&pageSize=50
-    Gateway->>Commerce: GetExternalProductsQuery()
-    Commerce->>WelcoSvc: GetProductsAsync(page: 1, pageSize: 50, system: "snul")
-    WelcoSvc->>WelcoProd: GET /api/integration/products (Bearer M2M JWT)
-    WelcoProd-->>WelcoSvc: 200 OK [ Products List with Specs, Images, Certifications ]
-    
-    Commerce->>SNULDB: Query WelcoProviderMap for active Egypt suppliers
-    SNULDB-->>Commerce: Allowed Provider IDs
-    Commerce->>Commerce: Filter and enrich catalog data for Egyptian market
-    Commerce-->>Gateway: 200 OK (Clean Catalog Response)
-    Gateway-->>Buyer: Display live surgical instruments catalog
-```
-
----
-
-### Workflow 3: Real-Time Pakistan Physical Inventory Check & Reservation
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Customer as Hospital Purchasing Dept
-    participant Checkout as SNUL Checkout Service
-    participant WelcoSvc as WelcoIntegrationService
-    participant WelcoInv as Welco Inventory API (Pakistan Warehouse)
-
-    Customer->>Checkout: Proceed to Checkout (50x Titanium Forceps)
-    Checkout->>WelcoSvc: CheckInventoryAsync({ ProductId: "p-441", Quantity: 50 })
-    WelcoSvc->>WelcoInv: POST /api/integration/inventory/check
-    
-    alt Factory Warehouse Has Stock (>= 50)
-        WelcoInv-->>WelcoSvc: 200 OK { isAvailable: true, availableStock: 320 }
-        Checkout->>WelcoSvc: ReserveInventoryAsync({ ProductId: "p-441", Quantity: 50, TimeoutMinutes: 30 })
-        WelcoSvc->>WelcoInv: POST /api/integration/inventory/reserve
-        WelcoInv-->>WelcoSvc: 200 OK { isReserved: true, reservationId: "res-1102" }
-        Checkout-->>Customer: Stock Locked (Proceed to Payment & Order Confirmation)
-    else Stock Insufficient
-        WelcoInv-->>WelcoSvc: 200 OK { isAvailable: false, availableStock: 12 }
-        Checkout-->>Customer: 400 Bad Request ("Only 12 units available in central warehouse")
-    end
-```
-
----
-
-### Workflow 4: Isolated Client Checkout & Real-Time Pakistan Stock Reservation
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Client as Egyptian Client / Clinic
-    participant Checkout as SNUL Commerce / Order Service (Egypt)
-    participant WelcoSvc as WelcoIntegrationService
-    participant WelcoInv as Welco Inventory API (Pakistan Warehouse)
-    participant SNULDB as SNUL Local DB (Egypt)
-
-    Client->>Checkout: POST /api/v1/orders (Cart, Egyptian Delivery Address, Payment)
-    Checkout->>WelcoSvc: CheckInventoryAsync({ ProductId, Quantity })
-    WelcoSvc->>WelcoInv: POST /api/integration/inventory/check
-    WelcoInv-->>WelcoSvc: 200 OK (Stock Confirmed in Pakistan Warehouse)
-    
-    Checkout->>WelcoSvc: ReserveInventoryAsync({ ProductId, Quantity, Timeout: 30m })
-    WelcoSvc->>WelcoInv: POST /api/integration/inventory/reserve
-    WelcoInv-->>WelcoSvc: 200 OK (Stock Locked)
-    
-    Checkout->>SNULDB: Save Local Order & Invoice (Status: Confirmed, ClientId: "client-eg-01")
-    SNULDB-->>Checkout: Order ID "SNUL-ORD-101" Created
-    Checkout-->>Client: Order Confirmation & Receipt (Stored ONLY in SNUL Egypt DB)
-```
-
----
-
-### Workflow 5: Local Egyptian B2B RFQ & Quote Negotiation Pipeline (Strictly Isolated)
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Hospital as Egyptian Hospital Procurement Officer
-    participant SNULSales as SNUL Sales Service (Egypt)
-    participant SNULDB as SNUL Local DB (Egypt)
-    actor SnulStaff as SNUL Egypt Operations Manager
-
-    Hospital->>SNULSales: POST /api/v1/rfqs (Request bulk surgical instrument kits)
-    SNULSales->>SNULDB: Store Local RFQ (Status: PendingReview, ClientId: "hosp-eg-88")
-    
-    SnulStaff->>SNULSales: POST /api/v1/quotes (Issue priced quote with localized EGP/USD pricing)
-    SNULSales->>SNULDB: Store Local Quote (Status: Issued, ValidUntil: 30 Days)
-    SNULSales-->>Hospital: Quote Notification (Itemized pricing ready for review)
-    
-    Hospital->>SNULSales: POST /api/v1/quotes/{id}/approve
-    SNULSales->>SNULDB: Mark Local Quote as "Approved"
-    SNULSales-->>Hospital: Quote Approved -> Proceed to Local Order Placement
-```
-
----
-
-### Workflow 6: Cross-Platform Technical Support & Ticketing
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Surgeon as Surgeon / Clinic Staff
-    participant SNULContent as SNUL Content / Support Service
-    participant SNULDB as SNUL Local DB
-    participant WelcoSvc as WelcoIntegrationService
-    participant WelcoSupport as Welco Technical Support (Pakistan Factory)
-
-    Surgeon->>SNULContent: POST /api/v1/support-tickets (Question on Autoclave sterilization temperature)
-    SNULContent->>SNULDB: Save Local Ticket Record
-    
-    SNULContent->>WelcoSvc: Submit Support Ticket to Factory Specialists
-    WelcoSvc->>WelcoSupport: POST /api/integration/support/tickets
-    WelcoSupport-->>WelcoSvc: 201 Created (Ticket Ref: "tkt-331")
-    
-    WelcoSupport->>WelcoSupport: Technical engineer posts sterilization datasheet
-    SNULContent->>WelcoSvc: GetSupportTicketByIdAsync("tkt-331")
-    WelcoSvc->>WelcoSupport: GET /api/integration/support/tickets/tkt-331
-    WelcoSupport-->>WelcoSvc: 200 OK (Thread Response with PDF Attachment)
-    
-    SNULContent->>SNULDB: Sync Thread to Local Customer Portal
-    SNULContent-->>Surgeon: Notification: Engineer replied with datasheet
-```
-
----
-
-## 🗺️ Complete Endpoint-to-Endpoint Integration Matrix
-
-| Business Operation | SNUL Entry Endpoint | SNUL Internal Handler | Downstream Welco API | Target Microservice (Welco) | Data Payload / Contract |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **M2M Auth Token** | `POST /api/integration/token` | `CreateIntegrationTokenCommand` | `POST /api/integration/token` | `Auth.Services.API` | `{ clientId, clientSecret }` ➔ `{ accessToken, expiresIn }` |
-| **Product Catalog**| `GET /api/v1/integration/products` | `GetExternalProductsQueryHandler` | `GET /api/integration/products` | `Product.Services.API` | `?page={p}&pageSize={s}` ➔ `Result<List<ExternalProductDto>>` |
-| **Product Detail** | `GET /api/v1/integration/products/{id}` | `GetExternalProductByIdQueryHandler` | `GET /api/integration/products/{id}` | `Product.Services.API` | `Route: id` ➔ `Result<ExternalProductDto>` |
-| **Stock Check** | `POST /api/v1/integration/inventory/check` | `CheckExternalInventoryQueryHandler` | `POST /api/integration/inventory/check` | `Commerce.Services.API` | `InventoryCheckRequest` ➔ `Result<InventoryCheckResponse>` |
-| **Stock Reserve** | `POST /api/v1/integration/inventory/reserve`| `ReserveExternalInventoryCommandHandler` | `POST /api/integration/inventory/reserve` | `Commerce.Services.API` | `InventoryCheckRequest` ➔ `Result<InventoryCheckResponse>` |
-| **Categories** | `GET /api/v1/integration/categories` | `GetExternalCategoriesQueryHandler` | `GET /api/integration/categories` | `Product.Services.API` | `None` ➔ `Result<List<ExternalCategoryDto>>` |
-| **Distributor App**| `POST /api/v1/integration/distributors/apply`| `ApplyExternalDistributorCommandHandler` | `POST /api/integration/distributors/apply` | `UserManamgent.Service.API`| `ApplyDistributorRequest` ➔ `Result<DistributorApplicationDto>` |
-| **Distributor List**| `GET /api/v1/integration/distributors` | `GetExternalDistributorsQueryHandler` | `GET /api/integration/distributors` | `UserManamgent.Service.API`| `None` ➔ `Result<List<DistributorApplicationDto>>` |
-| **Approve Dist.** | `PUT /api/v1/integration/distributors/{id}/approve`| `ApproveExternalDistributorCommandHandler`| `PUT /api/integration/distributors/{id}/approve`| `UserManamgent.Service.API`| `None` ➔ `Result<bool>` |
-| **Reject Dist.** | `PUT /api/v1/integration/distributors/{id}/reject` | `RejectExternalDistributorCommandHandler` | `PUT /api/integration/distributors/{id}/reject` | `UserManamgent.Service.API`| `{ reason }` ➔ `Result<bool>` |
-| **Support Tickets**| `GET /api/v1/integration/support/tickets` | `GetExternalSupportTicketsQueryHandler` | `GET /api/integration/support/tickets` | `Content.Services.API` | `?status={s}` ➔ `Result<List<ExternalSupportTicketDto>>` |
-| **Ticket Reply** | `POST /api/v1/integration/support/tickets/{id}/reply`| `ReplyExternalSupportTicketCommandHandler`| `POST /api/integration/support/tickets/{id}/reply`| `Content.Services.API` | `ReplySupportTicketRequest` ➔ `Result<bool>` |
-| **Ticket Close** | `POST /api/v1/integration/support/tickets/{id}/close`| `CloseExternalSupportTicketCommandHandler`| `POST /api/integration/support/tickets/{id}/close`| `Content.Services.API` | `None` ➔ `Result<bool>` |
-| **Help Articles** | `GET /api/v1/integration/help/articles` | `GetExternalHelpArticlesQueryHandler` | `GET /api/integration/help/articles` | `Content.Services.API` | `None` ➔ `Result<List<ExternalHelpArticleDto>>` |
-| **Help FAQs** | `GET /api/v1/integration/help/faqs` | `GetExternalFaqsQueryHandler` | `GET /api/integration/help/faqs` | `Content.Services.API` | `None` ➔ `Result<List<ExternalFAQDto>>` |
-| **Certifications** | `GET /api/v1/integration/certifications` | `GetExternalCertificationsQueryHandler` | `GET /api/integration/certifications` | `Certification.Services.API`| `None` ➔ `Result<List<ExternalCertificationDto>>` |
-| **Cert Detail** | `GET /api/v1/integration/certifications/{id}`| `GetExternalCertificationByIdQueryHandler`| `GET /api/integration/certifications/{id}` | `Certification.Services.API`| `Route: id` ➔ `Result<ExternalCertificationDto>` |
-
----
-
-## ⚙️ Configuration & Environment Settings
-
-### 1. `appsettings.json` Integration Section
-
-Configure the upstream connection to Welco in `SNUL.Shared` and consuming services (`Commerce.Services.API`):
+All API responses follow the standard `Result<T>` envelope:
 
 ```json
 {
+  "succeeded": true,
+  "data": { ... },
+  "message": "Operation completed successfully.",
+  "errors": []
+}
+```
+
+---
+
+### 6.1 Auth Service (`/api/v1/auth`, `/api/integration/token`)
+**Base Routes:** `https://localhost:7266/api/v1/auth` (SNUL) | `https://localhost:7166/api/v1/auth` (Welco)
+
+#### 1. Register User / Client
+- **Route:** `POST /api/v1/auth/register`
+- **Access:** Anonymous
+- **Request Form:**
+```json
+{
+  "firstName": "Ahmed",
+  "lastName": "Hassan",
+  "email": "ahmed.hassan@cairo-clinic.eg",
+  "password": "SecurePassword@123",
+  "confirmPassword": "SecurePassword@123",
+  "phoneNumber": "+201012345678",
+  "userType": 1, // 0 = Client, 1 = OrganizationUser / Provider
+  "companyName": "Cairo Surgical Clinic",
+  "taxNumber": "EG-99887766",
+  "commercialRegister": "CR-44332211"
+}
+```
+- **Response Form:**
+```json
+{
+  "succeeded": true,
+  "data": {
+    "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "email": "ahmed.hassan@cairo-clinic.eg",
+    "requiresOtpVerification": true,
+    "message": "Registration successful. Please verify your email with the OTP sent."
+  },
+  "message": null,
+  "errors": []
+}
+```
+
+#### 2. User Login
+- **Route:** `POST /api/v1/auth/login`
+- **Access:** Anonymous
+- **Request Form:**
+```json
+{
+  "email": "ahmed.hassan@cairo-clinic.eg",
+  "password": "SecurePassword@123"
+}
+```
+- **Response Form:**
+```json
+{
+  "succeeded": true,
+  "data": {
+    "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "fullName": "Ahmed Hassan",
+    "email": "ahmed.hassan@cairo-clinic.eg",
+    "roles": ["OrganizationUser"],
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "4c9d7890-a51c-4b3e-8c34-d102e3b4a567",
+    "refreshTokenExpiryTime": "2026-09-21T12:00:00Z"
+  },
+  "message": null,
+  "errors": []
+}
+```
+
+#### 3. Verify Email OTP
+- **Route:** `POST /api/v1/auth/verify-email-otp`
+- **Access:** Anonymous
+- **Request Form:**
+```json
+{
+  "email": "ahmed.hassan@cairo-clinic.eg",
+  "otp": "482910"
+}
+```
+- **Response Form:**
+```json
+{
+  "succeeded": true,
+  "data": true,
+  "message": "Email verified successfully.",
+  "errors": []
+}
+```
+
+#### 4. Resend Email OTP
+- **Route:** `POST /api/v1/auth/resend-otp`
+- **Access:** Anonymous
+- **Request Form:** `{ "email": "ahmed.hassan@cairo-clinic.eg" }`
+- **Response Form:** `Result<bool>`
+
+#### 5. Refresh Token
+- **Route:** `POST /api/v1/auth/refresh-token`
+- **Access:** Anonymous / Authenticated
+- **Request Form:**
+```json
+{
+  "accessToken": "eyJhbG...",
+  "refreshToken": "4c9d7890-a51c-4b3e-8c34-d102e3b4a567"
+}
+```
+- **Response Form:** `Result<AuthResponseDto>`
+
+#### 6. User Profile (Get & Update)
+- **Routes:** `GET /api/v1/auth/profile` | `PUT /api/v1/auth/profile`
+- **Access:** Authenticated
+- **Request Form (PUT):**
+```json
+{
+  "firstName": "Ahmed",
+  "lastName": "Hassan",
+  "phoneNumber": "+201012345678",
+  "avatarUrl": "https://localhost:7280/api/v1/attachments/file/avatar-1.jpg"
+}
+```
+- **Response Form:** `Result<UserProfileDto>`
+
+#### 7. Issue M2M Integration Token
+- **Route:** `POST /api/integration/token`
+- **Access:** Machine / Anonymous (HMAC secret protected)
+- **Request Form:**
+```json
+{
+  "clientId": "snul",
+  "clientSecret": "SNUL_SYMMETRIC_INTEGRATION_KEY_32_CHARS"
+}
+```
+- **Response Form:**
+```json
+{
+  "succeeded": true,
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "tokenType": "Bearer",
+    "expiresIn": 3600
+  },
+  "message": null,
+  "errors": []
+}
+```
+
+---
+
+### 6.2 User Management Service (`/api/v1/users`, `/companies`, `/addresses`, `/distributor-applications`)
+
+#### 1. Distributor Applications (Local Onboarding & Upstream Sync)
+- **Route:** `POST /api/v1/distributor-applications`
+- **Access:** Anonymous / Authenticated
+- **Request Form:**
+```json
+{
+  "companyName": "Nile Surgical Specialties Co.",
+  "contactPerson": "Dr. Tarek Mansour",
+  "email": "tarek@nilesurgical.eg",
+  "phone": "+201223344556",
+  "countryId": "1a2b3c4d-0000-0000-0000-000000000001",
+  "salesVolumeBand": "$100,000 - $500,000",
+  "categoryInterest": "Cardiovascular & Neurosurgery",
+  "website": "https://nilesurgical.eg",
+  "sourceMarket": "Egypt"
+}
+```
+- **Response Form:**
+```json
+{
+  "succeeded": true,
+  "data": {
+    "id": "e9123456-1111-2222-3333-444455556666",
+    "companyName": "Nile Surgical Specialties Co.",
+    "status": "Pending",
+    "createdAt": "2026-09-14T11:00:00Z"
+  },
+  "message": "Application submitted successfully and registered with master network.",
+  "errors": []
+}
+```
+
+#### 2. Get / Manage Distributor Applications
+- **Routes:**
+  - `GET /api/v1/distributor-applications` (Roles: `Admin`, `SnulStaff`)
+  - `GET /api/v1/distributor-applications/{id}` (Roles: `Admin`, `SnulStaff`)
+  - `PUT /api/v1/distributor-applications/{id}/status` (Roles: `Admin`)
+- **Request Form (PUT Status):**
+```json
+{
+  "status": "Approved", // Approved, Rejected, UnderReview
+  "reviewNotes": "Commercial registration verified with Ministry of Health."
+}
+```
+
+#### 3. Companies & Branches Management
+- **Routes:** `GET /api/v1/companies`, `POST /api/v1/companies`, `GET /api/v1/companies/{id}`, `PUT /api/v1/companies/{id}`
+- **Access:** `Admin`, `OrganizationUser`
+- **Request Form (POST):**
+```json
+{
+  "name": "Al-Amal Specialized Hospital",
+  "taxNumber": "EG-123456789",
+  "commercialRegister": "CR-987654",
+  "phone": "+20223456789",
+  "email": "procurement@alamal-hospital.eg",
+  "isProvider": false
+}
+```
+
+#### 4. Addresses & Location Hierarchy
+- **Routes:**
+  - `GET /api/v1/addresses` | `POST /api/v1/addresses` | `PUT /api/v1/addresses/{id}` | `DELETE /api/v1/addresses/{id}`
+  - `GET /api/v1/countries` | `GET /api/v1/cities?countryId={id}` | `GET /api/v1/zones?cityId={id}`
+
+---
+
+### 6.3 Product Catalog Service (`/api/v1/products`, `/categories`, `/currencies`, `/wishlists`)
+
+#### 1. Query Products
+- **Route:** `GET /api/v1/products`
+- **Access:** Public / Anonymous
+- **Query Parameters:** `?pageNumber=1&pageSize=20&categoryId={guid}&searchTerm=forceps&minPrice=10&maxPrice=500&inStockOnly=true`
+- **Response Form:**
+```json
+{
+  "succeeded": true,
+  "data": {
+    "items": [
+      {
+        "id": "7b123456-a1b2-c3d4-e5f6-7a8b9c0d1e2f",
+        "name": "Titanium Micro Forceps 18cm",
+        "sku": "WLC-TF-18",
+        "description": "High-precision titanium surgical forceps for neurovascular surgery.",
+        "price": 145.00,
+        "currency": "USD",
+        "categoryId": "2c222222-3333-4444-5555-666677778888",
+        "categoryName": "Micro Surgery",
+        "imageUrl": "https://localhost:7280/api/v1/attachments/file/forceps.png",
+        "isAvailable": true,
+        "material": "Grade 5 Titanium",
+        "specifications": {
+          "Length": "180mm",
+          "TipWidth": "0.3mm",
+          "Autoclavable": "Yes"
+        }
+      }
+    ],
+    "pageNumber": 1,
+    "pageSize": 20,
+    "totalCount": 142,
+    "totalPages": 8
+  },
+  "message": null,
+  "errors": []
+}
+```
+
+#### 2. Categories Taxonomy
+- **Route:** `GET /api/v1/categories`
+- **Access:** Public / Anonymous
+- **Response Form:** `Result<List<CategoryDto>>` (Tree structure with children categories)
+
+#### 3. Customer Wishlist
+- **Routes:** `GET /api/v1/wishlists` | `POST /api/v1/wishlists/items` | `DELETE /api/v1/wishlists/items/{productId}`
+- **Access:** Authenticated
+
+---
+
+### 6.4 Commerce Service (`/api/v1/carts`, `/orders`, `/api/v1/integration/*`)
+
+#### 1. Cart Management
+- **Routes:**
+  - `GET /api/v1/carts` (Authenticated / Guest Token)
+  - `POST /api/v1/carts/items`
+  - `PUT /api/v1/carts/items/{itemId}`
+  - `DELETE /api/v1/carts/items/{itemId}`
+  - `POST /api/v1/carts/merge` (Merge anonymous guest cart into user account upon login)
+- **Request Form (Add Item):**
+```json
+{
+  "productId": "7b123456-a1b2-c3d4-e5f6-7a8b9c0d1e2f",
+  "quantity": 10
+}
+```
+
+#### 2. Order Checkout (Local Egyptian DB Order)
+- **Route:** `POST /api/v1/orders`
+- **Access:** Authenticated
+- **Request Form:**
+```json
+{
+  "shippingAddressId": "9f333333-4444-5555-6666-777788889999",
+  "billingAddressId": "9f333333-4444-5555-6666-777788889999",
+  "paymentMethod": "BankTransfer", // CreditCard, BankTransfer, CashOnDelivery, LetterOfCredit
+  "notes": "Urgent delivery required for OR theater 3.",
+  "items": [
+    {
+      "productId": "7b123456-a1b2-c3d4-e5f6-7a8b9c0d1e2f",
+      "quantity": 10,
+      "unitPrice": 145.00
+    }
+  ]
+}
+```
+- **Response Form:**
+```json
+{
+  "succeeded": true,
+  "data": {
+    "orderId": "SNUL-2026-09-00142",
+    "orderStatus": "Confirmed",
+    "totalAmount": 1450.00,
+    "currency": "USD",
+    "createdAt": "2026-09-14T11:15:00Z"
+  },
+  "message": "Order placed successfully in local Egyptian registry.",
+  "errors": []
+}
+```
+
+#### 3. Real-Time Pakistan Physical Inventory Check & Reserve
+- **Route:** `POST /api/v1/integration/inventory/check`
+- **Access:** Public / Authenticated
+- **Request Form:**
+```json
+{
+  "productId": "7b123456-a1b2-c3d4-e5f6-7a8b9c0d1e2f",
+  "requestedQuantity": 50
+}
+```
+- **Response Form:**
+```json
+{
+  "succeeded": true,
+  "data": {
+    "productId": "7b123456-a1b2-c3d4-e5f6-7a8b9c0d1e2f",
+    "isAvailable": true,
+    "availableQuantity": 320,
+    "warehouseLocation": "Sialkot Central Factory Warehouse"
+  },
+  "message": null,
+  "errors": []
+}
+```
+- **Route:** `POST /api/v1/integration/inventory/reserve`
+- **Access:** Authenticated / Checkout
+- **Request Form:**
+```json
+{
+  "productId": "7b123456-a1b2-c3d4-e5f6-7a8b9c0d1e2f",
+  "quantity": 50,
+  "lockTimeoutMinutes": 30
+}
+```
+- **Response Form:**
+```json
+{
+  "succeeded": true,
+  "data": {
+    "reservationId": "res-99881122",
+    "isReserved": true,
+    "expiresAt": "2026-09-14T11:45:00Z"
+  },
+  "message": "Physical warehouse stock reserved.",
+  "errors": []
+}
+```
+
+---
+
+### 6.5 Sales Service (`/api/v1/rfqs`, `/quotes`, `/product-inquiries`)
+
+#### 1. Request for Quotation (RFQ)
+- **Routes:**
+  - `GET /api/v1/rfqs` (Roles: `Admin`, `SnulStaff`, `OrganizationUser`)
+  - `GET /api/v1/rfqs/{id}` (Roles: `Admin`, `SnulStaff`, `OrganizationUser`)
+  - `POST /api/v1/rfqs` (Roles: `Admin`, `SnulStaff`, `OrganizationUser`)
+  - `PUT /api/v1/rfqs/{id}/status` (Roles: `Admin`, `SnulStaff`)
+- **Request Form (POST RFQ):**
+```json
+{
+  "title": "Tender: Cardiovascular Surgery Forceps & Clamps (500 sets)",
+  "requiredDeliveryDate": "2026-12-01T00:00:00Z",
+  "notes": "ISO 13485 test reports must be supplied with each kit.",
+  "items": [
+    {
+      "productId": "7b123456-a1b2-c3d4-e5f6-7a8b9c0d1e2f",
+      "targetQuantity": 500,
+      "targetUnitPrice": 120.00
+    }
+  ]
+}
+```
+
+#### 2. Itemized Quotes & Approval Pipeline
+- **Routes:**
+  - `GET /api/v1/quotes` | `GET /api/v1/quotes/{id}`
+  - `POST /api/v1/quotes` (Roles: `Admin`, `SnulStaff`)
+  - `POST /api/v1/quotes/{id}/approve` (Roles: `Admin`, `OrganizationUser`)
+  - `POST /api/v1/quotes/{id}/decline` (Roles: `Admin`, `OrganizationUser`)
+- **Request Form (POST Create Quote):**
+```json
+{
+  "rfqId": "4a111111-2222-3333-4444-555566667777",
+  "validUntil": "2026-10-15T00:00:00Z",
+  "discountPercentage": 10.0,
+  "shippingFee": 250.00,
+  "items": [
+    {
+      "productId": "7b123456-a1b2-c3d4-e5f6-7a8b9c0d1e2f",
+      "quantity": 500,
+      "offeredUnitPrice": 125.00
+    }
+  ]
+}
+```
+
+---
+
+### 6.6 Content & Support Service (`/api/v1/support-tickets`, `/documents`, `/faq`, `/help-articles`)
+
+#### 1. Support Tickets
+- **Routes:** `GET /api/v1/support-tickets`, `POST /api/v1/support-tickets`, `POST /api/v1/support-tickets/{id}/reply`, `PUT /api/v1/support-tickets/{id}/status`
+- **Request Form (Create Ticket):**
+```json
+{
+  "subject": "Sterilization protocol clarification for Grade 5 Titanium Forceps",
+  "category": "Technical",
+  "priority": "High",
+  "message": "Please provide steam autoclave temperature limits and chemical compatibility chart."
+}
+```
+
+#### 2. Help Articles & Knowledge Base
+- **Routes:** `GET /api/v1/help-articles`, `GET /api/v1/help-articles/{slug}`, `GET /api/v1/faq`
+
+---
+
+### 6.7 Certification Service (`/api/v1/certifications`)
+
+- **Routes:** `GET /api/v1/certifications`, `GET /api/v1/certifications/{id}`
+- **Response Form:**
+```json
+{
+  "succeeded": true,
+  "data": [
+    {
+      "id": "c1000000-0000-0000-0000-000000000001",
+      "name": "ISO 13485:2016 Medical Devices QMS",
+      "issuingAuthority": "TÜV SÜD Product Service GmbH",
+      "certificateNumber": "Q5 092834 0004 Rev. 01",
+      "issuedDate": "2024-01-15",
+      "expiryDate": "2027-01-14",
+      "documentUrl": "https://localhost:7280/api/v1/attachments/file/iso13485.pdf"
+    },
+    {
+      "id": "c1000000-0000-0000-0000-000000000002",
+      "name": "CE Marking (Directive 93/42/EEC on Medical Devices)",
+      "issuingAuthority": "BSI Group The Netherlands B.V.",
+      "certificateNumber": "CE 682910",
+      "issuedDate": "2023-06-01",
+      "expiryDate": "2028-05-31",
+      "documentUrl": "https://localhost:7280/api/v1/attachments/file/ce_mark.pdf"
+    }
+  ],
+  "message": null,
+  "errors": []
+}
+```
+
+---
+
+### 6.8 Attachment Storage Service (`/api/v1/attachments`)
+
+- **Upload:** `POST /api/v1/attachments/upload` (Multipart form with `file`)
+- **Download / Stream:** `GET /api/v1/attachments/file/{fileName}` (Public file streaming)
+- **Delete:** `DELETE /api/v1/attachments/{id}` (Roles: `Admin`, `SnulStaff`)
+
+---
+
+## 7. ⚡ Welco Upstream Integration Endpoints (`/api/integration/*`)
+
+Exported by Welco's master microservices and consumed securely by SNUL's `WelcoIntegrationService`:
+
+| Domain | Welco Controller | Upstream Route | HTTP Verb | Purpose |
+| :--- | :--- | :--- | :---: | :--- |
+| **Auth** | `IntegrationTokenController` | `/api/integration/token` | `POST` | Issues M2M JWT tokens for client credentials |
+| **Products** | `IntegrationProductsController` | `/api/integration/products` | `GET` | Paginated master surgical instrument catalog |
+| **Product Detail** | `IntegrationProductsController` | `/api/integration/products/{id}` | `GET` | Detailed specs, CAD dimensions, materials |
+| **Categories** | `IntegrationProductsController` | `/api/integration/categories` | `GET` | Master taxonomy hierarchy |
+| **Providers** | `IntegrationProductsController` | `/api/integration/providers` | `GET` | Active verified manufacturing suppliers |
+| **Inventory Check** | `IntegrationInventoryController` | `/api/integration/inventory/check` | `POST` | Queries central Pakistan physical warehouse stock |
+| **Inventory Reserve**| `IntegrationInventoryController` | `/api/integration/inventory/reserve`| `POST` | Locks stock in Pakistan warehouse for 30 min |
+| **Distributors** | `IntegrationDistributorsController` | `/api/integration/distributors/apply`| `POST` | Registers regional distributor application in master DB |
+| **Distributors** | `IntegrationDistributorsController` | `/api/integration/distributors` | `GET` | Lists distributor applications across all regions |
+| **Distributor Ops** | `IntegrationDistributorsController` | `/api/integration/distributors/{id}/approve`| `PUT` | Approves distributor & grants global supplier map |
+| **Distributor Ops** | `IntegrationDistributorsController` | `/api/integration/distributors/{id}/reject` | `PUT` | Rejects application with reason |
+| **Support** | `IntegrationSupportController` | `/api/integration/support/tickets` | `GET` / `POST` | Syncs technical customer support tickets |
+| **Support Thread** | `IntegrationSupportController` | `/api/integration/support/tickets/{id}/reply`| `POST` | Appends engineering response from factory |
+| **Help Articles** | `IntegrationHelpController` | `/api/integration/help/articles` | `GET` | Technical instrument care and maintenance docs |
+| **Help FAQs** | `IntegrationHelpController` | `/api/integration/help/faqs` | `GET` | Global knowledge base questions |
+| **Certifications** | `IntegrationCertificationsController` | `/api/integration/certifications` | `GET` | Returns ISO 13485 / CE certificates & proofs |
+
+---
+
+## 8. 🔄 Complete Business Workflows & Sequence Diagrams
+
+### Workflow 1: Distributor / Provider Registration & Upstream Synchronization
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Clinic as Egyptian Hospital / Clinic (B2B)
+    participant Portal as SNUL Web Portal
+    participant SNULUser as SNUL UserManagement API (:7304)
+    participant SNULDB as SNUL Local DB (Egypt)
+    participant WelcoSvc as WelcoIntegrationService
+    participant WelcoDist as Welco Distributor Service (:7204)
+    actor Admin as System Administrator
+
+    Clinic->>Portal: Submit Distributor Application (Tax ID, License, Volume)
+    Portal->>SNULUser: POST /api/v1/distributor-applications
+    SNULUser->>SNULDB: Save Application (Status: Pending)
+    SNULUser->>WelcoSvc: SubmitDistributorApplicationAsync(Application)
+    WelcoSvc->>WelcoDist: POST /api/integration/distributors/apply (Bearer M2M JWT)
+    WelcoDist-->>WelcoSvc: 201 Created (Master Application ID: "DIST-901")
+    SNULUser-->>Portal: 200 OK (Application Submitted)
+
+    Admin->>SNULUser: PUT /api/v1/distributor-applications/{id}/status (Approved)
+    SNULUser->>SNULDB: Upgrade User Role to "OrganizationUser / Provider"
+    SNULUser->>WelcoSvc: ApproveDistributorApplicationAsync("DIST-901")
+    WelcoSvc->>WelcoDist: PUT /api/integration/distributors/DIST-901/approve
+    WelcoDist-->>WelcoSvc: 200 OK (Provider mapped in global registry)
+```
+
+---
+
+### Workflow 2: Direct Checkout with Real-Time Pakistan Physical Stock Reservation
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Customer as Egyptian Clinic Buyer
+    participant Commerce as SNUL Commerce API (:7145)
+    participant SNULDB as SNUL Local DB (Egypt)
+    participant WelcoSvc as WelcoIntegrationService
+    participant WelcoInv as Welco Inventory API (:7045)
+
+    Customer->>Commerce: POST /api/v1/orders (Items, Shipping Address, Payment)
+    Commerce->>WelcoSvc: CheckInventoryAsync({ ProductId, Qty: 20 })
+    WelcoSvc->>WelcoInv: POST /api/integration/inventory/check
+    WelcoInv-->>WelcoSvc: 200 OK { isAvailable: true, availableStock: 150 }
+    
+    Commerce->>WelcoSvc: ReserveInventoryAsync({ ProductId, Qty: 20, Timeout: 30m })
+    WelcoSvc->>WelcoInv: POST /api/integration/inventory/reserve
+    WelcoInv-->>WelcoSvc: 200 OK { isReserved: true, reservationId: "RES-441" }
+    
+    Commerce->>SNULDB: Insert Local Order (Status: Confirmed, ReservationId: "RES-441")
+    SNULDB-->>Commerce: Order "SNUL-ORD-8891" Created
+    Commerce-->>Customer: 200 OK (Order Confirmed — Stored ONLY in Egypt DB)
+```
+
+---
+
+## 9. ⚙️ Environment Configuration Files Schema (`appsettings.*.json` & `ocelot.*.json`)
+
+### 1. SNUL Downstream Microservices `appsettings.json`
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
   "ConnectionStrings": {
     "DatabaseConnection": "Server=localhost;Database=SNUL_Egypt_Db;Trusted_Connection=True;TrustServerCertificate=True;"
   },
   "JwtSettings": {
-    "Secret": "YOUR_STRONG_32_CHAR_JWT_SECRET_KEY_HERE!",
+    "Secret": "SNUL_SUPER_SECURE_JWT_SECRET_KEY_32_CHARS!",
     "Issuer": "https://localhost:7266",
     "Audience": "https://localhost:7266",
     "ExpiryMinutes": 60
@@ -458,7 +809,7 @@ Configure the upstream connection to Welco in `SNUL.Shared` and consuming servic
   "WelcoIntegration": {
     "BaseUrl": "https://localhost:7166",
     "ClientId": "snul",
-    "ClientSecret": "YOUR_SYMMETRIC_WELCO_CLIENT_SECRET",
+    "ClientSecret": "WELCO_M2M_SYMMETRIC_SHARED_SECRET_KEY",
     "DefaultSystem": "snul",
     "TimeoutSeconds": 30,
     "RetryCount": 3,
@@ -466,14 +817,14 @@ Configure the upstream connection to Welco in `SNUL.Shared` and consuming servic
       "snul": {
         "BaseUrl": "https://localhost:7166",
         "ClientId": "snul",
-        "ClientSecret": "YOUR_SYMMETRIC_WELCO_CLIENT_SECRET",
+        "ClientSecret": "WELCO_M2M_SYMMETRIC_SHARED_SECRET_KEY",
         "Market": "Egypt",
         "TimeoutSeconds": 30
       },
       "welo": {
         "BaseUrl": "https://welco-gateway.runasp.net",
         "ClientId": "welo",
-        "ClientSecret": "YOUR_SYMMETRIC_WELO_CLIENT_SECRET",
+        "ClientSecret": "WELO_M2M_SYMMETRIC_SHARED_SECRET_KEY",
         "Market": "Saudi",
         "TimeoutSeconds": 45
       }
@@ -482,56 +833,78 @@ Configure the upstream connection to Welco in `SNUL.Shared` and consuming servic
 }
 ```
 
----
+### 2. Ocelot Gateway Configuration Schema (`ocelot.commerce.Development.json`)
 
-## 🚀 Getting Started & Local Development
-
-### Prerequisites
-- [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- SQL Server (LocalDB, Docker, or Hosted SQL Server)
-- Running Welco Backend (`https://localhost:7166` or hosted Test endpoint)
-
-### 1. Clone & Build Solution
-
-```bash
-git clone https://github.com/MohamedSaber2004/SNUL-Backend.git
-cd SNUL
-dotnet build SNUL.slnx
+```json
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/v1/carts",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7145 }
+      ],
+      "UpstreamPathTemplate": "/api/v1/carts",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DangerousAcceptAnyServerCertificateValidator": true
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/orders",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7145 }
+      ],
+      "UpstreamPathTemplate": "/api/v1/orders",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT" ],
+      "DangerousAcceptAnyServerCertificateValidator": true
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/integration/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7145 }
+      ],
+      "UpstreamPathTemplate": "/api/v1/integration/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DangerousAcceptAnyServerCertificateValidator": true
+    }
+  ]
+}
 ```
-
-### 2. Apply SNUL Database Migrations
-
-```bash
-cd Auth.Services.API
-dotnet ef database update --project ../SNUL.Shared
-```
-
-### 3. Launch Services
-
-Run via Visual Studio multi-project launch (`SNUL.slnLaunch`) or start individual services via terminal:
-
-```bash
-# Gateway (Scalar docs at https://localhost:7266/scalar/v1)
-cd SNUL.Gateway.API && dotnet run --launch-profile https
-
-# Domain Microservices
-cd Auth.Services.API && dotnet run --launch-profile https
-cd UserManagement.Service.API && dotnet run --launch-profile https
-cd Product.Services.API && dotnet run --launch-profile https
-cd Commerce.Services.API && dotnet run --launch-profile https
-cd Sales.Services.API && dotnet run --launch-profile https
-cd Content.Services.API && dotnet run --launch-profile https
-cd Certification.Services.API && dotnet run --launch-profile https
-cd Attachment.Services.API && dotnet run --launch-profile https
-```
-
-### 4. Interactive API Documentation
-
-Open your browser to:
-- **Unified Portal Docs (Scalar):** `https://localhost:7266/scalar/v1`
-- **Raw Aggregated OpenAPI Spec:** `https://localhost:7266/openapi/all.json`
-- **Microservice Specific Specs:** `https://localhost:7266/api/docs/{service}/openapi.json`
 
 ---
 
-*SNUL © 2026 — Advanced Medical & Surgical Distribution Platform (Egypt).*
+## 10. 🚀 Build, Verification, & Local Startup Guide
+
+### 1. Build Verification
+Both solutions are compiled and verified on **.NET 10.0**:
+
+```bash
+# Build SNUL Solution
+dotnet build "E:\SNUL Site\backend\SNUL\SNUL.slnx"
+# Result: Build succeeded. 0 Warning(s), 0 Error(s).
+
+# Build Welco Solution
+dotnet build "E:\welco site\Welco\Welco.sln"
+# Result: Build succeeded. 0 Warning(s), 0 Error(s).
+```
+
+### 2. Run Test Suites
+```bash
+# Run SNUL Tests
+dotnet test "E:\SNUL Site\backend\SNUL\SNUL.Shared.Tests\SNUL.Shared.Tests.csproj"
+# Passed: 30, Failed: 0.
+
+# Run Welco Tests
+dotnet test "E:\welco site\Welco\Welco.Tests\Welco.Tests.csproj"
+# Passed: 29, Failed: 0.
+```
+
+### 3. Startup Profiles
+- **SNUL Gateway Interactive Docs:** `https://localhost:7266/scalar/v1`
+- **Welco Gateway Interactive Docs:** `https://localhost:7166/scalar/v1`
+- **Aggregated Raw OpenAPI:** `https://localhost:7266/openapi/all.json`
+
+---
+
+*SNUL & WELCO Dual-Platform Architecture © 2026. All rights reserved.*

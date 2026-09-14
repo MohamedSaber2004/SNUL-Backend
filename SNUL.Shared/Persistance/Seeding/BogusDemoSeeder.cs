@@ -9,7 +9,7 @@ using SNUL.Shared.Enums;
 
 namespace SNUL.Shared.Persistance.Seeding
 {
-        public static class BogusDemoSeeder
+    public static class BogusDemoSeeder
     {
         public const string Marker = "BogusSeeder";
         private const int FakerSeed = 1234;
@@ -103,7 +103,7 @@ namespace SNUL.Shared.Persistance.Seeding
             return slug.Trim('-');
         }
 
-                private static List<T> PickSome<T>(Faker faker, IList<T> source, int min, int max)
+        private static List<T> PickSome<T>(Faker faker, IList<T> source, int min, int max)
         {
             if (source.Count == 0) return new List<T>();
             var upper = Math.Min(max, source.Count);
@@ -121,7 +121,7 @@ namespace SNUL.Shared.Persistance.Seeding
                 : "Demo123!";
         }
 
-                public static bool ShouldSeedDemoData(IHostEnvironment? env, IConfiguration? config, out string reason)
+        public static bool ShouldSeedDemoData(IHostEnvironment? env, IConfiguration? config, out string reason)
         {
             if (env != null && env.IsProduction())
             {
@@ -134,9 +134,9 @@ namespace SNUL.Shared.Persistance.Seeding
                 Environment.GetEnvironmentVariable("SEED_DEMO_DATA"),
                 "true", StringComparison.OrdinalIgnoreCase);
 
-var fromConfigString = string.Equals(
-                config?["SEED_DEMO_DATA"],
-                "true", StringComparison.OrdinalIgnoreCase);
+            var fromConfigString = string.Equals(
+                            config?["SEED_DEMO_DATA"],
+                            "true", StringComparison.OrdinalIgnoreCase);
 
             if (fromConfig || fromEnvVar || fromConfigString)
             {
@@ -165,7 +165,7 @@ var fromConfigString = string.Equals(
                 var db = services.GetRequiredService<SnulDbContext>();
                 var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
-var roleManager = services.GetService<RoleManager<IdentityRole<Guid>>>();
+                var roleManager = services.GetService<RoleManager<IdentityRole<Guid>>>();
                 if (roleManager != null)
                     await RoleSeeder.SeedRolesAsync(roleManager);
 
@@ -173,8 +173,8 @@ var roleManager = services.GetService<RoleManager<IdentityRole<Guid>>>();
                 var faker = new Faker("en");
                 var year = DateTime.UtcNow.Year;
 
-var usd = await db.Currencies.FirstOrDefaultAsync(c => !c.IsDeleted && c.Code == "USD", ct)
-                    ?? await db.Currencies.FirstOrDefaultAsync(c => !c.IsDeleted, ct);
+                var usd = await db.Currencies.FirstOrDefaultAsync(c => !c.IsDeleted && c.Code == "USD", ct)
+                                    ?? await db.Currencies.FirstOrDefaultAsync(c => !c.IsDeleted, ct);
                 if (usd == null)
                 {
                     await CurrencySeeder.SeedAsync(db);
@@ -193,7 +193,7 @@ var usd = await db.Currencies.FirstOrDefaultAsync(c => !c.IsDeleted && c.Code ==
                     return;
                 }
 
-List<Category> leaves;
+                List<Category> leaves;
                 if (await db.Categories.AnyAsync(c => !c.IsDeleted, ct))
                 {
                     leaves = await db.Categories.Where(c => !c.IsDeleted && c.ParentCategoryId != null).ToListAsync(ct);
@@ -222,58 +222,57 @@ List<Category> leaves;
                 else
                 {
                     products = new List<Product>();
-                var specs = new List<ProductSpecification>();
-                var media = new List<ProductMedia>();
-                var tags = new List<ProductProcedureTag>();
-                var seq = 0;
-                foreach (var leaf in leaves)
-                {
-                    for (var i = 0; i < 5; i++)
+                    var specs = new List<ProductSpecification>();
+                    var media = new List<ProductMedia>();
+                    var tags = new List<ProductProcedureTag>();
+                    var seq = 0;
+                    foreach (var leaf in leaves)
                     {
-                        seq++;
-                        var nameEn = $"{faker.PickRandom(InstrumentEn)} {faker.PickRandom(InstrumentModifiers)}";
-                        var sku = $"WL-{100000 + seq}";
-                        var slug = $"{Slugify(nameEn)}-{seq}";
-                        var price = Math.Round(faker.Random.Decimal(15, 2500), 2);
-                        var length = faker.Random.Bool(0.7f) ? (decimal?)Math.Round(faker.Random.Decimal(10, 30), 1) : null;
-                        var material = faker.PickRandom(Materials);
-                        var product = Product.Create(
-                            nameEn,
-                            $"{faker.PickRandom(InstrumentAr)} {seq}",
-                            sku, slug,
-                            faker.Lorem.Sentence(8, 4),
-                            price,
-                            faker.Random.Int(0, 300),
-                            $"Autoclave 134°C; DIN 1.4021{(length.HasValue ? $"; {length} cm" : string.Empty)}",
-                            $"demo/products/{slug}.jpg",
-                            material, length,
-                            usd?.Id,
-                            leaf.Id, Marker);
-                        products.Add(product);
-                        specs.Add(new ProductSpecification { Id = Guid.NewGuid(), ProductId = product.Id, AttrName = "Material", AttrValue = material });
-                        specs.Add(new ProductSpecification { Id = Guid.NewGuid(), ProductId = product.Id, AttrName = "Sterilization", AttrValue = "Autoclave 134°C" });
-                        specs.Add(new ProductSpecification { Id = Guid.NewGuid(), ProductId = product.Id, AttrName = "Length", AttrValue = length.HasValue ? $"{length} cm" : "Standard" });
-                        foreach (var s in specs.TakeLast(3)) s.MarkAsCreated(Marker);
-                        media.Add(new ProductMedia { Id = Guid.NewGuid(), ProductId = product.Id, Type = ProductMediaType.Image, Url = $"demo/products/{slug}.jpg", SortOrder = 0 });
-                        media.Last().MarkAsCreated(Marker);
-                        if (faker.Random.Bool(0.3f))
+                        for (var i = 0; i < 5; i++)
                         {
-                            media.Add(new ProductMedia { Id = Guid.NewGuid(), ProductId = product.Id, Type = ProductMediaType.Image, Url = $"demo/products/{slug}-2.jpg", SortOrder = 1 });
+                            seq++;
+                            var nameEn = $"{faker.PickRandom(InstrumentEn)} {faker.PickRandom(InstrumentModifiers)}";
+                            var sku = $"WL-{100000 + seq}";
+                            var slug = $"{Slugify(nameEn)}-{seq}";
+                            var price = Math.Round(faker.Random.Decimal(15, 2500), 2);
+                            var length = faker.Random.Bool(0.7f) ? (decimal?)Math.Round(faker.Random.Decimal(10, 30), 1) : null;
+                            var material = faker.PickRandom(Materials);
+                            var product = Product.Create(
+                                nameEn,
+                                $"{faker.PickRandom(InstrumentAr)} {seq}",
+                                sku, slug,
+                                faker.Lorem.Sentence(8, 4),
+                                price,
+                                faker.Random.Int(0, 300),
+                                $"Autoclave 134°C; DIN 1.4021{(length.HasValue ? $"; {length} cm" : string.Empty)}",
+                                $"demo/products/{slug}.jpg",
+                                material, length,
+                                usd?.Id,
+                                leaf.Id, Marker);
+                            products.Add(product);
+                            specs.Add(new ProductSpecification { Id = Guid.NewGuid(), ProductId = product.Id, AttrName = "Material", AttrValue = material });
+                            specs.Add(new ProductSpecification { Id = Guid.NewGuid(), ProductId = product.Id, AttrName = "Sterilization", AttrValue = "Autoclave 134°C" });
+                            specs.Add(new ProductSpecification { Id = Guid.NewGuid(), ProductId = product.Id, AttrName = "Length", AttrValue = length.HasValue ? $"{length} cm" : "Standard" });
+                            foreach (var s in specs.TakeLast(3)) s.MarkAsCreated(Marker);
+                            media.Add(new ProductMedia { Id = Guid.NewGuid(), ProductId = product.Id, Type = ProductMediaType.Image, Url = $"demo/products/{slug}.jpg", SortOrder = 0 });
                             media.Last().MarkAsCreated(Marker);
-                        }
-                        foreach (var tag in faker.PickRandom(ProcedureTags, faker.Random.Int(1, 2)).Distinct())
-                        {
-                            var t = new ProductProcedureTag { Id = Guid.NewGuid(), ProductId = product.Id, Label = tag };
-                            t.MarkAsCreated(Marker);
-                            tags.Add(t);
+                            if (faker.Random.Bool(0.3f))
+                            {
+                                media.Add(new ProductMedia { Id = Guid.NewGuid(), ProductId = product.Id, Type = ProductMediaType.Image, Url = $"demo/products/{slug}-2.jpg", SortOrder = 1 });
+                                media.Last().MarkAsCreated(Marker);
+                            }
+                            foreach (var tag in faker.PickRandom(ProcedureTags, faker.Random.Int(1, 2)).Distinct())
+                            {
+                                var t = new ProductProcedureTag { Id = Guid.NewGuid(), ProductId = product.Id, Label = tag };
+                                t.MarkAsCreated(Marker);
+                                tags.Add(t);
+                            }
                         }
                     }
-                }
-                await db.Products.AddRangeAsync(products, ct);
-                await db.ProductSpecifications.AddRangeAsync(specs, ct);
-                await db.ProductMedias.AddRangeAsync(media, ct);
-                await db.ProductProcedureTags.AddRangeAsync(tags, ct);
-                await db.SaveChangesAsync(ct);
+                    await db.Products.AddRangeAsync(products, ct);
+                    await db.ProductSpecifications.AddRangeAsync(specs, ct);
+                    await db.ProductMedias.AddRangeAsync(media, ct);
+                    await db.SaveChangesAsync(ct);
                 }
 
                 List<Company> companies;
@@ -314,40 +313,40 @@ List<Category> leaves;
                             status, null, Marker,
                             $"info@{Slugify(seed.Name)}.example.com",
                             seed.ImageName);
-                        
+
                         company.IsProvider = true;
                         companies.Add(company);
                     }
                     await db.Companies.AddRangeAsync(companies, ct);
                     await db.SaveChangesAsync(ct);
 
-                var addresses = new List<CompanyAddress>();
-                foreach (var company in companies)
-                {
-                    var n = faker.Random.Int(1, 2);
-                    for (var a = 0; a < n; a++)
+                    var addresses = new List<CompanyAddress>();
+                    foreach (var company in companies)
                     {
-                        var country = countries.FirstOrDefault(c => c.Id == company.CountryId) ?? faker.PickRandom(countries);
-                        var city = await db.Cities.FirstOrDefaultAsync(c => !c.IsDeleted && c.CountryId == country.Id, ct)
-                            ?? await db.Cities.FirstOrDefaultAsync(c => !c.IsDeleted, ct);
-                        if (city == null) continue;
-                        var zone = await db.Zones.FirstOrDefaultAsync(z => !z.IsDeleted && z.CityId == city.Id, ct)
-                            ?? await db.Zones.FirstOrDefaultAsync(z => !z.IsDeleted, ct);
-                        if (zone == null) continue;
-                        addresses.Add(CompanyAddress.Create(
-                            company.Id, country.Id, city.Id, zone.Id,
-                            $"{faker.Random.Int(1, 200)} {faker.Address.StreetName()}",
-                            faker.Random.Bool(0.5f) ? $"Bldg {faker.Random.Int(1, 50)}" : null,
-                            faker.Random.Bool(0.4f) ? $"Fl {faker.Random.Int(1, 20)}" : null,
-                            faker.Random.Bool(0.4f) ? $"Apt {faker.Random.Int(1, 100)}" : null,
-                            Marker, isDefault: a == 0));
+                        var n = faker.Random.Int(1, 2);
+                        for (var a = 0; a < n; a++)
+                        {
+                            var country = countries.FirstOrDefault(c => c.Id == company.CountryId) ?? faker.PickRandom(countries);
+                            var city = await db.Cities.FirstOrDefaultAsync(c => !c.IsDeleted && c.CountryId == country.Id, ct)
+                                ?? await db.Cities.FirstOrDefaultAsync(c => !c.IsDeleted, ct);
+                            if (city == null) continue;
+                            var zone = await db.Zones.FirstOrDefaultAsync(z => !z.IsDeleted && z.CityId == city.Id, ct)
+                                ?? await db.Zones.FirstOrDefaultAsync(z => !z.IsDeleted, ct);
+                            if (zone == null) continue;
+                            addresses.Add(CompanyAddress.Create(
+                                company.Id, country.Id, city.Id, zone.Id,
+                                $"{faker.Random.Int(1, 200)} {faker.Address.StreetName()}",
+                                faker.Random.Bool(0.5f) ? $"Bldg {faker.Random.Int(1, 50)}" : null,
+                                faker.Random.Bool(0.4f) ? $"Fl {faker.Random.Int(1, 20)}" : null,
+                                faker.Random.Bool(0.4f) ? $"Apt {faker.Random.Int(1, 100)}" : null,
+                                Marker, isDefault: a == 0));
+                        }
                     }
-                }
-                await db.CompanyAddresses.AddRangeAsync(addresses, ct);
-                await db.SaveChangesAsync(ct);
+                    await db.CompanyAddresses.AddRangeAsync(addresses, ct);
+                    await db.SaveChangesAsync(ct);
                 }
 
-var password = DemoPassword(config);
+                var password = DemoPassword(config);
                 var staff = new List<ApplicationUser>();
                 for (var i = 1; i <= 2; i++)
                 {
@@ -372,20 +371,8 @@ var password = DemoPassword(config);
                     if (u2 != null) orgUsers.Add((u2, approved[i]));
                 }
 
-var legacyCustomers = await db.ApplicationUsers.Where(u => !u.IsDeleted && (int)u.UserType == 4).ToListAsync(ct);
-                if (legacyCustomers.Count > 0 && approved.Count > 0)
-                {
-                    for (var i = 0; i < legacyCustomers.Count; i++)
-                    {
-                        var lc = legacyCustomers[i];
-                        lc.UserType = UserType.OrganizationUser;
-                        if (!lc.CompanyId.HasValue)
-                            lc.CompanyId = approved[i % approved.Count].Id;
-                    }
-                    await db.SaveChangesAsync(ct);
-                }
 
-if (staff.Count == 0)
+                if (staff.Count == 0)
                     staff = await db.ApplicationUsers.Where(u => !u.IsDeleted && u.UserType == UserType.SnulStaff).Take(5).ToListAsync(ct);
                 if (orgUsers.Count == 0 && approved.Count > 0)
                 {
@@ -403,8 +390,8 @@ if (staff.Count == 0)
                 if (activeMembers.Count == 0)
                     activeMembers = await db.ApplicationUsers.Where(u => !u.IsDeleted).Take(20).ToListAsync(ct);
 
-var membersWithAddress = new HashSet<Guid>(
-                    await db.UserAddresses.Where(a => !a.IsDeleted).Select(a => a.UserId).ToListAsync(ct));
+                var membersWithAddress = new HashSet<Guid>(
+                                    await db.UserAddresses.Where(a => !a.IsDeleted).Select(a => a.UserId).ToListAsync(ct));
                 var memberAddresses = new List<UserAddress>();
                 foreach (var c in activeMembers)
                 {
@@ -427,7 +414,7 @@ var membersWithAddress = new HashSet<Guid>(
                     await db.SaveChangesAsync(ct);
                 }
 
-var repId = staff.Count > 0 ? staff[0].Id : Guid.NewGuid();
+                var repId = staff.Count > 0 ? staff[0].Id : Guid.NewGuid();
                 var chainNo = 0;
                 var chainPrefix = $"WO-{year}-";
                 if (await db.Orders.AnyAsync(o => !o.IsDeleted && (o.CreatedBy == Marker || o.OrderNumber.StartsWith(chainPrefix)), ct))
@@ -436,96 +423,106 @@ var repId = staff.Count > 0 ? staff[0].Id : Guid.NewGuid();
                 else
                 {
                     foreach (var (user, company) in orgUsers.Take(products.Count > 0 ? 12 : 0))
-                {
-                    chainNo++;
-                    var items = PickSome(faker, products, 2, 5);
-                    var rfq = new RFQ
                     {
-                        Id = Guid.NewGuid(),
-                        RFQNumber = $"RFQ-{year}-{chainNo:0000}",
-                        CompanyId = company.Id,
-                        Status = RFQStatus.Ordered,
-                        AssignedSalesRepId = staff.Count > 0 ? repId : null,
-                    };
-                    rfq.MarkAsCreated(Marker);
-                    foreach (var p in items)
-                    {
-                        var ri = new RFQItem
+                        chainNo++;
+                        var items = PickSome(faker, products, 2, 5);
+                        var rfq = new RFQ
                         {
-                            Id = Guid.NewGuid(), RFQId = rfq.Id, ProductId = p.Id,
-                            Quantity = faker.Random.Int(5, 200), UnitPrice = p.Price,
-                            Notes = faker.Random.Bool(0.3f) ? "Urgent delivery requested" : null,
+                            Id = Guid.NewGuid(),
+                            RFQNumber = $"RFQ-{year}-{chainNo:0000}",
+                            CompanyId = company.Id,
+                            Status = RFQStatus.Ordered,
+                            AssignedSalesRepId = staff.Count > 0 ? repId : null,
                         };
-                        ri.MarkAsCreated(Marker);
-                        rfq.Items.Add(ri);
-                    }
-                    var quoteTotal = Math.Round(rfq.Items.Sum(i => i.Quantity * i.UnitPrice) * (decimal)faker.Random.Double(0.92, 1.05), 2);
-                    var quote = new Quote
-                    {
-                        Id = Guid.NewGuid(),
-                        QuoteNumber = $"QT-{year}-{chainNo:0000}",
-                        RFQId = rfq.Id,
-                        Amount = quoteTotal,
-                        ValidUntil = DateTime.UtcNow.AddDays(30),
-                        Status = QuoteStatus.Approved,
-                        CreatedBySalesRepId = repId,
-                    };
-                    quote.MarkAsCreated(Marker);
-                    foreach (var ri in rfq.Items)
-                    {
-                        var qi = new QuoteItem
+                        rfq.MarkAsCreated(Marker);
+                        foreach (var p in items)
                         {
-                            Id = Guid.NewGuid(), QuoteId = quote.Id, ProductId = ri.ProductId,
-                            Quantity = ri.Quantity, UnitPrice = ri.UnitPrice,
-                        };
-                        qi.MarkAsCreated(Marker);
-                        quote.Items.Add(qi);
-                    }
-                    var order = new Order
-                    {
-                        Id = Guid.NewGuid(),
-                        OrderNumber = $"WO-{year}-{chainNo:0000}",
-                        Status = (OrderStatus)faker.Random.Int(2, 4),
-                        UserId = user.Id,
-                        CompanyId = company.Id,
-                        CurrencyId = usd?.Id,
-                        QuoteId = quote.Id,
-                        TotalAmount = quoteTotal,
-                        SnapshotBaseCurrency = "USD",
-                        SnapshotCurrencyCode = usd?.Code ?? "USD",
-                        SnapshotRate = 1,
-                        SnapshotRateDate = DateOnly.FromDateTime(DateTime.UtcNow),
-                        SnapshotSource = Marker,
-                    };
-                    order.MarkAsCreated(Marker);
-                    foreach (var qi in quote.Items)
-                    {
-                        var oi = new OrderItem
+                            var ri = new RFQItem
+                            {
+                                Id = Guid.NewGuid(),
+                                RFQId = rfq.Id,
+                                ProductId = p.Id,
+                                Quantity = faker.Random.Int(5, 200),
+                                UnitPrice = p.Price,
+                                Notes = faker.Random.Bool(0.3f) ? "Urgent delivery requested" : null,
+                            };
+                            ri.MarkAsCreated(Marker);
+                            rfq.Items.Add(ri);
+                        }
+                        var quoteTotal = Math.Round(rfq.Items.Sum(i => i.Quantity * i.UnitPrice) * (decimal)faker.Random.Double(0.92, 1.05), 2);
+                        var quote = new Quote
                         {
-                            Id = Guid.NewGuid(), OrderId = order.Id, ProductId = qi.ProductId,
-                            Quantity = qi.Quantity, UnitPrice = qi.UnitPrice,
+                            Id = Guid.NewGuid(),
+                            QuoteNumber = $"QT-{year}-{chainNo:0000}",
+                            RFQId = rfq.Id,
+                            Amount = quoteTotal,
+                            ValidUntil = DateTime.UtcNow.AddDays(30),
+                            Status = QuoteStatus.Approved,
+                            CreatedBySalesRepId = repId,
                         };
-                        oi.MarkAsCreated(Marker);
-                        order.Items.Add(oi);
-                    }
-                    var invoice = new Invoice
-                    {
-                        Id = Guid.NewGuid(), OrderId = order.Id,
-                        InvoiceNumber = $"INV-{year}-{chainNo:0000}",
-                        Amount = quoteTotal,
-                        Status = faker.Random.Bool(0.6f) ? InvoiceStatus.Paid : InvoiceStatus.Issued,
-                    };
-                    invoice.MarkAsCreated(Marker);
-                    order.Invoices.Add(invoice);
+                        quote.MarkAsCreated(Marker);
+                        foreach (var ri in rfq.Items)
+                        {
+                            var qi = new QuoteItem
+                            {
+                                Id = Guid.NewGuid(),
+                                QuoteId = quote.Id,
+                                ProductId = ri.ProductId,
+                                Quantity = ri.Quantity,
+                                UnitPrice = ri.UnitPrice,
+                            };
+                            qi.MarkAsCreated(Marker);
+                            quote.Items.Add(qi);
+                        }
+                        var order = new Order
+                        {
+                            Id = Guid.NewGuid(),
+                            OrderNumber = $"WO-{year}-{chainNo:0000}",
+                            Status = (OrderStatus)faker.Random.Int(2, 4),
+                            UserId = user.Id,
+                            CompanyId = company.Id,
+                            CurrencyId = usd?.Id,
+                            QuoteId = quote.Id,
+                            TotalAmount = quoteTotal,
+                            SnapshotBaseCurrency = "USD",
+                            SnapshotCurrencyCode = usd?.Code ?? "USD",
+                            SnapshotRate = 1,
+                            SnapshotRateDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                            SnapshotSource = Marker,
+                        };
+                        order.MarkAsCreated(Marker);
+                        foreach (var qi in quote.Items)
+                        {
+                            var oi = new OrderItem
+                            {
+                                Id = Guid.NewGuid(),
+                                OrderId = order.Id,
+                                ProductId = qi.ProductId,
+                                Quantity = qi.Quantity,
+                                UnitPrice = qi.UnitPrice,
+                            };
+                            oi.MarkAsCreated(Marker);
+                            order.Items.Add(oi);
+                        }
+                        var invoice = new Invoice
+                        {
+                            Id = Guid.NewGuid(),
+                            OrderId = order.Id,
+                            InvoiceNumber = $"INV-{year}-{chainNo:0000}",
+                            Amount = quoteTotal,
+                            Status = faker.Random.Bool(0.6f) ? InvoiceStatus.Paid : InvoiceStatus.Issued,
+                        };
+                        invoice.MarkAsCreated(Marker);
+                        order.Invoices.Add(invoice);
 
-                    await db.RFQs.AddAsync(rfq, ct);
-                    await db.Quotes.AddAsync(quote, ct);
-                    await db.Orders.AddAsync(order, ct);
+                        await db.RFQs.AddAsync(rfq, ct);
+                        await db.Quotes.AddAsync(quote, ct);
+                        await db.Orders.AddAsync(order, ct);
                     }
                     await db.SaveChangesAsync(ct);
                 }
 
-var catEntities = new List<HelpCategory>();
+                var catEntities = new List<HelpCategory>();
                 if (!await db.HelpCategories.AnyAsync(c => !c.IsDeleted, ct))
                 {
                     var helpCats = new[] { "Ordering", "Shipping & Incoterms", "Returns & RMA", "Sterilization", "Warranty" };
@@ -552,7 +549,9 @@ var catEntities = new List<HelpCategory>();
                             var title = $"{hc.Name} guide part {i}: {faker.Lorem.Sentence(4, 2).TrimEnd('.')}";
                             var ha = new HelpArticle
                             {
-                                Id = Guid.NewGuid(), CategoryId = hc.Id, Title = title,
+                                Id = Guid.NewGuid(),
+                                CategoryId = hc.Id,
+                                Title = title,
                                 Body = faker.Lorem.Paragraphs(2, 3),
                                 Slug = $"{Slugify(hc.Name)}-part-{i}",
                             };
@@ -579,27 +578,6 @@ var catEntities = new List<HelpCategory>();
                     await db.FAQItems.AddRangeAsync(faqs, ct);
                     await db.SaveChangesAsync(ct);
                 }
-                if (!await db.TradeShowEvents.AnyAsync(t => !t.IsDeleted, ct))
-                {
-                    var shows = new[]
-                    {
-                        ("Arab Health 2025", "Dubai, UAE", -210, -206),
-                        ("Medica 2025", "Düsseldorf, Germany", -120, -116),
-                        ("Arab Health 2026", "Dubai, UAE", 25, 29),
-                        ("FIME 2026", "Miami, USA", 150, 153),
-                    }.Select(s =>
-                    {
-                        var t = new TradeShowEvent
-                        {
-                            Id = Guid.NewGuid(), Name = s.Item1, Location = s.Item2,
-                            StartDate = DateTime.UtcNow.AddDays(s.Item3), EndDate = DateTime.UtcNow.AddDays(s.Item4),
-                        };
-                        t.MarkAsCreated(Marker);
-                        return t;
-                    }).ToList();
-                    await db.TradeShowEvents.AddRangeAsync(shows, ct);
-                    await db.SaveChangesAsync(ct);
-                }
                 if (!await db.ProductInquiries.AnyAsync(p => !p.IsDeleted, ct) && products.Count > 0)
                 {
                     var inquiries = Enumerable.Range(1, 6).Select(_ =>
@@ -607,8 +585,11 @@ var catEntities = new List<HelpCategory>();
                         var p = faker.PickRandom(products);
                         var pi = new ProductInquiry
                         {
-                            Id = Guid.NewGuid(), ProductId = p.Id, Name = faker.Name.FullName(),
-                            Organization = faker.Company.CompanyName(), Message = faker.Lorem.Paragraph(1),
+                            Id = Guid.NewGuid(),
+                            ProductId = p.Id,
+                            Name = faker.Name.FullName(),
+                            Organization = faker.Company.CompanyName(),
+                            Message = faker.Lorem.Paragraph(1),
                             Email = faker.Internet.Email(),
                         };
                         pi.MarkAsCreated(Marker);
@@ -623,8 +604,12 @@ var catEntities = new List<HelpCategory>();
                     {
                         var o = new OemInquiry
                         {
-                            Id = Guid.NewGuid(), FullName = faker.Name.FullName(), Email = faker.Internet.Email(),
-                            CompanyName = faker.Company.CompanyName(), ServiceType = s, Message = faker.Lorem.Paragraph(1),
+                            Id = Guid.NewGuid(),
+                            FullName = faker.Name.FullName(),
+                            Email = faker.Internet.Email(),
+                            CompanyName = faker.Company.CompanyName(),
+                            ServiceType = s,
+                            Message = faker.Lorem.Paragraph(1),
                         };
                         o.MarkAsCreated(Marker);
                         return o;
@@ -643,9 +628,11 @@ var catEntities = new List<HelpCategory>();
                         var st = faker.PickRandom(statuses);
                         var t = new SupportTicket
                         {
-                            Id = Guid.NewGuid(), UserId = tu.Id,
+                            Id = Guid.NewGuid(),
+                            UserId = tu.Id,
                             Subject = faker.Lorem.Sentence(5, 2).TrimEnd('.'),
-                            Message = faker.Lorem.Paragraph(1), Status = st,
+                            Message = faker.Lorem.Paragraph(1),
+                            Status = st,
                             Reply = st == "Open" ? null : faker.Lorem.Paragraph(1),
                             RepliedAt = st == "Open" ? null : DateTime.UtcNow.AddDays(-faker.Random.Int(1, 9)),
                             RepliedBy = st == "Open" || staff.Count == 0 ? null : repId,
@@ -656,26 +643,9 @@ var catEntities = new List<HelpCategory>();
                     await db.SupportTickets.AddRangeAsync(tickets, ct);
                     await db.SaveChangesAsync(ct);
                 }
-                if (!await db.Notifications.AnyAsync(n => !n.IsDeleted, ct) && activeMembers.Count > 0)
-                {
-                    var notes = activeMembers.Take(12).Select(u =>
-                    {
-                        var n = new Notification
-                        {
-                            Id = Guid.NewGuid(), UserId = u.Id,
-                            Type = faker.PickRandom(new[] { "QuoteReady", "RFQUpdate", "OrderShipped" }),
-                            Message = faker.Lorem.Sentence(6, 3),
-                            IsRead = faker.Random.Bool(0.5f),
-                        };
-                        n.MarkAsCreated(Marker);
-                        return n;
-                    }).ToList();
-                    await db.Notifications.AddRangeAsync(notes, ct);
-                    await db.SaveChangesAsync(ct);
-                }
 
-var demoCerts = new[]
-                {
+                var demoCerts = new[]
+                                {
                     ("ISO-13485-2024", "ISO 13485:2016 Quality Management", "BSI Group", 730),
                     ("CE-MDR-2024", "CE Mark — EU MDR 2017/745", "TÜV SÜD", 1095),
                     ("FDA-510K-2023", "FDA 510(k) Clearance", "U.S. Food & Drug Administration", 1825),
@@ -702,7 +672,7 @@ var demoCerts = new[]
                     await db.SaveChangesAsync(ct);
                 }
 
-var ratesAdded = 0;
+                var ratesAdded = 0;
                 if (usd != null)
                 {
                     var targetCodes = new[] { "AED", "EUR", "SAR", "EGP", "GBP", "PKR", "JPY", "CAD", "TRY", "QAR" };
@@ -718,9 +688,13 @@ var ratesAdded = 0;
                         if (t.Id == usd.Id || existingPairs.Contains(t.Id)) continue;
                         var r = new ExchangeRate
                         {
-                            Id = Guid.NewGuid(), BaseCurrencyId = usd.Id, TargetCurrencyId = t.Id,
+                            Id = Guid.NewGuid(),
+                            BaseCurrencyId = usd.Id,
+                            TargetCurrencyId = t.Id,
                             Rate = Math.Round(faker.Random.Decimal(0.05m, 400m), 6),
-                            RateDate = today, Source = "FawazahmedCDN", FetchedAt = DateTime.UtcNow,
+                            RateDate = today,
+                            Source = "FawazahmedCDN",
+                            FetchedAt = DateTime.UtcNow,
                         };
                         r.MarkAsCreated(Marker);
                         rates.Add(r);
@@ -736,18 +710,24 @@ var ratesAdded = 0;
                 {
                     var ok = new ExchangeRateSyncLog
                     {
-                        Id = Guid.NewGuid(), StartedAt = DateTime.UtcNow.AddHours(-2),
+                        Id = Guid.NewGuid(),
+                        StartedAt = DateTime.UtcNow.AddHours(-2),
                         CompletedAt = DateTime.UtcNow.AddHours(-2).AddMinutes(3),
-                        Status = ExchangeRateSyncStatus.Success, BaseCurrency = "USD",
-                        RatesCount = ratesAdded, Source = "FawazahmedCDN",
+                        Status = ExchangeRateSyncStatus.Success,
+                        BaseCurrency = "USD",
+                        RatesCount = ratesAdded,
+                        Source = "FawazahmedCDN",
                     };
                     ok.MarkAsCreated(Marker);
                     var failed = new ExchangeRateSyncLog
                     {
-                        Id = Guid.NewGuid(), StartedAt = DateTime.UtcNow.AddDays(-1),
+                        Id = Guid.NewGuid(),
+                        StartedAt = DateTime.UtcNow.AddDays(-1),
                         CompletedAt = DateTime.UtcNow.AddDays(-1).AddMinutes(5),
-                        Status = ExchangeRateSyncStatus.Failed, BaseCurrency = "USD",
-                        RatesCount = 0, Source = "FawazahmedCDN",
+                        Status = ExchangeRateSyncStatus.Failed,
+                        BaseCurrency = "USD",
+                        RatesCount = 0,
+                        Source = "FawazahmedCDN",
                         ErrorMessage = "Upstream provider timeout (demo entry).",
                     };
                     failed.MarkAsCreated(Marker);
@@ -755,7 +735,7 @@ var ratesAdded = 0;
                     await db.SaveChangesAsync(ct);
                 }
 
-if (!await db.Carts.AnyAsync(c => !c.IsDeleted && c.CreatedBy == Marker, ct) && products.Count > 0)
+                if (!await db.Carts.AnyAsync(c => !c.IsDeleted && c.CreatedBy == Marker, ct) && products.Count > 0)
                 {
                     var cartOwners = activeMembers.Take(6).ToList();
                     if (cartOwners.Count == 0)
@@ -769,8 +749,11 @@ if (!await db.Carts.AnyAsync(c => !c.IsDeleted && c.CreatedBy == Marker, ct) && 
                         {
                             var ci = new CartItem
                             {
-                                Id = Guid.NewGuid(), CartId = cart.Id, ProductId = p.Id,
-                                Quantity = faker.Random.Int(1, 5), UnitPriceSnapshot = p.Price,
+                                Id = Guid.NewGuid(),
+                                CartId = cart.Id,
+                                ProductId = p.Id,
+                                Quantity = faker.Random.Int(1, 5),
+                                UnitPriceSnapshot = p.Price,
                             };
                             ci.MarkAsCreated(Marker);
                             cart.Items.Add(ci);
@@ -785,8 +768,11 @@ if (!await db.Carts.AnyAsync(c => !c.IsDeleted && c.CreatedBy == Marker, ct) && 
                         {
                             var ci = new CartItem
                             {
-                                Id = Guid.NewGuid(), CartId = guest.Id, ProductId = p.Id,
-                                Quantity = faker.Random.Int(1, 4), UnitPriceSnapshot = p.Price,
+                                Id = Guid.NewGuid(),
+                                CartId = guest.Id,
+                                ProductId = p.Id,
+                                Quantity = faker.Random.Int(1, 4),
+                                UnitPriceSnapshot = p.Price,
                             };
                             ci.MarkAsCreated(Marker);
                             guest.Items.Add(ci);
@@ -800,7 +786,7 @@ if (!await db.Carts.AnyAsync(c => !c.IsDeleted && c.CreatedBy == Marker, ct) && 
                     }
                 }
 
-var interactionUsers = activeMembers.Take(10).ToList();
+                var interactionUsers = activeMembers.Take(10).ToList();
                 if (interactionUsers.Count == 0)
                     interactionUsers = await db.ApplicationUsers.Where(u => !u.IsDeleted).Take(10).ToListAsync(ct);
                 if (interactionUsers.Count > 0 && products.Count > 0
@@ -820,7 +806,10 @@ var interactionUsers = activeMembers.Take(10).ToList();
                         if (!existingTriples.Add($"{u.Id}|{p.Id}|{t}")) continue;
                         interactions.Add(new UserProductInteraction
                         {
-                            Id = Guid.NewGuid(), UserId = u.Id, ProductId = p.Id, Type = t,
+                            Id = Guid.NewGuid(),
+                            UserId = u.Id,
+                            ProductId = p.Id,
+                            Type = t,
                             Timestamp = DateTime.UtcNow.AddDays(-faker.Random.Int(0, 30)),
                         });
                     }
@@ -832,7 +821,7 @@ var interactionUsers = activeMembers.Take(10).ToList();
                     }
                 }
 
-if (!await db.DistributorApplications.AnyAsync(d => !d.IsDeleted, ct))
+                if (!await db.DistributorApplications.AnyAsync(d => !d.IsDeleted, ct))
                 {
                     var bands = new[] { "Under $100K", "$100K - $500K", "$500K - $1M", "$1M - $5M", "Over $5M" };
                     var appStatuses = new[]
@@ -848,12 +837,16 @@ if (!await db.DistributorApplications.AnyAsync(d => !d.IsDeleted, ct))
                         var name = faker.Company.CompanyName();
                         var app = new DistributorApplication
                         {
-                            Id = Guid.NewGuid(), CompanyName = name, CountryId = country.Id,
+                            Id = Guid.NewGuid(),
+                            CompanyName = name,
+                            CountryId = country.Id,
                             SalesVolumeBand = bands[i % bands.Length],
                             CategoryInterest = faker.PickRandom(Specialties).En,
                             Website = $"https://www.{Slugify(name)}.com",
-                            ContactPerson = faker.Name.FullName(), ContactEmail = faker.Internet.Email(),
-                            Phone = faker.Phone.PhoneNumber("+9715########"), Status = appStatuses[i],
+                            ContactPerson = faker.Name.FullName(),
+                            ContactEmail = faker.Internet.Email(),
+                            Phone = faker.Phone.PhoneNumber("+9715########"),
+                            Status = appStatuses[i],
                         };
                         app.MarkAsCreated(Marker);
                         apps.Add(app);
@@ -862,7 +855,7 @@ if (!await db.DistributorApplications.AnyAsync(d => !d.IsDeleted, ct))
                     await db.SaveChangesAsync(ct);
                 }
 
-if (!await db.Documents.AnyAsync(d => !d.IsDeleted, ct))
+                if (!await db.Documents.AnyAsync(d => !d.IsDeleted, ct))
                 {
                     var docTypes = new[] { "Catalog", "Brochure", "IFU", "Certificate" };
                     var docs = new List<Document>();
@@ -874,8 +867,10 @@ if (!await db.Documents.AnyAsync(d => !d.IsDeleted, ct))
                         {
                             Id = Guid.NewGuid(),
                             Title = linked != null ? $"{linked.NameEn} — {dt}" : $"SNUL {dt} {2024 + (i % 2)}",
-                            DocType = dt, FileUrl = $"demo/docs/{Slugify(dt)}-{i + 1:00}.pdf",
-                            FileSizeKB = faker.Random.Int(200, 15000), ProductId = linked?.Id,
+                            DocType = dt,
+                            FileUrl = $"demo/docs/{Slugify(dt)}-{i + 1:00}.pdf",
+                            FileSizeKB = faker.Random.Int(200, 15000),
+                            ProductId = linked?.Id,
                             PublishedDate = DateTime.UtcNow.AddDays(-faker.Random.Int(1, 180)),
                         };
                         doc.MarkAsCreated(Marker);
@@ -885,37 +880,14 @@ if (!await db.Documents.AnyAsync(d => !d.IsDeleted, ct))
                     await db.SaveChangesAsync(ct);
                 }
 
-if (!await db.BlogPosts.AnyAsync(b => !b.IsDeleted, ct))
-                {
-                    var titles = new[]
-                    {
-                        "How to choose the right surgical scissors",
-                        "Autoclave sterilization at 134°C: best practices",
-                        "German stainless steel vs titanium instruments",
-                        "Setting up a distribution partnership",
-                        "Understanding Incoterms for medical imports",
-                        "Caring for precision instruments",
-                    };
-                    var posts = titles.Select((title, i) =>
-                    {
-                        var b = new BlogPost
-                        {
-                            Id = Guid.NewGuid(), Title = title, Body = faker.Lorem.Paragraphs(3, 4),
-                            PublishedDate = DateTime.UtcNow.AddDays(-(i * 12 + 3)),
-                        };
-                        b.MarkAsCreated(Marker);
-                        return b;
-                    }).ToList();
-                    await db.BlogPosts.AddRangeAsync(posts, ct);
-                    await db.SaveChangesAsync(ct);
-                }
-
-if (!await db.SupportContacts.AnyAsync(s => !s.IsDeleted, ct))
+                if (!await db.SupportContacts.AnyAsync(s => !s.IsDeleted, ct))
                 {
                     var contact = new SupportContact
                     {
-                        Id = Guid.NewGuid(), SupportEmail = "support@snul.health",
-                        PhoneNumber = "+971500000001", WhatsAppNumber = "+971500000001",
+                        Id = Guid.NewGuid(),
+                        SupportEmail = "support@snul.health",
+                        PhoneNumber = "+971500000001",
+                        WhatsAppNumber = "+971500000001",
                         WorkingHours = "Mon - Fri: 8:00 AM - 6:00 PM (GST)",
                     };
                     contact.MarkAsCreated(Marker);
@@ -923,7 +895,7 @@ if (!await db.SupportContacts.AnyAsync(s => !s.IsDeleted, ct))
                     await db.SaveChangesAsync(ct);
                 }
 
-if (!await db.LandingPages.AnyAsync(l => !l.IsDeleted && l.CreatedBy == Marker, ct))
+                if (!await db.LandingPages.AnyAsync(l => !l.IsDeleted && l.CreatedBy == Marker, ct))
                 {
                     var existingSlugs = new HashSet<string>(
                         await db.LandingPages.Where(l => !l.IsDeleted).Select(l => l.Slug).ToListAsync(ct),
@@ -941,8 +913,12 @@ if (!await db.LandingPages.AnyAsync(l => !l.IsDeleted && l.CreatedBy == Marker, 
                         if (existingSlugs.Contains(slug)) continue;
                         var page = new LandingPage
                         {
-                            Id = Guid.NewGuid(), Type = type, Slug = slug,
-                            HeroTitle = hero, HeroBody = body, ContentBlock = body,
+                            Id = Guid.NewGuid(),
+                            Type = type,
+                            Slug = slug,
+                            HeroTitle = hero,
+                            HeroBody = body,
+                            ContentBlock = body,
                         };
                         page.MarkAsCreated(Marker);
                         pagesToAdd.Add(page);
@@ -954,7 +930,7 @@ if (!await db.LandingPages.AnyAsync(l => !l.IsDeleted && l.CreatedBy == Marker, 
                     }
                 }
 
-var tokenUsers = activeMembers.Take(5).ToList();
+                var tokenUsers = activeMembers.Take(5).ToList();
                 if (tokenUsers.Count == 0)
                     tokenUsers = await db.ApplicationUsers.Where(u => !u.IsDeleted).Take(5).ToListAsync(ct);
                 if (tokenUsers.Count > 0 && !await db.UserRefreshTokens.AnyAsync(t => t.CreatedBy == Marker, ct))

@@ -1,11 +1,2 @@
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjEzZmU4OC1hNzk4LTRkZjctMmUxZS0wOGRmMGYxZjAzOWYiLCJlbWFpbCI6Im1tbXMyMDI2QGdtYWlsLmNvbSIsImp0aSI6IjY2ZjhmNDBkLTNlMTUtNDQ0ZS05MGZkLTZmNWVlZjU3YTJhZCIsIkZ1bGxOYW1lIjoiTW9oYW1lZCBTYWJlciBBaG1lZCIsIlVzZXJUeXBlcyI6IjEiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsInJvbGUiOiJBZG1pbiIsImV4cCI6MTc4OTIyNjQ0MywiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzMwMy8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo3MzAzLyJ9.VRNq-e3P2PZfVQQfvCu0EXzG_EQ4LXpwHrOSps9VvR8
-
-{
-  "isSuccess": false,
-  "statusCode": 502,
-  "message": "Welco returned 502: Bad Gateway",
-  "errors": [
-    "Welco returned 502: Bad Gateway"
-  ],
-  "data": null
-}
+The core problem: Both systems had Client (buyer) and Provider (supplier) merged into one OrganizationUser role — meaning a provider company could shop carts
+  and place orders, and a buyer clinic had the same identity as a goods supplier. That's now fixed.

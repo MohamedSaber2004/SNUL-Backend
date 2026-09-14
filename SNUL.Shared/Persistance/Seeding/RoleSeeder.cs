@@ -29,11 +29,7 @@ namespace SNUL.Shared.Persistance.Seeding
                     }
                 }
 
-                var obsoleteCustomerRole = await roleManager.FindByNameAsync("Customer");
-                if (obsoleteCustomerRole != null)
-                {
-                    await roleManager.DeleteAsync(obsoleteCustomerRole);
-                }
+
             }
             catch (Exception)
             {

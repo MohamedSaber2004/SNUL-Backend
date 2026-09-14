@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Auth.Services.API.Features.Integration.Token;
 using SNUL.Shared.Common.Attributes;
 using SNUL.Shared.Common.Options;
+using SNUL.Shared.Localization;
 using SNUL.Shared.Results;
 using Xunit;
 
@@ -189,7 +190,7 @@ public sealed class IntegrationTokenTests
     }
 
     private static CreateIntegrationTokenCommandHandler CreateHandler(WelcoIntegrationOptions options) =>
-        new(Options.Create(options), NullLogger<CreateIntegrationTokenCommandHandler>.Instance);
+        new(Options.Create(options));
 
     private static WelcoIntegrationOptions BaseOptions() => new()
     {
@@ -204,7 +205,7 @@ public sealed class IntegrationTokenTests
     {
         Assert.False(result.IsSuccess);
         Assert.Equal(StatusCodes.Status401Unauthorized, result.StatusCode);
-        Assert.Equal("Invalid client credentials.", result.Message);
+        Assert.Equal(LocalizationKeys.Integration.InvalidCredientials, result.Message);
         Assert.NotNull(result.Errors);
         var single = Assert.Single(result.Errors);
         Assert.Equal(result.Message, single);

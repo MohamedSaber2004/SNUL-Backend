@@ -15,7 +15,7 @@ namespace SNUL.Shared.Persistance
     {
         private readonly ICurrentUserService? _currentUserService;
 
-public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
+        public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
         public DbSet<UserRefreshToken> UserRefreshTokens => Set<UserRefreshToken>();
         public DbSet<Country> Countries => Set<Country>();
         public DbSet<City> Cities => Set<City>();
@@ -31,13 +31,11 @@ public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
         public DbSet<Company> Companies => Set<Company>();
         public DbSet<ProductSpecification> ProductSpecifications => Set<ProductSpecification>();
         public DbSet<ProductMedia> ProductMedias => Set<ProductMedia>();
-        public DbSet<ProductProcedureTag> ProductProcedureTags => Set<ProductProcedureTag>();
         public DbSet<UserProductInteraction> UserProductInteractions => Set<UserProductInteraction>();
         public DbSet<Cart> Carts => Set<Cart>();
         public DbSet<CartItem> CartItems => Set<CartItem>();
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderItem> OrderItems => Set<OrderItem>();
-        public DbSet<Invoice> Invoices => Set<Invoice>();
         public DbSet<RFQ> RFQs => Set<RFQ>();
         public DbSet<RFQItem> RFQItems => Set<RFQItem>();
         public DbSet<Quote> Quotes => Set<Quote>();
@@ -50,9 +48,6 @@ public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
         public DbSet<HelpArticle> HelpArticles => Set<HelpArticle>();
         public DbSet<FAQItem> FAQItems => Set<FAQItem>();
         public DbSet<SupportTicket> SupportTickets => Set<SupportTicket>();
-        public DbSet<TradeShowEvent> TradeShowEvents => Set<TradeShowEvent>();
-        public DbSet<BlogPost> BlogPosts => Set<BlogPost>();
-        public DbSet<Notification> Notifications => Set<Notification>();
         public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
         public DbSet<SupportContact> SupportContacts => Set<SupportContact>();
         public DbSet<OemInquiry> OemInquiries => Set<OemInquiry>();
@@ -150,7 +145,7 @@ public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
                     {
                         case EntityState.Added:
 
-if (string.IsNullOrWhiteSpace(baseEntity.CreatedBy))
+                            if (string.IsNullOrWhiteSpace(baseEntity.CreatedBy))
                                 baseEntity.MarkAsCreated(currentUserId);
                             break;
 

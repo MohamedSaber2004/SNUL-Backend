@@ -24,43 +24,43 @@ namespace Commerce.Services.API.Controllers
     {
         public CartsController(IMediator mediator) : base(mediator) { }
 
-                [HttpGet]
+        [HttpGet]
         [Route(CommerceApiRoutes.Carts.Create)]
         [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
         public async Task<IActionResult> GetAll([FromQuery] GetCartsQuery q, CancellationToken ct) => ToActionResult(await _mediator.Send(q, ct));
 
-                [HttpGet]
+        [HttpGet]
         [Route(CommerceApiRoutes.Carts.GetById)]
-        [RoleAuthorize(UserType.OrganizationUser, UserType.Admin)]
+        [RoleAuthorize(UserType.Client, UserType.Admin)]
         public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct) => ToActionResult(await _mediator.Send(new GetCartByIdQuery { Id = id }, ct));
 
-                [HttpGet]
+        [HttpGet]
         [Route(CommerceApiRoutes.Carts.GetByUser)]
-        [RoleAuthorize(UserType.OrganizationUser, UserType.Admin)]
+        [RoleAuthorize(UserType.Client, UserType.Admin)]
         public async Task<IActionResult> GetByUser([FromRoute] Guid userId, CancellationToken ct) => ToActionResult(await _mediator.Send(new GetCartByUserQuery { UserId = userId }, ct));
 
-                [HttpGet]
+        [HttpGet]
         [Route(CommerceApiRoutes.Carts.GetBySession)]
-        [RoleAuthorize(UserType.OrganizationUser, UserType.Admin)]
+        [RoleAuthorize(UserType.Client, UserType.Admin)]
         public async Task<IActionResult> GetBySession([FromRoute] string sessionId, CancellationToken ct) => ToActionResult(await _mediator.Send(new GetCartBySessionQuery { SessionId = sessionId }, ct));
 
-                [HttpPost]
+        [HttpPost]
         [Route(CommerceApiRoutes.Carts.Create)]
-        [RoleAuthorize(UserType.OrganizationUser, UserType.Admin)]
+        [RoleAuthorize(UserType.Client, UserType.Admin)]
         public async Task<IActionResult> Create([FromBody] CreateCartCommand cmd, CancellationToken ct) => ToActionResult(await _mediator.Send(cmd, ct));
 
-                [HttpPost]
+        [HttpPost]
         [Route(CommerceApiRoutes.Carts.AddItem)]
-        [RoleAuthorize(UserType.OrganizationUser, UserType.Admin)]
+        [RoleAuthorize(UserType.Client, UserType.Admin)]
         public async Task<IActionResult> AddItem([FromRoute] Guid id, [FromBody] AddCartItemCommand cmd, CancellationToken ct)
         {
             cmd.CartId = id;
             return ToActionResult(await _mediator.Send(cmd, ct));
         }
 
-                [HttpPut]
+        [HttpPut]
         [Route(CommerceApiRoutes.Carts.UpdateItem)]
-        [RoleAuthorize(UserType.OrganizationUser, UserType.Admin)]
+        [RoleAuthorize(UserType.Client, UserType.Admin)]
         public async Task<IActionResult> UpdateItem([FromRoute] Guid id, [FromRoute] Guid itemId, [FromBody] UpdateCartItemCommand cmd, CancellationToken ct)
         {
             cmd.CartId = id;
@@ -68,14 +68,14 @@ namespace Commerce.Services.API.Controllers
             return ToActionResult(await _mediator.Send(cmd, ct));
         }
 
-                [HttpDelete]
+        [HttpDelete]
         [Route(CommerceApiRoutes.Carts.RemoveItem)]
-        [RoleAuthorize(UserType.OrganizationUser, UserType.Admin)]
+        [RoleAuthorize(UserType.Client, UserType.Admin)]
         public async Task<IActionResult> RemoveItem([FromRoute] Guid id, [FromRoute] Guid itemId, CancellationToken ct) => ToActionResult(await _mediator.Send(new RemoveCartItemCommand { CartId = id, ItemId = itemId }, ct));
 
-                [HttpPost]
+        [HttpPost]
         [Route(CommerceApiRoutes.Carts.Clear)]
-        [RoleAuthorize(UserType.OrganizationUser, UserType.Admin)]
+        [RoleAuthorize(UserType.Client, UserType.Admin)]
         public async Task<IActionResult> Clear([FromRoute] Guid id, CancellationToken ct) => ToActionResult(await _mediator.Send(new ClearCartCommand { CartId = id }, ct));
     }
 }
