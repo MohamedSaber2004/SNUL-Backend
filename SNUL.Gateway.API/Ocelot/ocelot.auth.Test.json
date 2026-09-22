@@ -1,24 +1,11 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/integration/token",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "snul-auth.runasp.net",
-          "Port": 443
-        }
-      ],
-      "UpstreamPathTemplate": "/api/integration/token",
-      "UpstreamHttpMethod": [ "POST" ],
-      "DangerousAcceptAnyServerCertificateValidator": true
-    },
-    {
       "DownstreamPathTemplate": "/api/v1/auth/profile",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-auth.runasp.net",
+          "Host": "welco-auth.runasp.net",
           "Port": 443
         }
       ],
@@ -35,7 +22,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-auth.runasp.net",
+          "Host": "welco-auth.runasp.net",
           "Port": 443
         }
       ],
@@ -48,7 +35,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-auth.runasp.net",
+          "Host": "welco-auth.runasp.net",
           "Port": 443
         }
       ],
@@ -61,7 +48,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-auth.runasp.net",
+          "Host": "welco-auth.runasp.net",
           "Port": 443
         }
       ],

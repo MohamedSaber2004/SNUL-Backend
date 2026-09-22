@@ -28,6 +28,7 @@ namespace SNUL.Shared.Persistance
         public DbSet<Currency> Currencies => Set<Currency>();
         public DbSet<ExchangeRate> ExchangeRates => Set<ExchangeRate>();
         public DbSet<ExchangeRateSyncLog> ExchangeRateSyncLogs => Set<ExchangeRateSyncLog>();
+        // public DbSet<WelcoProviderMap> WelcoProviderMaps => Set<WelcoProviderMap>();
         public DbSet<Company> Companies => Set<Company>();
         public DbSet<ProductSpecification> ProductSpecifications => Set<ProductSpecification>();
         public DbSet<ProductMedia> ProductMedias => Set<ProductMedia>();
@@ -51,7 +52,6 @@ namespace SNUL.Shared.Persistance
         public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
         public DbSet<SupportContact> SupportContacts => Set<SupportContact>();
         public DbSet<OemInquiry> OemInquiries => Set<OemInquiry>();
-        public DbSet<WelcoProviderMap> WelcoProviderMaps => Set<WelcoProviderMap>();
         public SnulDbContext(DbContextOptions<SnulDbContext> options, ICurrentUserService? currentUserService = null)
             : base(options)
         {

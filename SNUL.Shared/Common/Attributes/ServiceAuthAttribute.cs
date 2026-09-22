@@ -21,17 +21,13 @@ namespace SNUL.Shared.Common.Attributes
         public Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
             // Mirrors RoleAuthorize: [AllowAnonymous] bypasses service auth.
-            // Verified: IntegrationController (the sole [ServiceAuth] usage) has no
-            // [AllowAnonymous], so no behavior change there; authorization-filter
-            // ordering only moves this check earlier (before action filters/model
-            // binding), which is the correct phase for auth.
             if (context.ActionDescriptor.EndpointMetadata.Any(em => em is IAllowAnonymous))
             {
                 return Task.CompletedTask;
             }
 
-            var options = context.HttpContext.RequestServices
-                .GetRequiredService<IOptions<WelcoIntegrationOptions>>().Value;
+            var settings = context.HttpContext.RequestServices
+                .GetRequiredService<IOptions<JwtSettings>>().Value;
 
             var logger = context.HttpContext.RequestServices
                 .GetRequiredService<ILoggerFactory>()
@@ -49,7 +45,7 @@ namespace SNUL.Shared.Common.Attributes
                 return Task.CompletedTask;
             }
 
-            if (!ValidateServiceToken(token, options, logger))
+            if (!ValidateServiceToken(token, settings, logger))
             {
                 Deny(context);
                 return Task.CompletedTask;
@@ -62,7 +58,7 @@ namespace SNUL.Shared.Common.Attributes
 
         private static bool ValidateServiceToken(
             string token,
-            WelcoIntegrationOptions options,
+            JwtSettings settings,
             ILogger logger)
         {
             try
@@ -80,49 +76,29 @@ namespace SNUL.Shared.Common.Attributes
                     return false;
                 }
 
-                // No user-JWT path, no legacy bypass: client_id is mandatory.
                 var clientId = jwt.Claims.FirstOrDefault(c => c.Type == "client_id")?.Value;
-                if (string.IsNullOrWhiteSpace(clientId))
+                if (!string.IsNullOrWhiteSpace(clientId))
                 {
-                    logger.LogWarning("[ServiceAuth] Service token without client_id.");
+                    logger.LogWarning("[ServiceAuth] Service token with client_id is not supported.");
                     return false;
                 }
 
-                // Single shared path: key-only canonical resolution (see
-                // WelcoIntegrationCredentials for the documented choice/invariant).
-                if (!WelcoIntegrationCredentials.TryResolveByClientId(
-                    options, clientId, out var secret, out var expectedIssuer, out var expectedAudience))
+                if (string.IsNullOrWhiteSpace(settings.Secret) || settings.Secret.Length < 32)
                 {
-                    logger.LogWarning("[ServiceAuth] Unknown integration client ClientId={ClientId}.", clientId);
+                    logger.LogError("[ServiceAuth] JwtSettings.Secret is not configured (min 32 chars).");
                     return false;
                 }
 
-                // Fail closed: empty/short secret or empty issuer/audience is
-                // misconfiguration and must 401, never disable validation.
-                // Expected values keep today's snul-integration/welco-integration
-                // semantics (defaults with per-system overrides).
-                if (string.IsNullOrWhiteSpace(secret) || secret.Length < 32)
-                {
-                    logger.LogWarning("[ServiceAuth] Misconfigured secret for integration client ClientId={ClientId} (min 32 chars).", clientId);
-                    return false;
-                }
-
-                if (string.IsNullOrWhiteSpace(expectedIssuer) || string.IsNullOrWhiteSpace(expectedAudience))
-                {
-                    logger.LogWarning("[ServiceAuth] Misconfigured issuer/audience for integration client ClientId={ClientId}.", clientId);
-                    return false;
-                }
-
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.Secret));
 
                 handler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = key,
-                    ValidateIssuer = true,
-                    ValidIssuer = expectedIssuer,
-                    ValidateAudience = true,
-                    ValidAudience = expectedAudience,
+                    ValidateIssuer = !string.IsNullOrWhiteSpace(settings.Issuer),
+                    ValidIssuer = settings.Issuer,
+                    ValidateAudience = !string.IsNullOrWhiteSpace(settings.Audience),
+                    ValidAudience = settings.Audience,
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.FromMinutes(2)
                 }, out _);
@@ -153,7 +129,6 @@ namespace SNUL.Shared.Common.Attributes
                 return localizationProvider.GetLocalizedString(key, culture);
             }
 
-            // Mirror RoleAuthorize 401 contract: errors echoes the localized message.
             var message = Localize(LocalizationKeys.ExceptionMessages.Unauthorized);
             var response = Result<object?>.Unauthorized(message, new List<string> { message });
 

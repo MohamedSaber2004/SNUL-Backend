@@ -24,7 +24,6 @@ namespace SNUL.Shared
             string connectionStringName = "DatabaseConnection")
         {
             services.AddHttpContextAccessor();
-            services.AddSingleton<IWelcoSystemResolver, WelcoSystemResolver>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
@@ -35,7 +34,6 @@ namespace SNUL.Shared
                 services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
                 services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
                 services.Configure<ExchangeRateSettings>(configuration.GetSection(ExchangeRateSettings.SectionName));
-                services.Configure<WelcoIntegrationOptions>(configuration.GetSection(WelcoIntegrationOptions.SectionName));
             }
             else
             {
@@ -55,17 +53,11 @@ namespace SNUL.Shared
                     {
                         config.GetSection(ExchangeRateSettings.SectionName).Bind(options);
                     });
-                services.AddOptions<WelcoIntegrationOptions>()
-                    .Configure<IConfiguration>((options, config) =>
-                    {
-                        config.GetSection(WelcoIntegrationOptions.SectionName).Bind(options);
-                    });
             }
 
             services.AddSingleton(sp => sp.GetRequiredService<IOptions<JwtSettings>>().Value);
             services.AddSingleton(sp => sp.GetRequiredService<IOptions<EmailSettings>>().Value);
             services.AddSingleton(sp => sp.GetRequiredService<IOptions<ExchangeRateSettings>>().Value);
-            services.AddSingleton(sp => sp.GetRequiredService<IOptions<WelcoIntegrationOptions>>().Value);
 
             services.AddDbContext<SnulDbContext>((serviceProvider, options) =>
             {
@@ -113,17 +105,6 @@ services.AddHttpClient<ExchangeRateApiProvider>((sp, client) =>
                 else
                     client.BaseAddress = new Uri(baseUrl + "/");
                 client.Timeout = TimeSpan.FromSeconds(opts.TimeoutSeconds > 0 ? opts.TimeoutSeconds : 10);
-            });
-
-services.AddHttpClient<IWelcoIntegrationService, WelcoIntegrationService>((sp, client) =>
-            {
-                var opts = sp.GetRequiredService<IOptions<WelcoIntegrationOptions>>().Value;
-                if (!string.IsNullOrWhiteSpace(opts.BaseUrl))
-                {
-                    client.BaseAddress = new Uri(opts.BaseUrl.TrimEnd('/') + "/");
-                }
-                client.Timeout = TimeSpan.FromSeconds(opts.TimeoutSeconds > 0 ? opts.TimeoutSeconds : 30);
-                client.DefaultRequestHeaders.TryAddWithoutValidation("X-Client", "snul");
             });
 
             services.AddScoped<ISnulDbContext>(provider => provider.GetRequiredService<SnulDbContext>());

@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SNUL.Shared.Common.DTOs.Integration;
 using SNUL.Shared.Common.Interfaces;
 using SNUL.Shared.Common.Options;
 using SNUL.Shared.Common.Repositories.Interfaces.Base;
@@ -20,20 +19,17 @@ namespace Auth.Services.API.Features.Auth.Commands.Register
         private readonly IEmailService _emailService;
         private readonly EmailSettings _emailSettings;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IWelcoIntegrationService _welcoIntegrationService;
 
         public RegisterCommandHandler(
             UserManager<ApplicationUser> userManager,
             IEmailService emailService,
             IOptions<EmailSettings> emailSettings,
-            IUnitOfWork unitOfWork,
-            IWelcoIntegrationService welcoIntegrationService)
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _emailService = emailService;
             _emailSettings = emailSettings.Value;
             _unitOfWork = unitOfWork;
-            _welcoIntegrationService = welcoIntegrationService;
         }
 
         public async Task<Result<string>> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -154,26 +150,6 @@ namespace Auth.Services.API.Features.Auth.Commands.Register
             if (pendingApp != null)
             {
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-                try
-                {
-                    var applyReq = new ApplyDistributorRequest
-                    {
-                        CompanyName = pendingApp.CompanyName,
-                        ContactPerson = pendingApp.ContactPerson,
-                        Email = pendingApp.ContactEmail,
-                        Phone = pendingApp.Phone,
-                        CountryId = pendingApp.CountryId,
-                        SalesVolumeBand = pendingApp.SalesVolumeBand,
-                        CategoryInterest = pendingApp.CategoryInterest,
-                        Website = pendingApp.Website,
-                        SourceMarket = "Egypt"
-                    };
-                    await _welcoIntegrationService.SubmitDistributorApplicationAsync(applyReq, cancellationToken);
-                }
-                catch (Exception)
-                {
-                }
             }
 
             try

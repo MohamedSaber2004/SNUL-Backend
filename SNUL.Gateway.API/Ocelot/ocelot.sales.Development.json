@@ -1,4 +1,4 @@
-{
+﻿{
     "Routes":  [
                    {
                        "DownstreamPathTemplate":  "/api/v1/rfqs/{everything}",
@@ -6,7 +6,7 @@
                        "DownstreamHostAndPorts":  [
                                                       {
                                                           "Host":  "localhost",
-                                                          "Port": 7146
+                                                          "Port":  7046
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/rfqs/{everything}",
@@ -30,7 +30,7 @@
                        "DownstreamHostAndPorts":  [
                                                       {
                                                           "Host":  "localhost",
-                                                          "Port": 7146
+                                                          "Port":  7046
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/product-inquiries/{everything}",
@@ -45,7 +45,7 @@
                        "DownstreamHostAndPorts":  [
                                                       {
                                                           "Host":  "localhost",
-                                                          "Port": 7146
+                                                          "Port":  7046
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/product-inquiries/{everything}",
@@ -67,7 +67,7 @@
                        "DownstreamHostAndPorts":  [
                                                       {
                                                           "Host":  "localhost",
-                                                          "Port": 7146
+                                                          "Port":  7046
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/v1/quotes/{everything}",
@@ -91,7 +91,7 @@
                        "DownstreamHostAndPorts":  [
                                                       {
                                                           "Host":  "localhost",
-                                                          "Port": 7146
+                                                          "Port":  7046
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/sales/openapi.json",
@@ -106,7 +106,7 @@
                        "DownstreamHostAndPorts":  [
                                                       {
                                                           "Host":  "localhost",
-                                                          "Port": 7146
+                                                          "Port":  7046
                                                       }
                                                   ],
                        "UpstreamPathTemplate":  "/api/docs/sales",

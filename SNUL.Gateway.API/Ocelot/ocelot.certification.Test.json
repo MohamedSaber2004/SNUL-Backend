@@ -1,11 +1,24 @@
 {
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/v1/certifications",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "welco-certification.runasp.net",
+          "Port": 443
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/certifications",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DangerousAcceptAnyServerCertificateValidator": true
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/certifications/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-certification.runasp.net",
+          "Host": "welco-certification.runasp.net",
           "Port": 443
         }
       ],
@@ -18,7 +31,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-certification.runasp.net",
+          "Host": "welco-certification.runasp.net",
           "Port": 443
         }
       ],
@@ -35,7 +48,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-certification.runasp.net",
+          "Host": "welco-certification.runasp.net",
           "Port": 443
         }
       ],
@@ -48,7 +61,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-certification.runasp.net",
+          "Host": "welco-certification.runasp.net",
           "Port": 443
         }
       ],

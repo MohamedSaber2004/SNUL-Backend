@@ -60,8 +60,6 @@ namespace SNUL.Shared.Common.Interfaces
         DbSet<SupportContact> SupportContacts { get; }
         DbSet<OemInquiry> OemInquiries { get; }
 
-        // Integration
-        DbSet<WelcoProviderMap> WelcoProviderMaps { get; }
 
         // Audit
         DbSet<AuditLog> AuditLogs { get; }

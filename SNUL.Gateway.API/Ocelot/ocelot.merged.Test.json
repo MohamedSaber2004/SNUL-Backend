@@ -1,11 +1,35 @@
-﻿{
+{
+    "GlobalConfiguration":  {
+                                "BaseUrl":  "https://welco-gateway.runasp.net"
+                            },
     "Routes":  [
+                   {
+                       "DownstreamPathTemplate":  "/api/v1/attachments",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-attachment.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/attachments",
+                       "UpstreamHttpMethod":  [
+                                                  "POST"
+                                              ],
+                       "AuthenticationOptions":  {
+                                                     "AuthenticationProviderKey":  "Bearer",
+                                                     "AllowedScopes":  [
+
+                                                                       ]
+                                                 },
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
                    {
                        "DownstreamPathTemplate":  "/api/v1/attachments/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-attachment.runasp.net",
+                                                          "Host":  "welco-attachment.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -29,7 +53,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-attachment.runasp.net",
+                                                          "Host":  "welco-attachment.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -44,7 +68,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-attachment.runasp.net",
+                                                          "Host":  "welco-attachment.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -59,7 +83,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-attachment.runasp.net",
+                                                          "Host":  "welco-attachment.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -74,7 +98,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-auth.runasp.net",
+                                                          "Host":  "welco-auth.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -96,7 +120,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-auth.runasp.net",
+                                                          "Host":  "welco-auth.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -114,7 +138,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-auth.runasp.net",
+                                                          "Host":  "welco-auth.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -129,7 +153,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-auth.runasp.net",
+                                                          "Host":  "welco-auth.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -140,11 +164,26 @@
                        "DangerousAcceptAnyServerCertificateValidator":  true
                    },
                    {
+                       "DownstreamPathTemplate":  "/api/v1/certifications",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-certification.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/certifications",
+                       "UpstreamHttpMethod":  [
+                                                  "GET"
+                                              ],
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
                        "DownstreamPathTemplate":  "/api/v1/certifications/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-certification.runasp.net",
+                                                          "Host":  "welco-certification.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -159,7 +198,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-certification.runasp.net",
+                                                          "Host":  "welco-certification.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -182,7 +221,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-certification.runasp.net",
+                                                          "Host":  "welco-certification.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -197,7 +236,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-certification.runasp.net",
+                                                          "Host":  "welco-certification.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -208,11 +247,34 @@
                        "DangerousAcceptAnyServerCertificateValidator":  true
                    },
                    {
+                       "DownstreamPathTemplate":  "/api/v1/carts",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-commerce.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/carts",
+                       "UpstreamHttpMethod":  [
+                                                  "GET",
+                                                  "POST",
+                                                  "DELETE"
+                                              ],
+                       "AuthenticationOptions":  {
+                                                     "AuthenticationProviderKey":  "Bearer",
+                                                     "AllowedScopes":  [
+
+                                                                       ]
+                                                 },
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
                        "DownstreamPathTemplate":  "/api/v1/carts/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-commerce.runasp.net",
+                                                          "Host":  "welco-commerce.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -232,11 +294,33 @@
                        "DangerousAcceptAnyServerCertificateValidator":  true
                    },
                    {
+                       "DownstreamPathTemplate":  "/api/v1/orders",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-commerce.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/orders",
+                       "UpstreamHttpMethod":  [
+                                                  "GET",
+                                                  "POST"
+                                              ],
+                       "AuthenticationOptions":  {
+                                                     "AuthenticationProviderKey":  "Bearer",
+                                                     "AllowedScopes":  [
+
+                                                                       ]
+                                                 },
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
                        "DownstreamPathTemplate":  "/api/v1/orders/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-commerce.runasp.net",
+                                                          "Host":  "welco-commerce.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -256,59 +340,11 @@
                        "DangerousAcceptAnyServerCertificateValidator":  true
                    },
                    {
-                       "DownstreamPathTemplate":  "/api/v1/integration/{everything}",
-                       "DownstreamScheme":  "https",
-                       "DownstreamHostAndPorts":  [
-                                                      {
-                                                          "Host":  "snul-commerce.runasp.net",
-                                                          "Port":  443
-                                                      }
-                                                  ],
-                       "UpstreamPathTemplate":  "/api/v1/integration/{everything}",
-                       "UpstreamHttpMethod":  [
-                                                  "GET",
-                                                  "POST",
-                                                  "PUT",
-                                                  "DELETE"
-                                              ],
-                       "AuthenticationOptions":  {
-                                                     "AuthenticationProviderKey":  "Bearer",
-                                                     "AllowedScopes":  [
-
-                                                                       ]
-                                                 },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
-                   },
-                   {
-                       "DownstreamPathTemplate":  "/api/v1/integration",
-                       "DownstreamScheme":  "https",
-                       "DownstreamHostAndPorts":  [
-                                                      {
-                                                          "Host":  "snul-commerce.runasp.net",
-                                                          "Port":  443
-                                                      }
-                                                  ],
-                       "UpstreamPathTemplate":  "/api/v1/integration",
-                       "UpstreamHttpMethod":  [
-                                                  "GET",
-                                                  "POST",
-                                                  "PUT",
-                                                  "DELETE"
-                                              ],
-                       "AuthenticationOptions":  {
-                                                     "AuthenticationProviderKey":  "Bearer",
-                                                     "AllowedScopes":  [
-
-                                                                       ]
-                                                 },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
-                   },
-                   {
                        "DownstreamPathTemplate":  "/openapi/v1.json",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-commerce.runasp.net",
+                                                          "Host":  "welco-commerce.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -323,7 +359,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-commerce.runasp.net",
+                                                          "Host":  "welco-commerce.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -338,7 +374,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -353,7 +389,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -371,11 +407,47 @@
                        "DangerousAcceptAnyServerCertificateValidator":  true
                    },
                    {
+                       "DownstreamPathTemplate":  "/api/v1/documents",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-content.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/documents",
+                       "UpstreamHttpMethod":  [
+                                                  "GET"
+                                              ],
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
+                       "DownstreamPathTemplate":  "/api/v1/documents",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-content.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/documents",
+                       "UpstreamHttpMethod":  [
+                                                  "POST"
+                                              ],
+                       "AuthenticationOptions":  {
+                                                     "AuthenticationProviderKey":  "Bearer",
+                                                     "AllowedScopes":  [
+
+                                                                       ]
+                                                 },
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
                        "DownstreamPathTemplate":  "/api/v1/documents/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -390,7 +462,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -413,7 +485,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -428,7 +500,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -451,7 +523,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -466,7 +538,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -485,49 +557,11 @@
                        "DangerousAcceptAnyServerCertificateValidator":  true
                    },
                    {
-                       "DownstreamPathTemplate":  "/api/v1/trade-shows/{everything}",
-                       "DownstreamScheme":  "https",
-                       "DownstreamHostAndPorts":  [
-                                                      {
-                                                          "Host":  "snul-content.runasp.net",
-                                                          "Port":  443
-                                                      }
-                                                  ],
-                       "UpstreamPathTemplate":  "/api/v1/trade-shows/{everything}",
-                       "UpstreamHttpMethod":  [
-                                                  "GET"
-                                              ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true
-                   },
-                   {
-                       "DownstreamPathTemplate":  "/api/v1/trade-shows/{everything}",
-                       "DownstreamScheme":  "https",
-                       "DownstreamHostAndPorts":  [
-                                                      {
-                                                          "Host":  "snul-content.runasp.net",
-                                                          "Port":  443
-                                                      }
-                                                  ],
-                       "UpstreamPathTemplate":  "/api/v1/trade-shows/{everything}",
-                       "UpstreamHttpMethod":  [
-                                                  "POST",
-                                                  "PUT",
-                                                  "DELETE"
-                                              ],
-                       "AuthenticationOptions":  {
-                                                     "AuthenticationProviderKey":  "Bearer",
-                                                     "AllowedScopes":  [
-
-                                                                       ]
-                                                 },
-                       "DangerousAcceptAnyServerCertificateValidator":  true
-                   },
-                   {
                        "DownstreamPathTemplate":  "/api/v1/support/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -542,7 +576,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -558,6 +592,42 @@
 
                                                                        ]
                                                  },
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
+                       "DownstreamPathTemplate":  "/api/v1/oem-inquiries",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-content.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/oem-inquiries",
+                       "UpstreamHttpMethod":  [
+                                                  "GET"
+                                              ],
+                       "AuthenticationOptions":  {
+                                                     "AuthenticationProviderKey":  "Bearer",
+                                                     "AllowedScopes":  [
+
+                                                                       ]
+                                                 },
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
+                       "DownstreamPathTemplate":  "/api/v1/oem-inquiries",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-content.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/oem-inquiries",
+                       "UpstreamHttpMethod":  [
+                                                  "POST"
+                                              ],
                        "DangerousAcceptAnyServerCertificateValidator":  true
                    },
                    {
@@ -565,7 +635,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -580,7 +650,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -602,7 +672,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -617,7 +687,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-content.runasp.net",
+                                                          "Host":  "welco-content.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -632,7 +702,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -647,7 +717,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -668,7 +738,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -683,7 +753,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -704,7 +774,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -719,7 +789,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -740,7 +810,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -755,7 +825,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -778,7 +848,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -793,7 +863,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -816,7 +886,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -831,7 +901,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -850,11 +920,26 @@
                        "DangerousAcceptAnyServerCertificateValidator":  true
                    },
                    {
+                       "DownstreamPathTemplate":  "/api/v1/exchange-rates/cart-total",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-product.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/exchange-rates/cart-total",
+                       "UpstreamHttpMethod":  [
+                                                  "POST"
+                                              ],
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
                        "DownstreamPathTemplate":  "/api/v1/exchange-rates/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -869,7 +954,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -892,7 +977,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -913,7 +998,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -936,7 +1021,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -951,7 +1036,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-product.runasp.net",
+                                                          "Host":  "welco-product.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -962,11 +1047,47 @@
                        "DangerousAcceptAnyServerCertificateValidator":  true
                    },
                    {
+                       "DownstreamPathTemplate":  "/api/v1/rfqs",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-sales.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/rfqs",
+                       "UpstreamHttpMethod":  [
+                                                  "GET"
+                                              ],
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
+                       "DownstreamPathTemplate":  "/api/v1/rfqs",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-sales.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/rfqs",
+                       "UpstreamHttpMethod":  [
+                                                  "POST"
+                                              ],
+                       "AuthenticationOptions":  {
+                                                     "AuthenticationProviderKey":  "Bearer",
+                                                     "AllowedScopes":  [
+
+                                                                       ]
+                                                 },
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
                        "DownstreamPathTemplate":  "/api/v1/rfqs/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-sales.runasp.net",
+                                                          "Host":  "welco-sales.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -986,11 +1107,47 @@
                        "DangerousAcceptAnyServerCertificateValidator":  true
                    },
                    {
+                       "DownstreamPathTemplate":  "/api/v1/quotes",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-sales.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/quotes",
+                       "UpstreamHttpMethod":  [
+                                                  "GET"
+                                              ],
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
+                       "DownstreamPathTemplate":  "/api/v1/quotes",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-sales.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/quotes",
+                       "UpstreamHttpMethod":  [
+                                                  "POST"
+                                              ],
+                       "AuthenticationOptions":  {
+                                                     "AuthenticationProviderKey":  "Bearer",
+                                                     "AllowedScopes":  [
+
+                                                                       ]
+                                                 },
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
                        "DownstreamPathTemplate":  "/api/v1/quotes/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-sales.runasp.net",
+                                                          "Host":  "welco-sales.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1010,11 +1167,47 @@
                        "DangerousAcceptAnyServerCertificateValidator":  true
                    },
                    {
+                       "DownstreamPathTemplate":  "/api/v1/product-inquiries",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-sales.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/product-inquiries",
+                       "UpstreamHttpMethod":  [
+                                                  "GET"
+                                              ],
+                       "AuthenticationOptions":  {
+                                                     "AuthenticationProviderKey":  "Bearer",
+                                                     "AllowedScopes":  [
+
+                                                                       ]
+                                                 },
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
+                       "DownstreamPathTemplate":  "/api/v1/product-inquiries",
+                       "DownstreamScheme":  "https",
+                       "DownstreamHostAndPorts":  [
+                                                      {
+                                                          "Host":  "welco-sales.runasp.net",
+                                                          "Port":  443
+                                                      }
+                                                  ],
+                       "UpstreamPathTemplate":  "/api/v1/product-inquiries",
+                       "UpstreamHttpMethod":  [
+                                                  "POST"
+                                              ],
+                       "DangerousAcceptAnyServerCertificateValidator":  true
+                   },
+                   {
                        "DownstreamPathTemplate":  "/api/v1/product-inquiries/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-sales.runasp.net",
+                                                          "Host":  "welco-sales.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1029,7 +1222,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-sales.runasp.net",
+                                                          "Host":  "welco-sales.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1038,20 +1231,20 @@
                                                   "GET",
                                                   "DELETE"
                                               ],
-                       "DangerousAcceptAnyServerCertificateValidator":  true,
                        "AuthenticationOptions":  {
                                                      "AuthenticationProviderKey":  "Bearer",
                                                      "AllowedScopes":  [
 
                                                                        ]
-                                                 }
+                                                 },
+                       "DangerousAcceptAnyServerCertificateValidator":  true
                    },
                    {
                        "DownstreamPathTemplate":  "/openapi/v1.json",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-sales.runasp.net",
+                                                          "Host":  "welco-sales.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1066,7 +1259,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-sales.runasp.net",
+                                                          "Host":  "welco-sales.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1081,7 +1274,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-user.runasp.net",
+                                                          "Host":  "welco-user.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1096,7 +1289,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-user.runasp.net",
+                                                          "Host":  "welco-user.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1111,7 +1304,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-user.runasp.net",
+                                                          "Host":  "welco-user.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1126,7 +1319,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-user.runasp.net",
+                                                          "Host":  "welco-user.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1141,7 +1334,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-user.runasp.net",
+                                                          "Host":  "welco-user.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1156,7 +1349,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-user.runasp.net",
+                                                          "Host":  "welco-user.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1171,7 +1364,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-user.runasp.net",
+                                                          "Host":  "welco-user.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1186,7 +1379,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-user.runasp.net",
+                                                          "Host":  "welco-user.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1207,7 +1400,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-user.runasp.net",
+                                                          "Host":  "welco-user.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1231,7 +1424,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-user.runasp.net",
+                                                          "Host":  "welco-user.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -1246,7 +1439,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "snul-user.runasp.net",
+                                                          "Host":  "welco-user.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],

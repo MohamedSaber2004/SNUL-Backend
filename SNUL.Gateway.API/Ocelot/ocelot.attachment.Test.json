@@ -1,11 +1,28 @@
 {
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/v1/attachments",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "welco-attachment.runasp.net",
+          "Port": 443
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/attachments",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "DangerousAcceptAnyServerCertificateValidator": true
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/attachments/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-attachment.runasp.net",
+          "Host": "welco-attachment.runasp.net",
           "Port": 443
         }
       ],
@@ -22,7 +39,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-attachment.runasp.net",
+          "Host": "welco-attachment.runasp.net",
           "Port": 443
         }
       ],
@@ -35,7 +52,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-attachment.runasp.net",
+          "Host": "welco-attachment.runasp.net",
           "Port": 443
         }
       ],
@@ -48,7 +65,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-attachment.runasp.net",
+          "Host": "welco-attachment.runasp.net",
           "Port": 443
         }
       ],

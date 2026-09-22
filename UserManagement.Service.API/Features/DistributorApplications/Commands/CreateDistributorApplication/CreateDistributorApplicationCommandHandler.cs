@@ -1,6 +1,5 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SNUL.Shared.Common.DTOs.Integration;
 using UserManagementDto = SNUL.Shared.Common.DTOs.UserManagement.DistributorApplicationDto;
 using SNUL.Shared.Common.Interfaces;
 using SNUL.Shared.Common.Repositories.Interfaces.Base;
@@ -14,25 +13,22 @@ namespace UserManagement.Service.API.Features.DistributorApplications.Commands.C
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IWelcoIntegrationService _welcoIntegrationService;
         private readonly ILogger<CreateDistributorApplicationCommandHandler> _logger;
 
         public CreateDistributorApplicationCommandHandler(
             IUnitOfWork unitOfWork,
             ICurrentUserService currentUserService,
-            IWelcoIntegrationService welcoIntegrationService,
             ILogger<CreateDistributorApplicationCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
-            _welcoIntegrationService = welcoIntegrationService;
             _logger = logger;
         }
 
         public async Task<Result<UserManagementDto>> Handle(CreateDistributorApplicationCommand request, CancellationToken cancellationToken)
         {
 
-var countryRepo = _unitOfWork.GetRepository<Country, Guid>();
+ var countryRepo = _unitOfWork.GetRepository<Country, Guid>();
             var country = await countryRepo.GetByIdAsync(request.CountryId, cancellationToken);
             if (country == null || country.IsDeleted)
             {
@@ -61,28 +57,6 @@ var countryRepo = _unitOfWork.GetRepository<Country, Guid>();
             var repo = _unitOfWork.GetRepository<DistributorApplication, Guid>();
             await repo.AddAsync(app, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            // Sync to Welco via IWelcoIntegrationService
-            try
-            {
-                var applyReq = new ApplyDistributorRequest
-                {
-                    CompanyName = app.CompanyName,
-                    ContactPerson = app.ContactPerson,
-                    Email = app.ContactEmail,
-                    Phone = app.Phone,
-                    CountryId = app.CountryId,
-                    SalesVolumeBand = app.SalesVolumeBand,
-                    CategoryInterest = app.CategoryInterest,
-                    Website = app.Website,
-                    SourceMarket = "Egypt"
-                };
-                await _welcoIntegrationService.SubmitDistributorApplicationAsync(applyReq, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to sync distributor application to Welco for company {CompanyName}", app.CompanyName);
-            }
 
             var dto = new UserManagementDto
             {

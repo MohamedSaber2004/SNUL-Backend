@@ -5,7 +5,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-certification.runasp.net",
+          "Host": "welco-certification.runasp.net",
           "Port": 443
         }
       ],
@@ -18,7 +18,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-certification.runasp.net",
+          "Host": "welco-certification.runasp.net",
           "Port": 443
         }
       ],
@@ -35,7 +35,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-certification.runasp.net",
+          "Host": "welco-certification.runasp.net",
           "Port": 443
         }
       ],
@@ -48,7 +48,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-certification.runasp.net",
+          "Host": "welco-certification.runasp.net",
           "Port": 443
         }
       ],
