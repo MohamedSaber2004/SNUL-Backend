@@ -39,6 +39,10 @@ namespace Auth.Services.API.Infrastructure.Services
                 .Aggregate(0, (acc, val) => acc | val);
 
             claims.Add(new Claim("UserTypes", userTypesMask.ToString()));
+            // Singular authoritative type from the Users table. RoleAuthorize
+            // honors this claim, so role-gated endpoints keep working even when
+            // the account holds no Identity role rows (roles list empty).
+            claims.Add(new Claim("userType", user.UserType.ToString()));
 
             foreach (var role in roles)
             {
