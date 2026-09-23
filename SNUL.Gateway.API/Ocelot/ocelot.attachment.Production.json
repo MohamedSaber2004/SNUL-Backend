@@ -5,7 +5,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-gateway.runasp.net",
+          "Host": "snul-attachment.runasp.net",
           "Port": 443
         }
       ],
@@ -22,7 +22,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-gateway.runasp.net",
+          "Host": "snul-attachment.runasp.net",
           "Port": 443
         }
       ],
@@ -35,7 +35,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-gateway.runasp.net",
+          "Host": "snul-attachment.runasp.net",
           "Port": 443
         }
       ],
@@ -48,7 +48,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "snul-gateway.runasp.net",
+          "Host": "snul-attachment.runasp.net",
           "Port": 443
         }
       ],
