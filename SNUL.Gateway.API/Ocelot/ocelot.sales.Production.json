@@ -1,11 +1,11 @@
-﻿{
+{
     "Routes":  [
                    {
                        "DownstreamPathTemplate":  "/api/v1/rfqs/{everything}",
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "welco-sales.runasp.net",
+                                                          "Host":  "snul-sales.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -29,7 +29,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "welco-sales.runasp.net",
+                                                          "Host":  "snul-sales.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -53,7 +53,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "welco-sales.runasp.net",
+                                                          "Host":  "snul-sales.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -68,7 +68,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "welco-sales.runasp.net",
+                                                          "Host":  "snul-sales.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -90,7 +90,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "welco-sales.runasp.net",
+                                                          "Host":  "snul-sales.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
@@ -105,7 +105,7 @@
                        "DownstreamScheme":  "https",
                        "DownstreamHostAndPorts":  [
                                                       {
-                                                          "Host":  "welco-sales.runasp.net",
+                                                          "Host":  "snul-sales.runasp.net",
                                                           "Port":  443
                                                       }
                                                   ],
