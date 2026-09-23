@@ -1,11 +1,14 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using SNUL.Shared.Domain.Models;
 using SNUL.Shared.Enums;
 using SNUL.Shared.Localization;
 using SNUL.Shared.Localization.Interfaces;
@@ -102,6 +105,20 @@ namespace SNUL.Shared.Common.Attributes
                 userRoles.Contains(role) ||
                 (!string.IsNullOrWhiteSpace(userTypeClaim) && string.Equals(userTypeClaim, role, StringComparison.OrdinalIgnoreCase)));
 
+            // Final fallback: authoritative type straight from the Users table.
+            // Covers tokens issued without role claims (accounts holding no
+            // Identity role rows) — the token still proves identity via sub.
+            if (!isAuthorized)
+            {
+                var dbUserType = await TryGetDatabaseUserTypeAsync(context.HttpContext, user);
+                if (dbUserType.HasValue)
+                {
+                    if (dbUserType.Value == UserType.Admin) return;
+                    isAuthorized = allowedRoles.Any(role =>
+                        string.Equals(dbUserType.Value.ToString(), role, StringComparison.OrdinalIgnoreCase));
+                }
+            }
+
             if (!isAuthorized)
             {
                 var message = Localize(LocalizationKeys.ExceptionMessages.Forbidden);
@@ -111,6 +128,25 @@ namespace SNUL.Shared.Common.Attributes
                 {
                     StatusCode = StatusCodes.Status403Forbidden
                 };
+            }
+        }
+
+        private static async Task<UserType?> TryGetDatabaseUserTypeAsync(HttpContext httpContext, ClaimsPrincipal user)
+        {
+            try
+            {
+                var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                    ?? user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+                if (string.IsNullOrWhiteSpace(userId)) return null;
+                var userManager = httpContext.RequestServices.GetService<UserManager<ApplicationUser>>();
+                if (userManager == null) return null;
+                var appUser = await userManager.FindByIdAsync(userId);
+                if (appUser == null || appUser.IsDeleted) return null;
+                return appUser.UserType;
+            }
+            catch
+            {
+                return null;
             }
         }
     }
