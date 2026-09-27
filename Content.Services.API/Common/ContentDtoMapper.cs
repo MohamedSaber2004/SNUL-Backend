@@ -7,6 +7,7 @@ using HelpArticleEntity = SNUL.Shared.Domain.Models.HelpArticle;
 using FAQEntity = SNUL.Shared.Domain.Models.FAQItem;
 using SupportTicketEntity = SNUL.Shared.Domain.Models.SupportTicket;
 using SupportContactEntity = SNUL.Shared.Domain.Models.SupportContact;
+using HelpSiteStatEntity = SNUL.Shared.Domain.Models.HelpSiteStat;
 
 namespace Content.Services.API.Common
 {
@@ -93,6 +94,17 @@ namespace Content.Services.API.Common
             WhatsAppNumber = c.WhatsAppNumber,
             WorkingHours = c.WorkingHours,
             UpdatedAt = c.UpdatedAt ?? c.CreatedAt
+        };
+
+        public static Expression<Func<HelpSiteStatEntity, HelpSiteStatDto>> HelpSiteStatProjection => s => new HelpSiteStatDto
+        {
+            Id = s.Id,
+            StatKey = s.StatKey,
+            Value = s.Value,
+            Label = s.Label,
+            LabelAr = s.LabelAr,
+            SortOrder = s.SortOrder,
+            IsVisible = s.IsVisible
         };
     }
 }

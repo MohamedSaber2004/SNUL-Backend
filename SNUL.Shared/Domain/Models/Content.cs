@@ -80,4 +80,33 @@ namespace SNUL.Shared.Domain.Models
         public string ServiceType { get; set; } = null!;
         public string Message { get; set; } = null!;
     }
+
+    /// <summary>
+    /// Telemetry shown on the public Help Center hero, editable by an admin via
+    /// /api/v1/help/site-stats so business claims can be corrected or withdrawn
+    /// without a code deploy.
+    /// <para>
+    /// <see cref="StatKey"/> is the contract: the frontend keys off it, the value
+    /// is data. The four intended keys are
+    /// <c>lotTraceable</c> (the "100%" metric), <c>isoStandard</c> (the "ISO 13485"
+    /// metric), <c>resolutionRate</c> (the "99.4%" metric) and <c>slaBadge</c> (the
+    /// "&lt; 2h SLA" badge). Renaming a key breaks that contract, so keys are
+    /// data-contract, not labels.
+    /// </para>
+    /// <para>
+    /// <see cref="IsVisible"/> exists so a claim can be withdrawn without deleting
+    /// its row: flip the flag and the public queries stop returning it. Nothing
+    /// here is seeded and no property carries a default, because these are
+    /// operator-supplied facts. A database with no rows means nothing to show.
+    /// </para>
+    /// </summary>
+    public class HelpSiteStat : BaseEntity<Guid>
+    {
+        public string StatKey { get; set; } = null!;
+        public string Value { get; set; } = null!;
+        public string Label { get; set; } = null!;
+        public string? LabelAr { get; set; } // Arabic
+        public int SortOrder { get; set; }
+        public bool IsVisible { get; set; }
+    }
 }

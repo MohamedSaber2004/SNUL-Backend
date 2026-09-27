@@ -119,4 +119,16 @@ namespace SNUL.Shared.Persistance.Configurations
             b.Property(x => x.CreatedBy).IsRequired();
         }
     }
+    public class HelpSiteStatConfiguration : IEntityTypeConfiguration<HelpSiteStat>
+    {
+        public void Configure(EntityTypeBuilder<HelpSiteStat> b)
+        {
+            b.ToTable("HelpSiteStats"); b.HasKey(x => x.Id);
+            b.Property(x => x.StatKey).IsRequired().HasMaxLength(100); b.HasIndex(x => x.StatKey).IsUnique();
+            b.Property(x => x.Value).IsRequired().HasMaxLength(200);
+            b.Property(x => x.Label).IsRequired().HasMaxLength(200);
+            b.Property(x => x.LabelAr).HasMaxLength(200);
+            b.Property(x => x.CreatedBy).IsRequired();
+        }
+    }
 }

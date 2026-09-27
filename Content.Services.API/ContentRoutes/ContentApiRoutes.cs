@@ -82,5 +82,16 @@ namespace Content.Services.API.ContentRoutes
             public const string Create = "";
             public const string Delete = "{id}";
         }
+
+        public const string HelpSiteStatsBase = Root + "/" + Version + "/help/site-stats";
+        public static class HelpSiteStats
+        {
+            public const string Base = HelpSiteStatsBase;
+            public const string GetAll = "";
+            public const string GetByKey = "key/{key}";
+            public const string Create = "";
+            public const string Update = "{id}";
+            public const string Delete = "{id}";
+        }
     }
 }

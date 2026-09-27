@@ -869,6 +869,16 @@ namespace SNUL.Shared.Persistance.Seeding
                     await db.FAQItems.AddRangeAsync(faqs, ct);
                     await db.SaveChangesAsync(ct);
                 }
+
+                // HelpSiteStats is deliberately NOT seeded here. The rows behind it are
+                // the Help Center hero claims ("100%" lot traceable, "ISO 13485",
+                // "99.4%" resolution rate, the "< 2h SLA" badge): factual assertions
+                // published to customers. Unlike the help articles and FAQs, this
+                // seeder has no verified source for them, and a Bogus-generated
+                // percentage is indistinguishable from a real one once it is live.
+                // They are supplied by an admin through /api/v1/help/site-stats.
+                // An empty table is correct: the frontend renders nothing. Do not add
+                // placeholder statistics here to "fix" the empty hero.
                 if (!await db.ProductInquiries.AnyAsync(p => !p.IsDeleted, ct) && products.Count > 0)
                 {
                     var inquiries = Enumerable.Range(1, 6).Select(_ =>

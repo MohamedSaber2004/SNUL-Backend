@@ -530,5 +530,20 @@ namespace SNUL.Shared.Localization
             public const string PhoneRequired = "SupportContact.PhoneRequired";
             public const string WhatsAppRequired = "SupportContact.WhatsAppRequired";
         }
+
+        public static class HelpSiteStat
+        {
+            public const string Created = "HelpSiteStat.Created";
+            public const string Updated = "HelpSiteStat.Updated";
+            public const string Deleted = "HelpSiteStat.Deleted";
+            public const string Fetched = "HelpSiteStat.Fetched";
+            public const string ListFetched = "HelpSiteStat.ListFetched";
+            public const string NotFound = "HelpSiteStat.NotFound";
+            public const string StatKeyRequired = "HelpSiteStat.StatKeyRequired";
+            public const string ValueRequired = "HelpSiteStat.ValueRequired";
+            public const string LabelRequired = "HelpSiteStat.LabelRequired";
+            public const string HelpSiteStatIdRequired = "HelpSiteStat.HelpSiteStatIdRequired";
+            public const string StatKeyAlreadyExists = "HelpSiteStat.StatKeyAlreadyExists";
+        }
     }
 }
