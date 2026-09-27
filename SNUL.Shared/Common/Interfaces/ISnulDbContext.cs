@@ -31,8 +31,6 @@ namespace SNUL.Shared.Common.Interfaces
 
         // Currency & Exchange
         DbSet<Currency> Currencies { get; }
-        DbSet<ExchangeRate> ExchangeRates { get; }
-        DbSet<ExchangeRateSyncLog> ExchangeRateSyncLogs { get; }
 
         // Commerce (Cart / Order)
         DbSet<Cart> Carts { get; }

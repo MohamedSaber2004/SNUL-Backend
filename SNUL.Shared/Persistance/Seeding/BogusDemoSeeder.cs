@@ -248,7 +248,7 @@ namespace SNUL.Shared.Persistance.Seeding
                                 $"demo/products/{slug}.jpg",
                                 material, length,
                                 usd?.Id,
-                                leaf.Id, Marker);
+                                leaf.Id, null, Marker);
                             products.Add(product);
                             specs.Add(new ProductSpecification { Id = Guid.NewGuid(), ProductId = product.Id, AttrName = "Material", AttrValue = material });
                             specs.Add(new ProductSpecification { Id = Guid.NewGuid(), ProductId = product.Id, AttrName = "Sterilization", AttrValue = "Autoclave 134°C" });
@@ -358,6 +358,25 @@ namespace SNUL.Shared.Persistance.Seeding
                 }
                 var orgUsers = new List<(ApplicationUser User, Company Company)>();
                 var approved = companies.Where(c => c.Status == CompanyStatus.Approved).ToList();
+
+                // Mediator model: spread catalog items across the approved
+                // provider companies so provider-scoped reads ("my catalog",
+                // "offered by") return real demo data. Products left with a
+                // null CompanyId stay Admin-managed global items.
+                if (approved.Count > 0)
+                {
+                    var unowned = await db.Products
+                        .Where(p => !p.IsDeleted && p.CompanyId == null)
+                        .OrderBy(p => p.CreatedAt)
+                        .ToListAsync(ct);
+                    for (var i = 0; i < unowned.Count; i++)
+                    {
+                        unowned[i].CompanyId = approved[i % approved.Count].Id;
+                        unowned[i].MarkAsUpdated(Marker);
+                    }
+                    if (unowned.Count > 0)
+                        await db.SaveChangesAsync(ct);
+                }
                 for (var i = 0; i < approved.Count; i++)
                 {
                     var u = await EnsureUserAsync(userManager, faker,
@@ -669,69 +688,6 @@ namespace SNUL.Shared.Persistance.Seeding
                 if (certsToAdd.Count > 0)
                 {
                     await db.Certifications.AddRangeAsync(certsToAdd, ct);
-                    await db.SaveChangesAsync(ct);
-                }
-
-                var ratesAdded = 0;
-                if (usd != null)
-                {
-                    var targetCodes = new[] { "AED", "EUR", "SAR", "EGP", "GBP", "PKR", "JPY", "CAD", "TRY", "QAR" };
-                    var targets = await db.Currencies.Where(c => !c.IsDeleted && targetCodes.Contains(c.Code)).ToListAsync(ct);
-                    var today = DateOnly.FromDateTime(DateTime.UtcNow);
-                    var existingPairs = new HashSet<Guid>(
-                        await db.ExchangeRates
-                            .Where(r => !r.IsDeleted && r.BaseCurrencyId == usd.Id && r.RateDate == today)
-                            .Select(r => r.TargetCurrencyId).ToListAsync(ct));
-                    var rates = new List<ExchangeRate>();
-                    foreach (var t in targets)
-                    {
-                        if (t.Id == usd.Id || existingPairs.Contains(t.Id)) continue;
-                        var r = new ExchangeRate
-                        {
-                            Id = Guid.NewGuid(),
-                            BaseCurrencyId = usd.Id,
-                            TargetCurrencyId = t.Id,
-                            Rate = Math.Round(faker.Random.Decimal(0.05m, 400m), 6),
-                            RateDate = today,
-                            Source = "FawazahmedCDN",
-                            FetchedAt = DateTime.UtcNow,
-                        };
-                        r.MarkAsCreated(Marker);
-                        rates.Add(r);
-                    }
-                    if (rates.Count > 0)
-                    {
-                        await db.ExchangeRates.AddRangeAsync(rates, ct);
-                        await db.SaveChangesAsync(ct);
-                    }
-                    ratesAdded = rates.Count;
-                }
-                if (!await db.ExchangeRateSyncLogs.AnyAsync(s => !s.IsDeleted, ct))
-                {
-                    var ok = new ExchangeRateSyncLog
-                    {
-                        Id = Guid.NewGuid(),
-                        StartedAt = DateTime.UtcNow.AddHours(-2),
-                        CompletedAt = DateTime.UtcNow.AddHours(-2).AddMinutes(3),
-                        Status = ExchangeRateSyncStatus.Success,
-                        BaseCurrency = "USD",
-                        RatesCount = ratesAdded,
-                        Source = "FawazahmedCDN",
-                    };
-                    ok.MarkAsCreated(Marker);
-                    var failed = new ExchangeRateSyncLog
-                    {
-                        Id = Guid.NewGuid(),
-                        StartedAt = DateTime.UtcNow.AddDays(-1),
-                        CompletedAt = DateTime.UtcNow.AddDays(-1).AddMinutes(5),
-                        Status = ExchangeRateSyncStatus.Failed,
-                        BaseCurrency = "USD",
-                        RatesCount = 0,
-                        Source = "FawazahmedCDN",
-                        ErrorMessage = "Upstream provider timeout (demo entry).",
-                    };
-                    failed.MarkAsCreated(Marker);
-                    await db.ExchangeRateSyncLogs.AddRangeAsync(new[] { ok, failed }, ct);
                     await db.SaveChangesAsync(ct);
                 }
 

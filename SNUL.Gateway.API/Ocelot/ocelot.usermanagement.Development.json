@@ -1,4 +1,4 @@
-﻿{
+{
   "Routes": [
     {
       "DownstreamPathTemplate": "/api/v1/user-management/countries",
@@ -6,7 +6,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7204
+          "Port": 7304
         }
       ],
       "UpstreamPathTemplate": "/api/v1/user-management/countries",
@@ -21,7 +21,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7204
+          "Port": 7304
         }
       ],
       "UpstreamPathTemplate": "/api/v1/user-management/countries/{everything}",
@@ -36,7 +36,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7204
+          "Port": 7304
         }
       ],
       "UpstreamPathTemplate": "/api/v1/user-management/cities",
@@ -51,7 +51,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7204
+          "Port": 7304
         }
       ],
       "UpstreamPathTemplate": "/api/v1/user-management/cities/{everything}",
@@ -66,7 +66,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7204
+          "Port": 7304
         }
       ],
       "UpstreamPathTemplate": "/api/v1/user-management/zones",
@@ -81,7 +81,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7204
+          "Port": 7304
         }
       ],
       "UpstreamPathTemplate": "/api/v1/user-management/zones/{everything}",
@@ -96,7 +96,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7204
+          "Port": 7304
         }
       ],
       "UpstreamPathTemplate": "/api/v1/user-management/companies",
@@ -111,7 +111,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7204
+          "Port": 7304
         }
       ],
       "UpstreamPathTemplate": "/api/v1/user-management/companies/{companyId}/products",
@@ -126,7 +126,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7204
+          "Port": 7304
         }
       ],
       "UpstreamPathTemplate": "/api/v1/user-management/companies/{id}",
@@ -141,7 +141,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7204
+          "Port": 7304
         }
       ],
       "UpstreamPathTemplate": "/api/v1/user-management/distributor-applications",
@@ -160,7 +160,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7204
+          "Port": 7304
         }
       ],
       "UpstreamPathTemplate": "/api/v1/user-management/{everything}",
@@ -182,7 +182,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7204
+          "Port": 7304
         }
       ],
       "UpstreamPathTemplate": "/api/docs/usermanagement/openapi.json",
@@ -197,7 +197,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7204
+          "Port": 7304
         }
       ],
       "UpstreamPathTemplate": "/api/docs/usermanagement",

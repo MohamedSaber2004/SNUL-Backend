@@ -23,7 +23,12 @@ namespace SNUL.Shared.Persistance.Configurations
             builder.Property(x => x.Sku)
                 .IsRequired()
                 .HasMaxLength(50);
-            builder.HasIndex(x => x.Sku).IsUnique();
+            // Mediator model: the same SKU can be supplied by many companies.
+            // Uniqueness is per owning company (legacy/global rows with
+            // CompanyId = null share one scope, so they stay globally unique).
+            // HasFilter(null) stops EF adding "WHERE CompanyId IS NOT NULL",
+            // which would drop the uniqueness guard on legacy/global items.
+            builder.HasIndex(x => new { x.CompanyId, x.Sku }).IsUnique().HasFilter(null);
 
             builder.Property(x => x.Slug)
                 .IsRequired()
@@ -58,8 +63,14 @@ namespace SNUL.Shared.Persistance.Configurations
                 .HasForeignKey(x => x.CurrencyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(x => x.Company)
+                .WithMany(x => x.Products)
+                .HasForeignKey(x => x.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasIndex(x => x.CategoryId);
             builder.HasIndex(x => x.CurrencyId);
+            builder.HasIndex(x => x.CompanyId);
 
             builder.Property(x => x.CreatedBy)
                 .IsRequired();

@@ -13,9 +13,6 @@ namespace SNUL.Shared.Domain.Models
         public RFQStatus Status { get; set; } = RFQStatus.Pending;
         public Guid? AssignedSalesRepId { get; set; }
         public virtual ApplicationUser? AssignedSalesRep { get; set; }
-        
-        public Guid? WelcoRfqId { get; set; }
-        public string? WelcoRfqNumber { get; set; }
         public virtual ICollection<RFQItem> Items { get; set; } = new List<RFQItem>();
     }
     public class RFQItem : BaseEntity<Guid>

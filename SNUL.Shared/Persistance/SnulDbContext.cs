@@ -26,9 +26,6 @@ namespace SNUL.Shared.Persistance
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<Product> Products => Set<Product>();
         public DbSet<Currency> Currencies => Set<Currency>();
-        public DbSet<ExchangeRate> ExchangeRates => Set<ExchangeRate>();
-        public DbSet<ExchangeRateSyncLog> ExchangeRateSyncLogs => Set<ExchangeRateSyncLog>();
-        // public DbSet<WelcoProviderMap> WelcoProviderMaps => Set<WelcoProviderMap>();
         public DbSet<Company> Companies => Set<Company>();
         public DbSet<ProductSpecification> ProductSpecifications => Set<ProductSpecification>();
         public DbSet<ProductMedia> ProductMedias => Set<ProductMedia>();

@@ -14,11 +14,10 @@ namespace SNUL.Shared.Domain.Models
         public CompanyStatus Status { get; set; } = CompanyStatus.Pending;
         public Guid? AccountManagerId { get; set; }
         public bool IsProvider { get; set; }
-        
-        public Guid? WelcoCompanyId { get; set; }
         public virtual ApplicationUser? AccountManager { get; set; }
         public virtual ICollection<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
         public virtual ICollection<CompanyAddress> Addresses { get; set; } = new List<CompanyAddress>();
+        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 
         public static Company Create(
             string name,

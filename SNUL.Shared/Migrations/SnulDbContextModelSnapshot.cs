@@ -517,9 +517,6 @@ namespace SNUL.Shared.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<Guid?>("WelcoCategoryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ParentCategoryId");
@@ -729,9 +726,6 @@ namespace SNUL.Shared.Migrations
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
-
-                    b.Property<Guid?>("WelcoCompanyId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -1106,147 +1100,6 @@ namespace SNUL.Shared.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("Documents", (string)null);
-                });
-
-            modelBuilder.Entity("SNUL.Shared.Domain.Models.ExchangeRate", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BaseCurrencyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("FetchedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("Rate")
-                        .HasPrecision(28, 12)
-                        .HasColumnType("decimal(28,12)");
-
-                    b.Property<DateTime>("RateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Source")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid>("TargetCurrencyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("Version")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TargetCurrencyId");
-
-                    b.HasIndex("BaseCurrencyId", "TargetCurrencyId", "RateDate")
-                        .IsUnique();
-
-                    b.ToTable("ExchangeRates", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_ExchangeRate_Currencies_Different", "[BaseCurrencyId] <> [TargetCurrencyId]");
-
-                            t.HasCheckConstraint("CK_ExchangeRate_Rate_Positive", "[Rate] > 0");
-                        });
-                });
-
-            modelBuilder.Entity("SNUL.Shared.Domain.Models.ExchangeRateSyncLog", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BaseCurrency")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ErrorMessage")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("RatesCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Source")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("StartedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("Version")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ExchangeRateSyncLogs", (string)null);
                 });
 
             modelBuilder.Entity("SNUL.Shared.Domain.Models.FAQItem", b =>
@@ -1755,12 +1608,6 @@ namespace SNUL.Shared.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<Guid?>("WelcoOrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("WelcoOrderNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
@@ -1840,6 +1687,9 @@ namespace SNUL.Shared.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -1922,19 +1772,18 @@ namespace SNUL.Shared.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<Guid?>("WelcoProductId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("CurrencyId");
 
-                    b.HasIndex("Sku")
+                    b.HasIndex("Slug")
                         .IsUnique();
 
-                    b.HasIndex("Slug")
+                    b.HasIndex("CompanyId", "Sku")
                         .IsUnique();
 
                     b.ToTable("Products", (string)null);
@@ -2346,12 +2195,6 @@ namespace SNUL.Shared.Migrations
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
-
-                    b.Property<Guid?>("WelcoRfqId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("WelcoRfqNumber")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -3011,25 +2854,6 @@ namespace SNUL.Shared.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("SNUL.Shared.Domain.Models.ExchangeRate", b =>
-                {
-                    b.HasOne("SNUL.Shared.Domain.Models.Currency", "BaseCurrency")
-                        .WithMany()
-                        .HasForeignKey("BaseCurrencyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SNUL.Shared.Domain.Models.Currency", "TargetCurrency")
-                        .WithMany()
-                        .HasForeignKey("TargetCurrencyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("BaseCurrency");
-
-                    b.Navigation("TargetCurrency");
-                });
-
             modelBuilder.Entity("SNUL.Shared.Domain.Models.HelpArticle", b =>
                 {
                     b.HasOne("SNUL.Shared.Domain.Models.HelpCategory", "Category")
@@ -3114,12 +2938,19 @@ namespace SNUL.Shared.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("SNUL.Shared.Domain.Models.Company", "Company")
+                        .WithMany("Products")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("SNUL.Shared.Domain.Models.Currency", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Category");
+
+                    b.Navigation("Company");
 
                     b.Navigation("Currency");
                 });
@@ -3346,6 +3177,8 @@ namespace SNUL.Shared.Migrations
             modelBuilder.Entity("SNUL.Shared.Domain.Models.Company", b =>
                 {
                     b.Navigation("Addresses");
+
+                    b.Navigation("Products");
 
                     b.Navigation("Users");
                 });

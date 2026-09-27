@@ -20,58 +20,29 @@ namespace Content.Services.API.Features.SupportContact.Queries.GetSupportContact
 
         public async Task<Result<SupportContactDto>> Handle(GetSupportContactQuery request, CancellationToken cancellationToken)
         {
-            try
+            var repo = _uow.GetRepository<SupportContactEntity, Guid>();
+            var contact = await repo.GetAll(c => !c.IsDeleted)
+                .AsNoTracking()
+                .OrderByDescending(c => c.UpdatedAt ?? c.CreatedAt)
+                .Select(ContentDtoMapper.SupportContactProjection)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            // No row yet: return an empty (unconfigured) contact rather than
+            // inventing phone numbers or opening hours. The row is created by
+            // PUT /api/v1/support/contact, which upserts.
+            if (contact == null)
             {
-                var repo = _uow.GetRepository<SupportContactEntity, Guid>();
-                var contact = await repo.GetAll(c => !c.IsDeleted)
-                    .AsNoTracking()
-                    .OrderByDescending(c => c.UpdatedAt ?? c.CreatedAt)
-                    .Select(ContentDtoMapper.SupportContactProjection)
-                    .FirstOrDefaultAsync(cancellationToken);
-
-                if (contact != null)
-                {
-                    return Result<SupportContactDto>.Success(contact, LocalizationKeys.SupportContact.Fetched);
-                }
-
-                var defaultEntity = new SupportContactEntity
-                {
-                    SupportEmail = "support@snul.health",
-                    PhoneNumber = "+971 50 000 0000",
-                    WhatsAppNumber = "+971500000000",
-                    WorkingHours = "Mon - Fri: 8:00 AM - 6:00 PM (GST)"
-                };
-                defaultEntity.MarkAsCreated("System");
-
-                await repo.AddAsync(defaultEntity, cancellationToken);
-                await _uow.SaveChangesAsync(cancellationToken);
-
-                var dto = new SupportContactDto
-                {
-                    Id = defaultEntity.Id,
-                    SupportEmail = defaultEntity.SupportEmail,
-                    PhoneNumber = defaultEntity.PhoneNumber,
-                    WhatsAppNumber = defaultEntity.WhatsAppNumber,
-                    WorkingHours = defaultEntity.WorkingHours,
-                    UpdatedAt = defaultEntity.CreatedAt
-                };
-
-                return Result<SupportContactDto>.Success(dto, LocalizationKeys.SupportContact.Fetched);
-            }
-            catch
-            {
-                
-                var fallback = new SupportContactDto
+                return Result<SupportContactDto>.Success(new SupportContactDto
                 {
                     Id = Guid.Empty,
-                    SupportEmail = "support@snul.health",
-                    PhoneNumber = "+971 50 000 0000",
-                    WhatsAppNumber = "+971500000000",
-                    WorkingHours = "Mon - Fri: 8:00 AM - 6:00 PM (GST)",
-                    UpdatedAt = DateTime.UtcNow
-                };
-                return Result<SupportContactDto>.Success(fallback, LocalizationKeys.SupportContact.Fetched);
+                    SupportEmail = string.Empty,
+                    PhoneNumber = string.Empty,
+                    WhatsAppNumber = string.Empty,
+                    WorkingHours = null
+                }, LocalizationKeys.SupportContact.Fetched);
             }
+
+            return Result<SupportContactDto>.Success(contact, LocalizationKeys.SupportContact.Fetched);
         }
     }
 }

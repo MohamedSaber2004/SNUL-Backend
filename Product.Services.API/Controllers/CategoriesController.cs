@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Product.Services.API.Features.Categories.Commands.CreateCategory;
 using Product.Services.API.Features.Categories.Commands.DeleteCategory;
 using Product.Services.API.Features.Categories.Commands.UpdateCategory;
+using Product.Services.API.Features.Categories.Queries.GetAllCategories;
 using Product.Services.API.Features.Categories.Queries.GetCategories;
 using Product.Services.API.Features.Categories.Queries.GetCategoryById;
 using Product.Services.API.Features.Categories.Queries.GetCategoryProducts;
+using Product.Services.API.Features.Categories.Queries.GetCategoryProviders;
 
 using Product.Services.API.ProductRoutes;
 using SNUL.Shared.Common.Attributes;
@@ -35,6 +37,16 @@ namespace Product.Services.API.Controllers
         }
 
         [HttpGet]
+        [Route(ProductApiRoutes.Categories.GetAllList)]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllList(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetAllCategoriesQuery(), cancellationToken);
+            return ToActionResult(result);
+        }
+
+        [HttpGet]
         [Route(ProductApiRoutes.Categories.GetById)]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -47,7 +59,7 @@ namespace Product.Services.API.Controllers
 
         [HttpPost]
         [Route(ProductApiRoutes.Categories.Create)]
-        [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
+        [RoleAuthorize(UserType.Admin, UserType.SnulStaff, UserType.OrganizationUser)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] CreateCategoryCommand command, CancellationToken cancellationToken)
@@ -88,6 +100,17 @@ namespace Product.Services.API.Controllers
         public async Task<IActionResult> GetProductsByCategory([FromRoute] Guid categoryId, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetCategoryProductsQuery { CategoryId = categoryId }, cancellationToken);
+            return ToActionResult(result);
+        }
+
+        [HttpGet]
+        [Route(ProductApiRoutes.Categories.GetProviders)]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProviders([FromRoute] Guid categoryId, [FromQuery] GetCategoryProvidersQuery query, CancellationToken cancellationToken)
+        {
+            query.CategoryId = categoryId;
+            var result = await _mediator.Send(query, cancellationToken);
             return ToActionResult(result);
         }
     }

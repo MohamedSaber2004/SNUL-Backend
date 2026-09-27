@@ -1,11 +1,7 @@
 using System.Reflection;
 using FluentValidation;
-using Hangfire;
-using Hangfire.SqlServer;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Product.Services.API.Filters;
-using Product.Services.API.Jobs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Scalar.AspNetCore;
@@ -102,31 +98,6 @@ var env = builder.Environment;
 var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection")
                 ?? builder.Configuration["DatabaseConnection"];
 
-            if (!string.IsNullOrWhiteSpace(connectionString))
-            {
-                builder.Services.AddHangfire(configuration => configuration
-                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-                    .UseSimpleAssemblyNameTypeSerializer()
-                    .UseRecommendedSerializerSettings()
-                    .UseSqlServerStorage(connectionString, new SqlServerStorageOptions
-                    {
-                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                        QueuePollInterval = TimeSpan.Zero,
-                        UseRecommendedIsolationLevel = true,
-                        DisableGlobalLocks = true,
-                        PrepareSchemaIfNecessary = true
-                    }));
-
-                builder.Services.AddHangfireServer(options =>
-                {
-                    options.WorkerCount = Math.Max(Environment.ProcessorCount, 2);
-                    options.ServerName = "ProductService-ExchangeRateServer";
-                });
-
-                builder.Services.AddScoped<ExchangeRateSyncJob>();
-            }
-
             var app = builder.Build();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -157,15 +128,6 @@ var connectionString = builder.Configuration.GetConnectionString("DatabaseConnec
             });
             app.MapControllers();
 
-            if (!string.IsNullOrWhiteSpace(connectionString))
-            {
-                app.UseHangfireDashboard("/hangfire", new DashboardOptions
-                {
-                    Authorization = new[] { new HangfireAuthorizationFilter() },
-                    DashboardTitle = "SNUL - Background Jobs"
-                });
-            }
-
             if (!app.Environment.IsEnvironment("Test"))
             {
                 try
@@ -186,37 +148,6 @@ var connectionString = builder.Configuration.GetConnectionString("DatabaseConnec
                     var logger = app.Services.GetService<ILogger<Program>>();
                     logger?.LogError(ex, "Product startup migration/seeding failed. DB may be unreachable. This explains 500.30 startup failure.");
                     Console.Error.WriteLine($"[Product] Startup migration/seeding failed: {ex.GetType().Name}: {ex.Message}");
-                }
-            }
-
-            if (!string.IsNullOrWhiteSpace(connectionString))
-            {
-                try
-                {
-                    var recurringJobManager = app.Services.GetService<IRecurringJobManager>();
-                    if (recurringJobManager != null)
-                    {
-                        var exchangeRateSettings = app.Configuration.GetSection(ExchangeRateSettings.SectionName).Get<ExchangeRateSettings>() ?? new ExchangeRateSettings();
-                        var intervalHours = exchangeRateSettings.SyncIntervalHours > 0 ? exchangeRateSettings.SyncIntervalHours : 24;
-
-                        var cronExpression = intervalHours switch
-                        {
-                            1 => Cron.Hourly(),
-                            > 1 and < 24 => Cron.HourInterval(intervalHours),
-                            _ => Cron.Daily()
-                        };
-
-                        recurringJobManager.AddOrUpdate<ExchangeRateSyncJob>(
-                            "sync-latest-exchange-rates",
-                            job => job.ExecuteAsync(),
-                            cronExpression);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    var logger = app.Services.GetService<ILogger<Program>>();
-                    logger?.LogWarning(ex, "Product Hangfire recurring job setup failed.");
-                    Console.Error.WriteLine($"[Product] Hangfire setup failed: {ex.GetType().Name}: {ex.Message}");
                 }
             }
 

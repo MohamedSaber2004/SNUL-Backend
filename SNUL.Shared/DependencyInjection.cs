@@ -86,26 +86,25 @@ namespace SNUL.Shared
             services.AddMemoryCache();
             services.AddScoped<IExchangeRateService, ExchangeRateService>();
 
-services.AddHttpClient<IExchangeRateProvider, FrankfurterExchangeRateProvider>((sp, client) =>
+services.AddHttpClient<FawazahmedCdnProvider>((sp, client) =>
             {
                 var opts = sp.GetRequiredService<IOptions<ExchangeRateSettings>>().Value;
-                var baseUrl = string.IsNullOrWhiteSpace(opts.BaseUrl) ? "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies" : opts.BaseUrl.TrimEnd('/');
+                var baseUrl = string.IsNullOrWhiteSpace(opts.BaseUrl) ? FawazahmedCdnProvider.DefaultBaseUrl : opts.BaseUrl.TrimEnd('/');
                 client.BaseAddress = new Uri(baseUrl + "/");
                 client.Timeout = TimeSpan.FromSeconds(opts.TimeoutSeconds > 0 ? opts.TimeoutSeconds : 10);
                 client.DefaultRequestHeaders.Clear();
             });
 
-services.AddHttpClient<ExchangeRateApiProvider>((sp, client) =>
+services.AddHttpClient<YahooFinanceProvider>((sp, client) =>
             {
                 var opts = sp.GetRequiredService<IOptions<ExchangeRateSettings>>().Value;
-                var baseUrl = string.IsNullOrWhiteSpace(opts.BaseUrl) ? "https://v6.exchangerate-api.com" : opts.BaseUrl.TrimEnd('/');
-                
-                if (!string.IsNullOrWhiteSpace(opts.ApiKey) && !baseUrl.Contains("/v6/"))
-                    client.BaseAddress = new Uri($"https://v6.exchangerate-api.com/v6/{opts.ApiKey}/");
-                else
-                    client.BaseAddress = new Uri(baseUrl + "/");
+                client.BaseAddress = new Uri(YahooFinanceProvider.DefaultBaseUrl + "/");
                 client.Timeout = TimeSpan.FromSeconds(opts.TimeoutSeconds > 0 ? opts.TimeoutSeconds : 10);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
             });
+
+services.AddScoped<IExchangeRateProvider>(sp => sp.GetRequiredService<YahooFinanceProvider>());
 
             services.AddScoped<ISnulDbContext>(provider => provider.GetRequiredService<SnulDbContext>());
 

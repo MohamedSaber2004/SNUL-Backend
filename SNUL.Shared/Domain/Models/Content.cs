@@ -61,9 +61,11 @@ namespace SNUL.Shared.Domain.Models
     public class SupportContact : BaseEntity<Guid>
     {
         public string SupportEmail { get; set; } = "support@snul.health";
-        public string PhoneNumber { get; set; } = "+971500000000";
-        public string WhatsAppNumber { get; set; } = "+971500000000";
-        public string? WorkingHours { get; set; } = "Mon - Fri: 8:00 AM - 6:00 PM (GST)";
+        // No invented defaults: these are admin-managed via
+        // PUT /api/v1/support/contact. Empty means "not configured yet".
+        public string PhoneNumber { get; set; } = string.Empty;
+        public string WhatsAppNumber { get; set; } = string.Empty;
+        public string? WorkingHours { get; set; }
     }
     public class OemInquiry : BaseEntity<Guid>
     {

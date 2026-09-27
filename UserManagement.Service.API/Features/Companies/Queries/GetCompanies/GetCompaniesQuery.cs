@@ -12,5 +12,6 @@ namespace UserManagement.Service.API.Features.Companies.Queries.GetCompanies
         public bool? IsActive { get; set; }
         public bool? IsProvider { get; set; }
         public SNUL.Shared.Enums.CompanyType? Type { get; set; }
+        public SNUL.Shared.Enums.CompanyStatus? Status { get; set; }
     }
 }

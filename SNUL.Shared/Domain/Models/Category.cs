@@ -9,8 +9,6 @@ namespace SNUL.Shared.Domain.Models
         public string? Description { get; set; }
         public string? ImageName { get; set; }
         public Guid? ParentCategoryId { get; set; }
-        
-        public Guid? WelcoCategoryId { get; set; }
 
         public virtual Category? ParentCategory { get; set; }
         public virtual ICollection<Category> SubCategories { get; set; } = new List<Category>();

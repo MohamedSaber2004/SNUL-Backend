@@ -60,6 +60,9 @@ namespace SNUL.Shared.Localization
             public const string RefreshTokenExpired = "Auth.RefreshTokenExpired";
             public const string TooManyAttempts = "Auth.TooManyAttempts";
             public const string OtpSent = "Auth.OtpSent";
+            public const string OtpResent = "Auth.OtpResent";
+            public const string OtpResendTooSoon = "Auth.OtpResendTooSoon";
+            public const string EmailAlreadyConfirmed = "Auth.EmailAlreadyConfirmed";
             public const string OtpVerified = "Auth.OtpVerified";
             public const string PasswordResetSuccess = "Auth.PasswordResetSuccess";
             public const string InvalidOtp = "Auth.InvalidOtp";
@@ -237,9 +240,6 @@ namespace SNUL.Shared.Localization
             public const string NotFound = "ExchangeRate.NotFound";
             public const string FromAndToRequired = "ExchangeRate.FromAndToRequired";
             public const string AmountNonNegative = "ExchangeRate.AmountNonNegative";
-            public const string InvalidDateFormat = "ExchangeRate.InvalidDateFormat";
-            public const string SyncSuccess = "ExchangeRate.SyncSuccess";
-            public const string SyncFailed = "ExchangeRate.SyncFailed";
         }
 
 

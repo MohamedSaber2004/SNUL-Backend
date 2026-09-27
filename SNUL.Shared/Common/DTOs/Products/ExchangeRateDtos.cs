@@ -20,17 +20,43 @@ namespace SNUL.Shared.Common.DTOs.Products
         public decimal ConvertedAmount { get; set; }
         public DateOnly RateDate { get; set; }
         public string Source { get; set; } = string.Empty;
+        public decimal SafetyMarginPercent { get; set; }
     }
 
-    public class ExchangeRateSyncLogDto
+    public class CartTotalLineRequest
     {
-        public Guid Id { get; set; }
-        public DateTime StartedAt { get; set; }
-        public DateTime? CompletedAt { get; set; }
-        public string Status { get; set; } = string.Empty;
-        public string BaseCurrency { get; set; } = string.Empty;
-        public int RatesCount { get; set; }
+        public string Key { get; set; } = string.Empty;
+        public decimal UnitAmount { get; set; }
+        public int Quantity { get; set; }
+        public string FromCurrency { get; set; } = string.Empty;
+    }
+
+    public class ConvertCartTotalRequest
+    {
+        public string ToCurrency { get; set; } = string.Empty;
+        public List<CartTotalLineRequest> Lines { get; set; } = new();
+    }
+
+    public class CartTotalLineResultDto
+    {
+        public string Key { get; set; } = string.Empty;
+        public string FromCurrency { get; set; } = string.Empty;
+        public decimal UnitAmount { get; set; }
+        public decimal CeiledUnitAmount { get; set; }
+        public int Quantity { get; set; }
+        public decimal Rate { get; set; }
+        public decimal ConvertedUnitAmount { get; set; }
+        public decimal LineTotal { get; set; }
+    }
+
+    public class CartTotalResultDto
+    {
+        public string ToCurrency { get; set; } = string.Empty;
+        public List<CartTotalLineResultDto> Lines { get; set; } = new();
+        public decimal Subtotal { get; set; }
+        public decimal Total { get; set; }
+        public DateOnly RateDate { get; set; }
         public string Source { get; set; } = string.Empty;
-        public string? ErrorMessage { get; set; }
+        public decimal SafetyMarginPercent { get; set; }
     }
 }

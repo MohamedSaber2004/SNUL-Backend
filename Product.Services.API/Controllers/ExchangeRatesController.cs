@@ -20,35 +20,56 @@ namespace Product.Services.API.Controllers
 
         public ExchangeRatesController(IMediator mediator, IExchangeRateService service) : base(mediator) => _service = service;
 
-                [HttpGet]
+        [HttpGet]
         [Route(ProductApiRoutes.ExchangeRates.Latest)]
         [AllowAnonymous]
         public async Task<IActionResult> GetLatest(CancellationToken ct)
         {
-            var rates = await _service.GetLatestRatesAsync("USD", ct);
-            return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Success(rates.ToList(), LocalizationKeys.ExchangeRate.ListFetched));
+            try
+            {
+                var rates = await _service.GetLatestRatesAsync("USD", ct);
+                return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Success(rates.ToList(), LocalizationKeys.ExchangeRate.ListFetched));
+            }
+            catch (Exception ex)
+            {
+                return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Failure(ex.Message));
+            }
         }
 
-                [HttpGet]
+        [HttpGet]
         [Route(ProductApiRoutes.ExchangeRates.LatestByBase)]
         [AllowAnonymous]
         public async Task<IActionResult> GetLatestByBase([FromRoute] string baseCurrency, CancellationToken ct)
         {
-            var rates = await _service.GetLatestRatesAsync(baseCurrency, ct);
-            return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Success(rates.ToList(), LocalizationKeys.ExchangeRate.ListFetched));
+            try
+            {
+                var rates = await _service.GetLatestRatesAsync(baseCurrency, ct);
+                return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Success(rates.ToList(), LocalizationKeys.ExchangeRate.ListFetched));
+            }
+            catch (Exception ex)
+            {
+                return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Failure(ex.Message));
+            }
         }
 
-                [HttpGet]
+        [HttpGet]
         [Route(ProductApiRoutes.ExchangeRates.Pair)]
         [AllowAnonymous]
         public async Task<IActionResult> GetPair([FromRoute] string from, [FromRoute] string to, CancellationToken ct)
         {
-            var rate = await _service.GetLatestRateAsync(from, to, ct);
-            if (rate == null) return ToActionResult(Result<ExchangeRateDto>.NotFound(LocalizationKeys.ExchangeRate.NotFound));
-            return ToActionResult(Result<ExchangeRateDto>.Success(rate, LocalizationKeys.ExchangeRate.Fetched));
+            try
+            {
+                var rate = await _service.GetLatestRateAsync(from, to, ct);
+                if (rate == null) return ToActionResult(Result<ExchangeRateDto>.NotFound(LocalizationKeys.ExchangeRate.NotFound));
+                return ToActionResult(Result<ExchangeRateDto>.Success(rate, LocalizationKeys.ExchangeRate.Fetched));
+            }
+            catch (Exception ex)
+            {
+                return ToActionResult(Result<ExchangeRateDto>.Failure(ex.Message));
+            }
         }
 
-                [HttpGet]
+        [HttpGet]
         [Route(ProductApiRoutes.ExchangeRates.Convert)]
         [AllowAnonymous]
         public async Task<IActionResult> Convert([FromQuery] string from, [FromQuery] string to, [FromQuery] decimal amount, CancellationToken ct)
@@ -58,51 +79,43 @@ namespace Product.Services.API.Controllers
             if (amount < 0)
                 return ToActionResult(Result<ConversionResultDto>.BadRequest(LocalizationKeys.ExchangeRate.AmountNonNegative));
 
-            var result = await _service.ConvertWithDetailsAsync(amount, from, to, ct);
-            return ToActionResult(Result<ConversionResultDto>.Success(result, LocalizationKeys.ExchangeRate.Fetched));
+            try
+            {
+                var result = await _service.ConvertWithDetailsAsync(amount, from, to, ct);
+                return ToActionResult(Result<ConversionResultDto>.Success(result, LocalizationKeys.ExchangeRate.Fetched));
+            }
+            catch (Exception ex)
+            {
+                return ToActionResult(Result<ConversionResultDto>.Failure(ex.Message));
+            }
         }
 
-                [HttpGet]
-        [Route(ProductApiRoutes.ExchangeRates.History)]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetHistory([FromRoute] string baseCurrency, [FromRoute] string date, CancellationToken ct)
-        {
-            if (!DateOnly.TryParse(date, out var d))
-                return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.BadRequest(LocalizationKeys.ExchangeRate.InvalidDateFormat));
-
-            var rates = await _service.GetHistoricalRatesAsync(baseCurrency, d, ct);
-            return ToActionResult(Result<IReadOnlyCollection<ExchangeRateDto>>.Success(rates.ToList(), LocalizationKeys.ExchangeRate.ListFetched));
-        }
-
-                [HttpPost]
-        [Route(ProductApiRoutes.ExchangeRates.Sync)]
-        [RoleAuthorize(UserType.Admin)]
-        public async Task<IActionResult> Sync(CancellationToken ct)
-        {
-            var result = await _service.SyncLatestRatesAsync(ct);
-            if (!result.Success) return ToActionResult(Result<ExchangeRateSyncResult>.Failure(LocalizationKeys.ExchangeRate.SyncFailed, 502));
-            return ToActionResult(Result<ExchangeRateSyncResult>.Success(result, LocalizationKeys.ExchangeRate.SyncSuccess));
-        }
-
+        /// <summary>
+        /// Converts a whole cart in a single round-trip. Each line is converted
+        /// independently (mixed-currency carts are supported) and the safety margin
+        /// is applied to every non-identity line before the subtotal is summed.
+        /// </summary>
         [HttpPost]
-        [Route(ProductApiRoutes.ExchangeRates.SyncHistory)]
-        [RoleAuthorize(UserType.Admin)]
-        public async Task<IActionResult> SyncHistory([FromRoute] string date, CancellationToken ct)
-        {
-            if (!DateOnly.TryParse(date, out var d))
-                return ToActionResult(Result<ExchangeRateSyncResult>.BadRequest(LocalizationKeys.ExchangeRate.InvalidDateFormat));
-            var result = await _service.SyncHistoricalRatesAsync(d, ct);
-            if (!result.Success) return ToActionResult(Result<ExchangeRateSyncResult>.Failure(LocalizationKeys.ExchangeRate.SyncFailed, 502));
-            return ToActionResult(Result<ExchangeRateSyncResult>.Success(result, LocalizationKeys.ExchangeRate.SyncSuccess));
-        }
-
-                [HttpGet]
-        [Route(ProductApiRoutes.ExchangeRates.SyncLogs)]
+        [Route(ProductApiRoutes.ExchangeRates.CartTotal)]
         [AllowAnonymous]
-        public async Task<IActionResult> GetSyncLogs([FromQuery] int take = 10, CancellationToken ct = default)
+        public async Task<IActionResult> ConvertCartTotal([FromBody] ConvertCartTotalRequest request, CancellationToken ct)
         {
-            var logs = await _service.GetSyncLogsAsync(take, ct);
-            return ToActionResult(Result<IReadOnlyCollection<ExchangeRateSyncLog>>.Success(logs, LocalizationKeys.ExchangeRate.ListFetched));
+            if (request == null || string.IsNullOrWhiteSpace(request.ToCurrency))
+                return ToActionResult(Result<CartTotalResultDto>.BadRequest("toCurrency is required"));
+            if (request.Lines == null || request.Lines.Count == 0)
+                return ToActionResult(Result<CartTotalResultDto>.BadRequest("lines are required"));
+            if (request.Lines.Count > 200)
+                return ToActionResult(Result<CartTotalResultDto>.BadRequest("too many lines (max 200)"));
+
+            try
+            {
+                var result = await _service.ConvertCartTotalAsync(request, ct);
+                return ToActionResult(Result<CartTotalResultDto>.Success(result, LocalizationKeys.ExchangeRate.Fetched));
+            }
+            catch (Exception ex)
+            {
+                return ToActionResult(Result<CartTotalResultDto>.Failure(ex.Message));
+            }
         }
     }
 }

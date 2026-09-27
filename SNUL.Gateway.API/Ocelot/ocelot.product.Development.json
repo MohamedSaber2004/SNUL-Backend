@@ -6,7 +6,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/products",
@@ -21,7 +21,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/products",
@@ -40,7 +40,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/categories",
@@ -55,7 +55,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/categories",
@@ -74,7 +74,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/currencies",
@@ -89,7 +89,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/currencies",
@@ -108,7 +108,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/categories/{everything}",
@@ -123,7 +123,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/categories/{everything}",
@@ -144,7 +144,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/products/{everything}",
@@ -159,7 +159,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/products/{everything}",
@@ -180,7 +180,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/currencies/{everything}",
@@ -195,7 +195,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/currencies/{everything}",
@@ -216,7 +216,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/exchange-rates/cart-total",
@@ -231,7 +231,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/exchange-rates/{everything}",
@@ -246,7 +246,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/exchange-rates/{everything}",
@@ -267,7 +267,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/wishlist",
@@ -286,7 +286,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/v1/wishlist/{everything}",
@@ -307,7 +307,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/docs/product/openapi.json",
@@ -322,7 +322,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7054
+          "Port": 7154
         }
       ],
       "UpstreamPathTemplate": "/api/docs/product",

@@ -6,6 +6,9 @@ using Product.Services.API.Features.Products.Commands.CreateProduct;
 using Product.Services.API.Features.Products.Commands.DeleteProduct;
 using Product.Services.API.Features.Products.Commands.UpdateProduct;
 using Product.Services.API.Features.Products.Commands.UpdateProductVideos;
+using Product.Services.API.Features.Products.Queries.GetMostSellingProducts;
+using Product.Services.API.Features.Products.Queries.GetMyProducts;
+using Product.Services.API.Features.Products.Queries.GetSkuProviders;
 using Product.Services.API.Features.Products.Queries.GetProductById;
 using Product.Services.API.Features.Products.Queries.GetProducts;
 using Product.Services.API.Features.Products.Queries.GetProductVideos;
@@ -23,6 +26,17 @@ namespace Product.Services.API.Controllers
     {
         public ProductsController(IMediator mediator) : base(mediator)
         {
+        }
+
+        [HttpGet]
+        [Route(ProductApiRoutes.Products.GetMostSelling)]
+        [Route(ProductApiRoutes.Products.GetTopSelling)]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetMostSelling([FromQuery] int limit = 8, CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetMostSellingProductsQuery { Limit = limit }, cancellationToken);
+            return ToActionResult(result);
         }
 
                 [HttpGet]
@@ -56,9 +70,30 @@ namespace Product.Services.API.Controllers
             return ToActionResult(result);
         }
 
+        [HttpGet]
+        [Route(ProductApiRoutes.Products.GetMine)]
+        [RoleAuthorize(UserType.Admin, UserType.SnulStaff, UserType.OrganizationUser)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetMine([FromQuery] GetMyProductsQuery query, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
+            return ToActionResult(result);
+        }
+
+        [HttpGet]
+        [Route(ProductApiRoutes.Products.GetProvidersBySku)]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProvidersBySku([FromRoute] string sku, [FromQuery] GetSkuProvidersQuery query, CancellationToken cancellationToken)
+        {
+            query.Sku = sku;
+            var result = await _mediator.Send(query, cancellationToken);
+            return ToActionResult(result);
+        }
+
                 [HttpPut]
         [Route(ProductApiRoutes.Products.UpdateVideos)]
-        [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
+        [RoleAuthorize(UserType.Admin, UserType.SnulStaff, UserType.OrganizationUser)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -71,7 +106,7 @@ namespace Product.Services.API.Controllers
 
                 [HttpPost]
         [Route(ProductApiRoutes.Products.Create)]
-        [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
+        [RoleAuthorize(UserType.Admin, UserType.SnulStaff, UserType.OrganizationUser)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] CreateProductCommand command, CancellationToken cancellationToken)
@@ -82,7 +117,7 @@ namespace Product.Services.API.Controllers
 
                 [HttpPut]
         [Route(ProductApiRoutes.Products.Update)]
-        [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
+        [RoleAuthorize(UserType.Admin, UserType.SnulStaff, UserType.OrganizationUser)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -95,7 +130,7 @@ namespace Product.Services.API.Controllers
 
                 [HttpDelete]
         [Route(ProductApiRoutes.Products.Delete)]
-        [RoleAuthorize(UserType.Admin, UserType.SnulStaff)]
+        [RoleAuthorize(UserType.Admin, UserType.SnulStaff, UserType.OrganizationUser)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)

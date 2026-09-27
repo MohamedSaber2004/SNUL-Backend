@@ -47,6 +47,14 @@ if (app.Status == DistributorApplicationStatus.Approved)
                     && approvedCompany.Status == CompanyStatus.Approved
                     && await TryLinkApplicantAsync(app, approvedCompany.Id, currentUserId, cancellationToken))
                 {
+                    // Heal rows written before approval started setting these:
+                    // re-approving an already-approved application is the only
+                    // place they can be corrected.
+                    if (!approvedCompany.IsProvider || !approvedCompany.IsActive)
+                    {
+                        approvedCompany.IsProvider = true;
+                        approvedCompany.SetActiveState(true, currentUserId);
+                    }
                     await _unitOfWork.SaveChangesAsync(cancellationToken);
                     return Result<DistributorApplicationDto>.Success(ToDto(app), LocalizationKeys.DistributorApplication.Approved);
                 }
@@ -72,6 +80,11 @@ var companyRepo = _unitOfWork.GetRepository<Company, Guid>();
                     request.AccountManagerId,
                     currentUserId,
                     string.IsNullOrWhiteSpace(existingCompany.Email) ? app.ContactEmail : existingCompany.Email);
+                // Approval is what makes a company a provider: without these two
+                // lines an approved applicant is invisible to the public provider
+                // directory and to every provider-scoped query.
+                existingCompany.IsProvider = true;
+                existingCompany.SetActiveState(true, currentUserId);
                 companyId = existingCompany.Id;
             }
             else
@@ -84,6 +97,8 @@ var companyRepo = _unitOfWork.GetRepository<Company, Guid>();
                     request.AccountManagerId,
                     currentUserId,
                     app.ContactEmail);
+                newCompany.IsProvider = true;
+                newCompany.SetActiveState(true, currentUserId);
                 await companyRepo.AddAsync(newCompany, cancellationToken);
                 companyId = newCompany.Id;
             }
@@ -121,12 +136,38 @@ await TryLinkApplicantAsync(app, companyId, currentUserId, cancellationToken);
                     .FirstOrDefaultAsync(cancellationToken);
             }
 
-            if (applicant == null || applicant.IsDeleted || applicant.CompanyId == companyId)
+            if (applicant == null || applicant.IsDeleted)
                 return false;
 
-            applicant.CompanyId = companyId;
-            applicant.MarkAsUpdated(currentUserId);
-            return true;
+            // Promotion is what makes the link effective: ProviderScope (and the
+            // Sales BuyerScope) key off UserType.OrganizationUser, so linking a
+            // CompanyId alone would leave the applicant unable to act as a
+            // provider until their next login happened to self-heal.
+            var modified = false;
+            if (applicant.CompanyId != companyId)
+            {
+                applicant.CompanyId = companyId;
+                modified = true;
+            }
+            if (applicant.UserType != UserType.OrganizationUser)
+            {
+                applicant.UserType = UserType.OrganizationUser;
+                modified = true;
+            }
+            if (!applicant.IsActive)
+            {
+                applicant.IsActive = true;
+                modified = true;
+            }
+            if (!applicant.EmailConfirmed)
+            {
+                applicant.EmailConfirmed = true;
+                modified = true;
+            }
+            if (modified)
+                applicant.MarkAsUpdated(currentUserId);
+
+            return modified;
         }
 
         private static DistributorApplicationDto ToDto(DistributorApplication app)

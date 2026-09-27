@@ -39,9 +39,6 @@ namespace SNUL.Shared.Domain.Models
         public decimal? SnapshotRate { get; set; }
         public DateOnly? SnapshotRateDate { get; set; }
         public string? SnapshotSource { get; set; }
-        
-        public Guid? WelcoOrderId { get; set; }
-        public string? WelcoOrderNumber { get; set; }
         public virtual ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
         public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
     }

@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Service.API.Features.Companies.Commands.CreateCompany;
 using UserManagement.Service.API.Features.Companies.Commands.DeleteCompany;
+using UserManagement.Service.API.Features.Companies.Commands.UpdateMyCompany;
 using UserManagement.Service.API.Features.Companies.Commands.UpdateCompany;
+using UserManagement.Service.API.Features.Companies.Queries.GetCompanyProducts;
 using UserManagement.Service.API.Features.Companies.Queries.GetCompanies;
 using UserManagement.Service.API.Features.Companies.Queries.GetCompanyById;
 using UserManagement.Service.API.Features.Companies.Queries.GetMyCompany;
@@ -21,10 +23,22 @@ namespace UserManagement.Service.API.Controllers
     {
         public CompaniesController(IMediator mediator) : base(mediator) { }
         [HttpGet][Route(UserManagementApiRoutes.Companies.GetMyCompany)] public async Task<IActionResult> GetMyCompany(CancellationToken ct) => ToActionResult(await _mediator.Send(new GetMyCompanyQuery(), ct));
-        [HttpGet][Route(UserManagementApiRoutes.Companies.GetAll)][AllowAnonymous] public async Task<IActionResult> GetAll([FromQuery] GetCompaniesQuery q, CancellationToken ct) => ToActionResult(await _mediator.Send(q, ct));
+        [HttpGet][Route(UserManagementApiRoutes.Companies.GetProducts)] public async Task<IActionResult> GetProducts([FromRoute] Guid companyId, [FromQuery] GetCompanyProductsQuery q, CancellationToken ct) { q.CompanyId = companyId; return ToActionResult(await _mediator.Send(q, ct)); }
+        [HttpGet][Route(UserManagementApiRoutes.Companies.GetAll)][RoleAuthorize(UserType.Admin)] public async Task<IActionResult> GetAll([FromQuery] GetCompaniesQuery q, CancellationToken ct) => ToActionResult(await _mediator.Send(q, ct));
+        [HttpGet]
+        [Route(UserManagementApiRoutes.Companies.GetDirectory)]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetDirectory([FromQuery] GetCompaniesQuery q, CancellationToken ct)
+        {
+            q.IsActive = true;
+            q.IsProvider = true;
+            q.Status = CompanyStatus.Approved;
+            return ToActionResult(await _mediator.Send(q, ct));
+        }
         [HttpGet][Route(UserManagementApiRoutes.Companies.GetById)][AllowAnonymous] public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct) => ToActionResult(await _mediator.Send(new GetCompanyByIdQuery { Id = id }, ct));
         [HttpPost][Route(UserManagementApiRoutes.Companies.Create)][RoleAuthorize(UserType.Admin)] public async Task<IActionResult> Create([FromBody] CreateCompanyCommand c, CancellationToken ct) => ToActionResult(await _mediator.Send(c, ct));
         [HttpPut][Route(UserManagementApiRoutes.Companies.Update)][RoleAuthorize(UserType.Admin)] public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateCompanyCommand c, CancellationToken ct) { c.Id = id; return ToActionResult(await _mediator.Send(c, ct)); }
+        [HttpPut][Route(UserManagementApiRoutes.Companies.UpdateMyCompany)][RoleAuthorize] public async Task<IActionResult> UpdateMyCompany([FromBody] UpdateMyCompanyCommand c, CancellationToken ct) => ToActionResult(await _mediator.Send(c, ct));
         [HttpDelete][Route(UserManagementApiRoutes.Companies.Delete)][RoleAuthorize(UserType.Admin)] public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken ct) => ToActionResult(await _mediator.Send(new DeleteCompanyCommand { Id = id }, ct));
     }
 }

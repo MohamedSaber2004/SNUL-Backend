@@ -6,7 +6,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7203
+          "Port": 7303
         }
       ],
       "UpstreamPathTemplate": "/api/v1/auth/profile",
@@ -23,7 +23,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7203
+          "Port": 7303
         }
       ],
       "UpstreamPathTemplate": "/api/v1/auth/{everything}",
@@ -36,7 +36,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7203
+          "Port": 7303
         }
       ],
       "UpstreamPathTemplate": "/api/docs/auth/openapi.json",
@@ -49,7 +49,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7203
+          "Port": 7303
         }
       ],
       "UpstreamPathTemplate": "/api/docs/auth",

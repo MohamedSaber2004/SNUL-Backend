@@ -12,34 +12,41 @@ namespace Product.Services.API.ProductRoutes
         {
             public const string Base = CategoriesBase;
             public const string GetAll = "";
-            public const string GetById = "{id}";
+            public const string GetAllList = "all";
+            public const string GetById = "{id:guid}";
             public const string Create = "";
-            public const string Update = "{id}";
-            public const string Delete = "{id}";
-            public const string GetProductsByCategory = "{categoryId}/products";
+            public const string Update = "{id:guid}";
+            public const string Delete = "{id:guid}";
+            public const string GetProductsByCategory = "{categoryId:guid}/products";
+            public const string GetProviders = "{categoryId:guid}/providers";
         }
 
         public static class Products
         {
             public const string Base = ProductApiRoutes.Base;
             public const string GetAll = "";
-            public const string GetById = "{id}";
+            public const string GetById = "{id:guid}";
+            public const string GetMine = "mine";
+            public const string GetProvidersBySku = "by-sku/{sku}/providers";
             public const string Create = "";
-            public const string Update = "{id}";
-            public const string Delete = "{id}";
-            public const string GetVideos = "{id}/videos";
-            public const string UpdateVideos = "{id}/videos";
+            public const string Update = "{id:guid}";
+            public const string Delete = "{id:guid}";
+            public const string GetVideos = "{id:guid}/videos";
+            public const string UpdateVideos = "{id:guid}/videos";
+            public const string GetMostSelling = "most-selling";
+            public const string GetTopSelling = "top-selling";
         }
 
         public static class Currencies
         {
             public const string Base = CurrenciesBase;
             public const string GetAll = "";
-            public const string GetById = "{id}";
+            public const string GetAllList = "all";
+            public const string GetById = "{id:guid}";
             public const string GetByCode = "code/{code}";
             public const string Create = "";
-            public const string Update = "{id}";
-            public const string Delete = "{id}";
+            public const string Update = "{id:guid}";
+            public const string Delete = "{id:guid}";
         }
 
         public static class ExchangeRates
@@ -47,12 +54,9 @@ namespace Product.Services.API.ProductRoutes
             public const string Base = Root + "/" + Version + "/exchange-rates";
             public const string Latest = "latest";
             public const string LatestByBase = "latest/{baseCurrency}";
-            public const string History = "history/{baseCurrency}/{date}";
             public const string Pair = "{from}/{to}";
             public const string Convert = "convert";
-            public const string Sync = "sync";
-            public const string SyncHistory = "sync/history/{date}";
-            public const string SyncLogs = "sync/logs";
+            public const string CartTotal = "cart-total";
         }
 
         public static class Wishlist

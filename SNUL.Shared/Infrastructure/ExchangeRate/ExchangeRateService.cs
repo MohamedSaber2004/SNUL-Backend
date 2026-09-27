@@ -1,33 +1,33 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SNUL.Shared.Common.DTOs.Products;
 using SNUL.Shared.Common.Interfaces;
 using SNUL.Shared.Common.Options;
-using SNUL.Shared.Domain.Models;
-using SNUL.Shared.Persistance;
-using ExchangeRateEntity = SNUL.Shared.Domain.Models.ExchangeRate;
-using SyncLogEntity = SNUL.Shared.Domain.Models.ExchangeRateSyncLog;
 
 namespace SNUL.Shared.Infrastructure.ExchangeRate
 {
     public class ExchangeRateService : IExchangeRateService
     {
-        private readonly SnulDbContext _db;
         private readonly IExchangeRateProvider _provider;
         private readonly ExchangeRateSettings _settings;
-        private readonly IMemoryCache _cache;
+        private readonly ILogger<ExchangeRateService> _logger;
 
         public ExchangeRateService(
-            SnulDbContext db,
             IExchangeRateProvider provider,
             IOptions<ExchangeRateSettings> options,
-            IMemoryCache cache)
+            ILogger<ExchangeRateService> logger)
         {
-            _db = db;
             _provider = provider;
             _settings = options.Value;
-            _cache = cache;
+            _logger = logger;
+        }
+
+        /// <summary>Safety margin applied to conversion totals (never to display rates or identity conversions).</summary>
+        private decimal ApplySafetyMargin(decimal marketRate)
+        {
+            var margin = _settings.SafetyMarginPercent;
+            if (margin <= 0 || marketRate <= 0) return marketRate;
+            return marketRate * (1m + margin / 100m);
         }
 
         public async Task<ExchangeRateDto?> GetLatestRateAsync(string fromCurrency, string toCurrency, CancellationToken cancellationToken)
@@ -73,369 +73,97 @@ namespace SNUL.Shared.Infrastructure.ExchangeRate
                     FromCurrency = fromCurrency,
                     ToCurrency = toCurrency,
                     Rate = 1m,
-                    ConvertedAmount = Decimal.Round(amount, GetDecimalDigits(toCurrency)),
+                    ConvertedAmount = amount,
                     RateDate = DateOnly.FromDateTime(DateTime.UtcNow.Date),
                     Source = "identity"
                 };
             }
 
-            var baseCurrency = _settings.BaseCurrency.Trim().ToUpperInvariant();
-            if (string.IsNullOrWhiteSpace(baseCurrency)) baseCurrency = "USD";
-
-var rates = await GetLatestRatesInternalAsync(baseCurrency, cancellationToken);
-
-            var fromRate = fromCurrency == baseCurrency ? 1m : GetRateForCurrency(rates, fromCurrency);
-            var toRate = toCurrency == baseCurrency ? 1m : GetRateForCurrency(rates, toCurrency);
-
-            if (fromCurrency != baseCurrency && fromRate == null)
-                throw new InvalidOperationException($"Missing exchange rate for {fromCurrency} (base {baseCurrency})");
-            if (toCurrency != baseCurrency && toRate == null)
-                throw new InvalidOperationException($"Missing exchange rate for {toCurrency} (base {baseCurrency})");
-
-            decimal rate;
-            if (fromCurrency == baseCurrency)
-                rate = toRate!.Value;
-            else if (toCurrency == baseCurrency)
-                rate = 1m / fromRate!.Value;
-            else
-                rate = toRate!.Value / fromRate!.Value;
-
-var decimalDigits = GetDecimalDigits(toCurrency);
-            var converted = Decimal.Round(amount * rate, decimalDigits, MidpointRounding.AwayFromZero);
-
-var rateDate = rates.Values.FirstOrDefault()?.RateDate ?? DateOnly.FromDateTime(DateTime.UtcNow.Date);
-            var source = rates.Values.FirstOrDefault()?.Source ?? _provider.ProviderName;
+            var details = await _provider.ConvertAsync(fromCurrency, toCurrency, amount, cancellationToken);
+            var safeRate = ApplySafetyMargin(details.Rate);
 
             return new ConversionResultDto
             {
-                Amount = amount,
-                FromCurrency = fromCurrency,
+                Amount = details.Amount,
+                FromCurrency = details.FromCurrency,
+                ToCurrency = details.ToCurrency,
+                Rate = safeRate,
+                ConvertedAmount = amount * safeRate,
+                RateDate = details.RateDate,
+                Source = details.Source,
+                SafetyMarginPercent = _settings.SafetyMarginPercent > 0 ? _settings.SafetyMarginPercent : 0m
+            };
+        }
+
+        public async Task<CartTotalResultDto> ConvertCartTotalAsync(ConvertCartTotalRequest request, CancellationToken cancellationToken)
+        {
+            if (request == null) throw new ArgumentException("Request required");
+            if (string.IsNullOrWhiteSpace(request.ToCurrency)) throw new ArgumentException("ToCurrency required");
+            if (request.Lines == null || request.Lines.Count == 0) throw new ArgumentException("Lines required");
+            if (request.Lines.Count > 200) throw new ArgumentException("Too many lines (max 200)");
+
+            var toCurrency = request.ToCurrency.Trim().ToUpperInvariant();
+            var lines = new List<CartTotalLineResultDto>(request.Lines.Count);
+            DateOnly rateDate = DateOnly.FromDateTime(DateTime.UtcNow.Date);
+            string source = _provider.ProviderName;
+
+            foreach (var line in request.Lines)
+            {
+                if (line.Quantity <= 0) throw new ArgumentException($"Invalid quantity for '{line.Key}'");
+                if (line.UnitAmount < 0) throw new ArgumentException($"Invalid amount for '{line.Key}'");
+                var details = await _provider.ConvertAsync(line.FromCurrency, toCurrency, line.UnitAmount, cancellationToken);
+                var unitAmount = line.UnitAmount;
+                var isIdentity = string.Equals(details.FromCurrency, toCurrency, StringComparison.OrdinalIgnoreCase);
+                var safeRate = isIdentity ? details.Rate : ApplySafetyMargin(details.Rate);
+                var convertedUnit = unitAmount * safeRate;
+                var lineTotal = convertedUnit * line.Quantity;
+                lines.Add(new CartTotalLineResultDto
+                {
+                    Key = line.Key ?? string.Empty,
+                    FromCurrency = details.FromCurrency,
+                    UnitAmount = unitAmount,
+                    CeiledUnitAmount = unitAmount,
+                    Quantity = line.Quantity,
+                    Rate = safeRate,
+                    ConvertedUnitAmount = convertedUnit,
+                    LineTotal = lineTotal
+                });
+                rateDate = details.RateDate;
+                source = details.Source;
+            }
+
+            var subtotal = lines.Sum(l => l.LineTotal);
+            return new CartTotalResultDto
+            {
                 ToCurrency = toCurrency,
-                Rate = rate,
-                ConvertedAmount = converted,
+                Lines = lines,
+                Subtotal = subtotal,
+                Total = subtotal,
                 RateDate = rateDate,
-                Source = source
+                Source = source,
+                SafetyMarginPercent = _settings.SafetyMarginPercent > 0 ? _settings.SafetyMarginPercent : 0m
             };
         }
 
         public async Task<IReadOnlyCollection<ExchangeRateDto>> GetLatestRatesAsync(string baseCurrency, CancellationToken cancellationToken)
         {
             baseCurrency = NormalizeCode(baseCurrency);
-            var dict = await GetLatestRatesInternalAsync(baseCurrency, cancellationToken);
-            return dict.Values.Select(v => new ExchangeRateDto
-            {
-                Id = v.Id,
-                BaseCurrency = v.BaseCurrency,
-                TargetCurrency = v.TargetCurrency,
-                Rate = v.Rate,
-                RateDate = v.RateDate,
-                Source = v.Source,
-                FetchedAt = v.FetchedAt
-            }).OrderBy(r => r.TargetCurrency).ToList();
-        }
-
-        public async Task<IReadOnlyCollection<ExchangeRateDto>> GetHistoricalRatesAsync(string baseCurrency, DateOnly date, CancellationToken cancellationToken)
-        {
-            baseCurrency = NormalizeCode(baseCurrency);
-            var cacheKey = CacheKey(baseCurrency, date);
-            if (_cache.TryGetValue(cacheKey, out Dictionary<string, CachedRate>? cached) && cached != null)
-            {
-                return cached.Values.Select(v => ToDto(v)).OrderBy(r => r.TargetCurrency).ToList();
-            }
-
-            var rates = await _db.ExchangeRates
-                .AsNoTracking()
-                .Include(r => r.BaseCurrency)
-                .Include(r => r.TargetCurrency)
-                .Where(r => r.BaseCurrency.Code == baseCurrency && r.RateDate == date && !r.IsDeleted)
-                .ToListAsync(cancellationToken);
-
-            if (rates.Count == 0)
-            {
-                
-                return await GetLatestRatesAsync(baseCurrency, cancellationToken);
-            }
-
-            var dict = rates.ToDictionary(r => r.TargetCurrency.Code, r => new CachedRate
-            {
-                Id = r.Id,
-                BaseCurrency = r.BaseCurrency.Code,
-                TargetCurrency = r.TargetCurrency.Code,
-                Rate = r.Rate,
-                RateDate = r.RateDate,
-                Source = r.Source,
-                FetchedAt = r.FetchedAt
-            }, StringComparer.OrdinalIgnoreCase);
-
-            _cache.Set(cacheKey, dict, TimeSpan.FromMinutes(_settings.CacheExpirationMinutes > 0 ? _settings.CacheExpirationMinutes : 60));
-            return dict.Values.Select(v => ToDto(v)).OrderBy(r => r.TargetCurrency).ToList();
-        }
-
-        public async Task<ExchangeRateSyncResult> SyncLatestRatesAsync(CancellationToken cancellationToken)
-        {
-            var baseCurrency = NormalizeCode(_settings.BaseCurrency);
-            var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
-            return await SyncInternalAsync(baseCurrency, today, null, cancellationToken);
-        }
-
-        public async Task<ExchangeRateSyncResult> SyncHistoricalRatesAsync(DateOnly date, CancellationToken cancellationToken)
-        {
-            var baseCurrency = NormalizeCode(_settings.BaseCurrency);
-            return await SyncInternalAsync(baseCurrency, date, date, cancellationToken);
-        }
-
-        private async Task<ExchangeRateSyncResult> SyncInternalAsync(string baseCurrency, DateOnly rateDate, DateOnly? providerDate, CancellationToken cancellationToken)
-        {
-            var started = DateTime.UtcNow;
-            var log = new ExchangeRateSyncLog
-            {
-                Id = Guid.NewGuid(),
-                StartedAt = started,
-                BaseCurrency = baseCurrency,
-                Source = _provider.ProviderName,
-                Status = ExchangeRateSyncStatus.Pending
-            };
-            log.MarkAsCreated("System");
-            _db.ExchangeRateSyncLogs.Add(log);
-            await _db.SaveChangesAsync(cancellationToken);
-
-            try
-            {
-                ExchangeRateResponse response;
-                if (providerDate.HasValue)
+            var targetCodes = new[] { "USD", "EUR", "GBP", "EGP", "SAR", "AED", "DZD" };
+            var response = await _provider.GetLatestRatesAsync(baseCurrency, targetCodes, cancellationToken);
+            return response.Rates
+                .Select(kv => new ExchangeRateDto
                 {
-                    var hist = await _provider.GetHistoricalRatesAsync(baseCurrency, providerDate.Value, cancellationToken);
-                    if (hist == null)
-                        throw new InvalidOperationException($"Provider returned no data for {baseCurrency} on {providerDate.Value:yyyy-MM-dd}");
-                    response = hist;
-                }
-                else
-                {
-                    response = await _provider.GetLatestRatesAsync(baseCurrency, cancellationToken);
-                }
-
-                if (response.Rates == null || response.Rates.Count == 0)
-                    throw new InvalidOperationException("Provider returned empty rates");
-
-var baseCurr = await _db.Currencies.FirstOrDefaultAsync(c => c.Code == baseCurrency && !c.IsDeleted, cancellationToken);
-                if (baseCurr == null)
-                    throw new InvalidOperationException($"Base currency {baseCurrency} not found in Currencies table (seed required)");
-
-var validRates = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
-                foreach (var kv in response.Rates)
-                {
-                    var code = kv.Key?.Trim().ToUpperInvariant();
-                    if (string.IsNullOrWhiteSpace(code) || code.Length != 3) continue;
-                    if (kv.Value <= 0) continue;
-                    if (code == baseCurrency) continue;
-                    validRates[code] = kv.Value;
-                }
-
-                if (validRates.Count == 0)
-                    throw new InvalidOperationException("No valid rates after validation");
-
-var targetDate = response.Date;
-                var currencies = await _db.Currencies.Where(c => !c.IsDeleted).ToDictionaryAsync(c => c.Code, c => c, StringComparer.OrdinalIgnoreCase, cancellationToken);
-
-var existingRates = await _db.ExchangeRates
-                    .Where(r => r.BaseCurrencyId == baseCurr.Id && r.RateDate == targetDate && !r.IsDeleted)
-                    .ToDictionaryAsync(r => r.TargetCurrencyId, cancellationToken);
-
-                var count = 0;
-
-var strategy = _db.Database.CreateExecutionStrategy();
-                await strategy.ExecuteAsync(async () =>
-                {
-                    using var tx = await _db.Database.BeginTransactionAsync(cancellationToken);
-                    try
-                    {
-                        foreach (var kv in validRates)
-                        {
-                            if (!currencies.TryGetValue(kv.Key, out var targetCurr))
-                            {
-                                continue;
-                            }
-
-                            if (existingRates.TryGetValue(targetCurr.Id, out var existing))
-                            {
-                                
-                                if (existing.Rate != kv.Value || existing.Source != response.Source)
-                                {
-                                    existing.Rate = kv.Value;
-                                    existing.Source = response.Source;
-                                    existing.FetchedAt = response.FetchedAt;
-                                    existing.MarkAsUpdated("System");
-                                }
-                            }
-                            else
-                            {
-                                var er = new ExchangeRateEntity
-                                {
-                                    Id = Guid.NewGuid(),
-                                    BaseCurrencyId = baseCurr.Id,
-                                    TargetCurrencyId = targetCurr.Id,
-                                    Rate = kv.Value,
-                                    RateDate = targetDate,
-                                    Source = response.Source,
-                                    FetchedAt = response.FetchedAt
-                                };
-                                er.MarkAsCreated("System");
-                                _db.ExchangeRates.Add(er);
-                                existingRates[targetCurr.Id] = er;
-                            }
-                            count++;
-                        }
-
-                        await _db.SaveChangesAsync(cancellationToken);
-                        await tx.CommitAsync(cancellationToken);
-                    }
-                    catch
-                    {
-                        await tx.RollbackAsync(cancellationToken);
-                        throw;
-                    }
-                });
-
-                var cacheKey = CacheKey(baseCurrency, targetDate);
-                _cache.Remove(cacheKey);
-                
-                var latestKey = CacheKey(baseCurrency, targetDate);
-                _cache.Remove(latestKey);
-
-                log.CompletedAt = DateTime.UtcNow;
-                log.RatesCount = count;
-                log.Source = response.Source;
-                log.Status = ExchangeRateSyncStatus.Success;
-                log.MarkAsUpdated("System");
-                await _db.SaveChangesAsync(cancellationToken);
-
-                return new ExchangeRateSyncResult
-                {
-                    Success = true,
-                    BaseCurrency = baseCurrency,
+                    BaseCurrency = response.BaseCurrency,
+                    TargetCurrency = kv.Key,
+                    Rate = kv.Value,
+                    RateDate = response.Date,
                     Source = response.Source,
-                    RatesCount = count,
-                    RateDate = targetDate
-                };
-            }
-            catch (Exception ex)
-            {
-                try
-                {
-                    _db.ChangeTracker.Clear();
-                    var errorLog = await _db.ExchangeRateSyncLogs.FirstOrDefaultAsync(l => l.Id == log.Id, CancellationToken.None) ?? log;
-                    errorLog.CompletedAt = DateTime.UtcNow;
-                    errorLog.Status = ExchangeRateSyncStatus.Failed;
-                    errorLog.ErrorMessage = ex.Message.Length > 2000 ? ex.Message[..2000] : ex.Message;
-                    errorLog.Source = _provider.ProviderName;
-                    errorLog.MarkAsUpdated("System");
-                    if (_db.Entry(errorLog).State == EntityState.Detached)
-                    {
-                        _db.ExchangeRateSyncLogs.Update(errorLog);
-                    }
-                    await _db.SaveChangesAsync(CancellationToken.None);
-                }
-                catch (Exception)
-                {
-                }
-
-                return new ExchangeRateSyncResult
-                {
-                    Success = false,
-                    BaseCurrency = baseCurrency,
-                    Source = _provider.ProviderName,
-                    RatesCount = 0,
-                    RateDate = rateDate,
-                    ErrorMessage = ex.Message
-                };
-            }
-        }
-
-        private async Task<Dictionary<string, CachedRate>> GetLatestRatesInternalAsync(string baseCurrency, CancellationToken cancellationToken)
-        {
-            
-            var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
-            var cacheKey = CacheKey(baseCurrency, today);
-            if (_cache.TryGetValue(cacheKey, out Dictionary<string, CachedRate>? cached) && cached != null)
-                return cached;
-
-            var baseCurr = await _db.Currencies.AsNoTracking().FirstOrDefaultAsync(c => c.Code == baseCurrency && !c.IsDeleted, cancellationToken);
-            if (baseCurr == null)
-                throw new InvalidOperationException($"Base currency {baseCurrency} not found");
-
-            var latestDate = await _db.ExchangeRates
-                .Where(r => r.BaseCurrencyId == baseCurr.Id && !r.IsDeleted)
-                .OrderByDescending(r => r.RateDate)
-                .Select(r => r.RateDate)
-                .FirstOrDefaultAsync(cancellationToken);
-
-            if (latestDate == default)
-            {
-                var sync = await SyncLatestRatesAsync(cancellationToken);
-                if (!sync.Success)
-                    throw new InvalidOperationException($"No rates available for {baseCurrency} and sync failed: {sync.ErrorMessage}");
-
-                latestDate = sync.RateDate;
-            }
-
-            var rates = await _db.ExchangeRates
-                .AsNoTracking()
-                .Include(r => r.BaseCurrency)
-                .Include(r => r.TargetCurrency)
-                .Where(r => r.BaseCurrencyId == baseCurr.Id && r.RateDate == latestDate && !r.IsDeleted)
-                .ToListAsync(cancellationToken);
-
-            var dict = rates.ToDictionary(r => r.TargetCurrency.Code, r => new CachedRate
-            {
-                Id = r.Id,
-                BaseCurrency = r.BaseCurrency.Code,
-                TargetCurrency = r.TargetCurrency.Code,
-                Rate = r.Rate,
-                RateDate = r.RateDate,
-                Source = r.Source,
-                FetchedAt = r.FetchedAt
-            }, StringComparer.OrdinalIgnoreCase);
-
-_cache.Set(cacheKey, dict, TimeSpan.FromMinutes(_settings.CacheExpirationMinutes > 0 ? _settings.CacheExpirationMinutes : 60));
-            return dict;
-        }
-
-        private decimal? GetRateForCurrency(Dictionary<string, CachedRate> rates, string code)
-        {
-            if (rates.TryGetValue(code, out var cr)) return cr.Rate;
-            return null;
-        }
-
-        private int GetDecimalDigits(string code)
-        {
-
-var cur = _db.Currencies.AsNoTracking().FirstOrDefault(c => c.Code == code && !c.IsDeleted);
-            return cur?.DecimalDigits ?? 2;
-        }
-
-        public async Task<IReadOnlyCollection<ExchangeRateSyncLog>> GetSyncLogsAsync(int take, CancellationToken cancellationToken)
-        {
-            var logs = await _db.ExchangeRateSyncLogs
-                .AsNoTracking()
-                .OrderByDescending(l => l.StartedAt)
-                .Take(Math.Clamp(take, 1, 100))
-                .ToListAsync(cancellationToken);
-            return logs;
+                    FetchedAt = response.FetchedAt
+                })
+                .OrderBy(r => r.TargetCurrency)
+                .ToList();
         }
 
         private static string NormalizeCode(string code) => string.IsNullOrWhiteSpace(code) ? "USD" : code.Trim().ToUpperInvariant();
-        private static string CacheKey(string baseCurrency, DateOnly date) => $"exchange-rates:{baseCurrency}:{date:yyyy-MM-dd}";
-        private static ExchangeRateDto ToDto(CachedRate r) => new() { Id = r.Id, BaseCurrency = r.BaseCurrency, TargetCurrency = r.TargetCurrency, Rate = r.Rate, RateDate = r.RateDate, Source = r.Source, FetchedAt = r.FetchedAt };
-
-        private sealed class CachedRate
-        {
-            public Guid Id { get; set; }
-            public string BaseCurrency { get; set; } = string.Empty;
-            public string TargetCurrency { get; set; } = string.Empty;
-            public decimal Rate { get; set; }
-            public DateOnly RateDate { get; set; }
-            public string Source { get; set; } = string.Empty;
-            public DateTime FetchedAt { get; set; }
-        }
     }
 }
