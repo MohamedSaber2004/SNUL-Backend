@@ -23,7 +23,9 @@ namespace Content.Services.API.Features.FAQs.Commands.UpdateFAQ
             if (entity == null || entity.IsDeleted) return Result<FAQItemDto>.NotFound(LocalizationKeys.FAQ.NotFound);
             var currentUserId = _currentUser.UserId != Guid.Empty ? _currentUser.UserId.ToString() : "System";
             entity.Question = request.Question.Trim();
+            entity.QuestionAr = request.QuestionAr?.Trim();
             entity.Answer = request.Answer.Trim();
+            entity.AnswerAr = request.AnswerAr?.Trim();
             entity.SortOrder = request.SortOrder;
             entity.MarkAsUpdated(currentUserId);
 

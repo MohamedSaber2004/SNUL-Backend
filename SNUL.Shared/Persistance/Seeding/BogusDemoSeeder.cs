@@ -91,6 +91,255 @@ namespace SNUL.Shared.Persistance.Seeding
         private static readonly string[] OemServices =
             { "Private Label", "Custom Development", "Laser Marking", "Packaging", "Branding" };
 
+        /// <summary>
+        /// Joins help-article paragraphs with LF-only blank lines. The public Help Center
+        /// splits article bodies on "\n\n", so a "\r\n\r\n" produced by a Windows verbatim
+        /// string would not split and the whole body would render as one paragraph.
+        /// </summary>
+        private static string Para(params string[] paragraphs) => string.Join("\n\n", paragraphs);
+
+        // The English category names are load-bearing: the seeder matches on them and
+        // the admin UI is keyed off them, so they must stay byte-for-byte stable.
+        private static readonly (string Name, string NameAr, string Icon)[] HelpCategories =
+        {
+            ("Ordering", "الطلبات", "shopping_cart"),
+            ("Shipping & Incoterms", "الشحن وشروط التجارة الدولية", "local_shipping"),
+            ("Returns & RMA", "المرتجعات وطلبات الاسترجاع", "restart_alt"),
+            ("Sterilization", "التعقيم", "cleaning_services"),
+            ("Warranty", "الضمان", "verified"),
+        };
+
+        private static readonly (string Category, string Slug, string Title, string TitleAr, string Body, string BodyAr)[] HelpArticles =
+        {
+            // --- Ordering ---
+            ("Ordering", "requesting-a-quotation", "Requesting a quotation", "طلب عرض السعر",
+                Para(
+                    "Send us the instrument list you need and we will prepare a quotation. The most useful requests include the catalogue reference or product code, the quantity required for each item, and the country or port of delivery. If you are quoting for a tender, include the submission deadline so we can confirm whether we are able to meet it.",
+                    "For instruments that are not in our catalogue, a short description or a photograph of the item is usually enough for us to identify it. Please state the intended surgical specialty and the working length you need, because the same instrument name is used for several lengths and curves.",
+                    "Every quotation carries a stated validity period. Treat that period as the deadline for confirming quantities and shipping details, and ask us to extend it in writing if your internal approval process takes longer."),
+                Para(
+                    "أرسل لنا قائمة الأدوات التي تحتاجها وسنُعدّ لك عرض سعر. وتكون الطلبات الأكثر فائدة هي التي تتضمن مرجع الكتالوج أو رمز المنتج، والكمية المطلوبة من كل صنف، وبلد أو ميناء التوصيل. وإذا كنت تقدّم عرضاً لمناقصة، فيرجى ذكر الموعد النهائي لتقديم العروض حتى نتمكن من تأكيد قدرتنا على الوفاء به.",
+                    "أما الأدوات غير الموجودة في كتالوجنا، فيكفي عادةً وصف موجز أو صورة للصنف للتعرف عليه. ويرجى ذكر التخصص الجراحي المقصود وطول العمل المطلوب، لأن الاسم الواحد يُستخدم لعدة أطوال وانحناءات مختلفة.",
+                    "يحمل كل عرض سعر مدّة صلاحية مبيَّنة. عامل هذه المدّة على أنها الموعد النهائي لتأكيد الكميات وتفاصيل الشحن، واطلب تمديدها كتابةً إذا استغرقت إجراءات الاعتماد في جهتك وقتاً أطول.")),
+
+            ("Ordering", "minimum-orders-and-trial-orders", "Minimums and trial orders", "الحد الأدنى للطلبات والطلبات التجريبية",
+                Para(
+                    "Minimum order quantities are set per item, not per shipment, and they vary by instrument and by whether the item is a stock configuration or a build-to-order item. Stock items ship from finished goods; build-to-order items enter production after the order is confirmed. We will tell you which case applies before you commit to a quantity.",
+                    "If you are evaluating a new line, ask us for a mixed trial shipment that samples several references in small quantities. This is the usual way to test instruments without holding a full production quantity, and we will confirm the carton implications with it.",
+                    "Custom lengths, private-label branding and non-standard finishing all affect the minimum and the lead time. Where a request falls below the minimum, we will say so plainly and offer the nearest workable alternative rather than quote something that cannot be produced."),
+                Para(
+                    "تُحدَّد الحد الأدنى للطلب لكل صنف على حدة، لا لكل شحنة، وتتغيّر بحسب الأداة وبخاصة ما إذا كانت الأداة من تشكيلة جاهزة أم تُصنَّع عند الطلب. الأدوات الجاهزة تُشحن من مخزون الإنتاج، أما الأدوات المصنَّعة عند الطلب فتدخل خط الإنتاج بعد تأكيد الطلب. وسنُخبرك بالحالة التي تنطبق قبل أن تلتزم بكمية محددة.",
+                    "وإذا كنت تختبر خطاً جديداً، فاطلب منا شحنة تجريبية مختلطة تضمّ عدة مراجع بكميات صغيرة. وهذه هي الطريقة المعتادة لتجربة الأدوات دون الاحتفاظ بكمية إنتاج كاملة، وسنؤكّد لك أثر ذلك على حجم الكرتونة.",
+                    "أما الأطوال الخاصة والشعارات الخاصة بالعميل والتشطيبات غير القياسية، فجميعها تؤثر في الحد الأدنى ومدة التجهيز. وإذا كان الطلب أقل من الحد الأدنى، سنقول ذلك بوضوح ونقترح أقرب بديل قابل للتنفيذ بدلاً من تقديم عرض لا يمكن تصنيعه.")),
+
+            ("Ordering", "custom-instruments-and-branding", "Custom instruments and branding", "الأدوات الخاصة ووضع شعار العميل",
+                Para(
+                    "We produce to customer drawings and to modifications of catalogue items. A useful custom request states the reference, the modification, the reason for it, and the procedure in which the instrument will be used, so engineering can assess feasibility before quoting.",
+                    "Branding options include laser marking on the instrument, printed marks on the packaging, and a supplied insert for the box. Marking is placed on an area selected for legibility and for cleanability, and we will confirm the marking artwork with you before it goes to production.",
+                    "Development work is quoted separately from the instrument price. Where a modification is repeated across a set, or becomes a standing item for you, we will tell you, because the tooling and the setup cost are then shared rather than repeated."),
+                Para(
+                    "نصنّع الأدوات وفق رسومات العميل ووفق تعديلات على الأصناف الموجودة في الكتالوج. وطلب التطوير المفيد يذكر المرجع والتعديل المُراد وسببه والإجراء الجراحي الذي ستُستخدم فيه الأداة، ليتمكن الهندسة من دراسة جدوى التنفيذ قبل تقديم العرض.",
+                    "وتشمل خيارات وضع العلامة التجارية حرق الليزر على الأداة نفسها، والعلامات المطبوعة على العبوة، وبطاقة إرشادية تُوضع في العلبة. ويُحدَّد موضع الحرق في منطقة مختارة للوضوح ولتسهيل التنظيف، وسنؤكّد معك تصميم العلامة قبل بدء الإنتاج.",
+                    "يُقدَّم عمل التطوير بعرض سعر منفصل عن سعر الأداة. وإذا تكرّر التعديل في عدة أصوات، أو صار صنفاً دائماً لديك، فسنُعلمك بذلك، لأن تكاليف الأدوات والنقل تتقاسم حينها بدلاً من تكرارها في كل مرة.")),
+
+            // --- Shipping & Incoterms ---
+            ("Shipping & Incoterms", "incoterms-explained", "Incoterms explained", "شرح شروط التجارة الدولية (إنكوترمز)",
+                Para(
+                    "An Incoterm tells both sides where responsibility for the goods passes and who arranges carriage. It does not set the price and it does not replace the import obligations of your country. Read the term and the named place together, because EXW and FOB differ mainly in where the handover occurs.",
+                    "The most common terms for a first export order are EXW, FOB and CIF. With EXW the buyer collects the goods from our works, so the buyer arranges everything. With FOB we load the goods on board at the named port and hand over the documents, and the buyer takes over from that point. With CIF we also arrange and pay for carriage to the named destination port, though insurance remains a separate matter to confirm.",
+                    "If you have no in-house logistics team, tell us and we will quote the term that hands over the least to you and quote the carriage separately so you can see it as a line item. Tell us the destination port early, since it affects both the term and the packing.",
+                    "Whichever term you choose, the risk and the cost of damage in transit are governed by the term, not by whatever the packing looks like on arrival. Inspect and photograph the pallets before signing the delivery note, and note any visible damage on it."),
+                Para(
+                    "شروط التجارة الدولية (إنكوترمز) تُبيّن للطرفين عند نقطة التسليم تتحول المسؤولية عن البضاعة ومن يتولى ترتيب النقل. وهي لا تحدّد السعر ولا تحل محل الالتزامات الجمركية في بلدك. اقرأ الشرط مع اسم المكان المذكور، فالفرق بين EXW وFOB يكمن أساساً في مكان التسليم.",
+                    "والشروط الأكثر شيوعاً في أول طلب تصدير هي EXW وFOB وCIF. وفي حال EXW يستلم المشتري البضاعة من مصنعنا، أي يتولى كل شيء. أما في FOB فنحمل البضاعة على متن الوسيلة في الميناء المذكور ونسلّم المستندات، ويتولى المشتري المسؤولية من تلك اللحظة. أما في CIF فنحن نرتب وندفع أجرة النقل حتى ميناء الوجهة المذكور، مع أن التأمين يظل أمراً منفصلاً يجب تأكيده.",
+                    "وإذا لم يكن لديك فريق لوجستي داخلي، فأخبرنا وسنُقدّم عرضاً بالشرط الذي ينقل إليك أقل قدر من المسؤوليات، مع تسعير النقل بشكل منفصل لتظهره كبند مستقل. وأخبرنا بميناء الوجهة مبكراً، لأنه يؤثر في الشرط وفي التغليف معاً.",
+                    "وأيًّا كان الشرط الذي تختاره، فإن المخاطر وتكلفة التلف أثناء النقل يحكمها الشرط نفسه، لا مظهر التغليف عند الوصول. افحص المنصات وصوّرها قبل التوقيع على سند التسليم، ودوّن أي تلف ظاهر عليه.")),
+
+            ("Shipping & Incoterms", "export-documents", "Export documents for customs clearance", "مستندات التصدير لتخليص الجمارك",
+                Para(
+                    "Every export shipment is accompanied by a commercial invoice and a packing list that agree with each other on quantities, weights and carton numbers. The invoice states the agreed unit prices, the Incoterm and the named place, and it is the document your customs authority will use to assess duty.",
+                    "For instruments classified as medical devices, your import authority may also ask for a certificate of conformity, a declaration of conformity, or evidence that the manufacturer holds a recognised quality management certification. We supply the documents we hold on request; ask early in the process rather than at the port.",
+                    "The commercial invoice and packing list are usually issued in English, and we can provide a bilingual English-Arabic version on request. Your import licence, if your country requires one, is your responsibility to obtain before shipment; we cannot ship against an import licence that has not been issued.",
+                    "Keep the airway bill number, the commercial invoice number and the packing list together when the shipment arrives. Most clearance questions are answered faster from those three references than from a description of the contents."),
+                Para(
+                    "يصحب كل شحنة تصدير فاتورة تجارية وقائمة تعبئة متفقتان فيما بينهما في الكميات والأوزان وأرقام الكراتين. وتذكر الفاتورة أسعار الوحدات المتفق عليها والشرط التجاري واسم المكان، وهي المستند الذي ستستخدمه سلطتك الجمركية لتقدير الرسوم.",
+                    "وبالنسبة للأدوات المصنَّفة كأجهزة طبية، قد تطلب جهة الاستيراد لديك أيضاً شهادة مطابقة أو إقراراً بالمطابقة أو إثباتاً بأن المصنع حاصل على اعتماد لنظام إدارة جودة معترف به. ونقدّم المستندات المتوفرة لدينا عند الطلب؛ فاطلبها مبكراً في إجراءات الاستيراد، لا عند الميناء.",
+                    "تصدر الفاتورة التجارية وقائمة التعبئة عادةً بالإنجليزية، ويمكننا توفير نسخة ثنائية اللغة بالإنجليزية والعربية عند الطلب. أما ترخيص الاستيراد، إن كان مطلوباً في بلدك، فالحصول عليه قبل الشحن مسؤوليتك؛ ولا يمكننا الشحن بناءً على ترخيص لم يُصدر بعد.",
+                    "احتفظ برقم بوليصة الشحن ورقم الفاتورة التجارية وقائمة التعبئة معاً عند وصول الشحنة. فمعظم استفسارات التخليص تُجاب بسرعة أكبر بهذه المراجع الثلاثة مقارنةً بوصف المحتوى.")),
+
+            ("Shipping & Incoterms", "cartons-pallets-and-consolidation", "Cartons, pallets and consolidation", "الكراتين والمنصات وتجميع الشحنات",
+                Para(
+                    "Instruments are supplied in inner packaging, then in export cartons, then on pallets. Carton quantities are chosen by us to protect the instruments in transit rather than to fill a container, so a set that is comfortable loose may be supplied in more, smaller cartons.",
+                    "Palletising depends on the transport mode. Sea freight is palletised and often shrink-wrapped; air freight is usually shipped as cartons on an air pallet, and the gross weight and the height per piece drive the cost. Tell us the mode and the destination port early and we will confirm the packing plan before production.",
+                    "When several orders are ready at once we can consolidate them into one consignment. Consolidation reduces the freight cost per instrument but makes the paperwork for each underlying order its own set of documents, and it means a shortage in one order can hold the whole consignment. We will tell you when that trade-off applies.",
+                    "If you are receiving several pallets, check them against the packing list on arrival and photograph any damage before signing. Instruments that arrive with a crushed or wet carton should be reported before the consignment is put into general stock."),
+                Para(
+                    "تُورَّد الأدوات في عبوات داخلية، ثم في كراتين التصدير، ثم على المنصات. وتُختار كميات الكراتين من جانبنا بما يحمي الأدوات أثناء النقل، لا لملء الحاوية؛ لذا قد يأتي طقم يسهل نقله منفردين ونورّده في كراتين أكثر وأصغر.",
+                    "يعتمد وضع الأدوات على المنصة حسب وسيلة النقل. الشحن البحري يُحمَّل على منصات ويُغلَّف غالباً بمادة انكماش، أما الشحن الجوي فيُرسَل عادةً كراتين على منصة شحن جوي، حيث يقود الوزن الإجمالي والارتفاع لكل قطعة تكلفة الشحنة. أخبرنا بوسيلة النقل وميناء الوجهة مبكراً وسنؤكّد خطة التغليف قبل الإنتاج.",
+                    "وعند جاهزية عدة طلبات في وقت واحد يمكننا تجميعها في شحنة واحدة. ويخفض التجميع أجرة الشحن لكل أداة، لكنه يجعل لكل طلب من الطلبات الأساسية مجموعته الخاصة من المستندات، كما أن نقصاً في طلب واحد قد يؤخر الشحنة كاملة. وسنُعلمك عند انطباق هذه المفاضلة.",
+                    "وإذا استلمت عدة منصات، فقارنها بقائمة التعبئة عند الوصول وصوّر أي تلف قبل التوقيع. والأدوات التي تصل في كرتون مهروس أو مبلل يجب الإبلاغ عنها قبل إدخال الشحنة إلى المخزون العام.")),
+
+            // --- Returns & RMA ---
+            ("Returns & RMA", "when-an-rma-is-required", "When an RMA is required", "متى يلزم تقديم طلب استرجاع",
+                Para(
+                    "A return authorization request is the only accepted way to send instruments back to us. Please do not return anything without it. An unannounced return is difficult to identify on arrival, cannot be matched to a claim, and will be held in goods-in until we can establish what it is, which delays any credit or replacement.",
+                    "We need an RMA for a manufacturing defect, for damage in transit that was not recorded on the delivery note, for an incorrect item in the consignment, or for a shortfall against the packing list. Each of these needs different evidence, so raising the right request first is what keeps the case moving.",
+                    "Change of mind, a surplus stock and a discontinued line are not defects and are not covered by the RMA process. If you are overstocked, contact us before you do anything with the instruments, because a surplus that can be worked into a later order is a much easier conversation than one that has already been shipped back."),
+                Para(
+                    "طلب الإذن بالإرجاع هو الطريقة الوحيدة المقبولة لإرسال الأدوات إلينا. يرجى عدم إرجاع أي شيء قبل الحصول عليه. فالإرجاع غير المُعلَن يصعب التعرّف عليه عند الوصول، ولا يمكن مطابقته بأي مطالبة، وسيُحتجز في قسم الاستلام حتى نتمكن من تحديد ما هو، مما يؤخّر أي ردّ قيمة أو استبدال.",
+                    "نحتاج إلى طلب إرجاع في حال وجود عيب تصنيع، أو تلف أثناء النقل لم يُدوَّن على سند التسليم، أو صنف غير مطابق في الشحنة، أو نقص مقارنةً بقائمة التعبئة. ولكل حالة منها أدلة مختلفة، لذا فإن رفع الطلب المناسب أولاً هو ما يحافظ على سير الحالة.",
+                    "أما تغيّر الرأي، أو فائض المخزون، أو إيقاف خط إنتاج، ليست عيوباً ولا يشملها إجراء الإرجاع. وإذا كان لديك مخزون فائض، فتواصل معنا قبل أن تفعل أي شيء بالأدوات، لأن الفائض الذي يمكن استثماره في طلب لاحق أسهل بكثير في النقاش من فائض شُحن بالفعل.")),
+
+            ("Returns & RMA", "rma-process-step-by-step", "The RMA process step by step", "خطوات تقديم طلب الاسترجاع",
+                Para(
+                    "First, record the instrument reference, the lot or serial marking, the purchase order or invoice number, and the date the problem was found. Then photograph the instrument and, where relevant, the packaging and the shipping label. Send these with your RMA request to our support address.",
+                    "Our quality team reviews the request and issues an RMA number with the address to use. Do not use a different address: sending to the works without a number means the parcel is handled as an unidentified delivery.",
+                    "Pack the instruments for the return journey in the same protective manner as the original shipment, or better, and declare the value as the original invoice value. Include a copy of the RMA number inside the carton. We will confirm receipt and the disposition, which is either a repair, a replacement, a credit note or a return to you at your cost.",
+                    "Keep the RMA number and the outcome together in your quality records. A repeated defect on the same reference is a trend, and a trend is much easier to act on than a series of isolated claims that nobody has connected."),
+                Para(
+                    "أولاً: سجّل مرجع الأداة وعلامة التشغيلة أو الرقم التسلسلي، ورقم أمر الشراء أو الفاتورة، وتاريخ اكتشاف المشكلة. ثم صوّر الأداة، وعند الاقتضاء صوّر العبوة وبطاقة الشحن. وأرسل هذه المستندات مع طلب الإرجاع إلى عنوان الدعم لدينا.",
+                    "يراجع فريق الجودة الطلب ويصدر رقم إرجاع مع العنوان الواجب استخدامه. ولا تستخدم عنواناً آخر؛ فالإرسال إلى المصنع دون رقم يجعل الطرد مُعاملاً كطرد مجهول الهوية.",
+                    "غُلِّف الأدوات ل رحلة العودة بالطريقة الوقائية نفسها التي غُلِّفت بها عند الشحن الأصلي، أو بطريقة أفضل، وصرّح بالقيمة المطابقة لقيمة الفاتورة الأصلية. وضع نسخة من رقم الإرجاع داخل الكرتون. وسنؤكّد الاستلام والمصير، وهو أحد أربعة: إصلاح، أو استبدال، أو إشعار دائن، أو إعادتها إليك على نفقتك.",
+                    "احتفظ برقم الإرجاع والنتيجة معاً في سجلات الجودة لديك. فالعيب المتكرر في المرجع نفسه اتجاهاً، والاتجاه أسهل في التعامل معه من سلسلة شكاوى متفرقة لم يربط بينها أحد.")),
+
+            ("Returns & RMA", "replacing-defective-instruments", "Replacing a defective instrument", "استبدال الأداة المعيبة",
+                Para(
+                    "Not every defect means a replacement. A manufacturing defect is assessed against the intended use and the condition in which the instrument arrived. Items that can be brought back to specification by our workshop are repaired, because that returns a working instrument to you faster and keeps it in clinical use.",
+                    "Where an item cannot be brought back to specification, or where the same reference has failed repeatedly, we replace it. The decision and the reason are recorded on the RMA, so you have a written basis for the decision in your own file.",
+                    "We will also tell you when a failure was caused by handling rather than by manufacturing, and what to change to avoid it: reprocessing temperature, contact with incompatible cleaning agents, or exceeding the instrument's working life. That conversation is usually more valuable than the replacement itself.",
+                    "Keep returned items out of clinical stock even after the RMA is raised. An instrument that has been sent for assessment should not go back to a tray, because you cannot use it while its condition is being examined."),
+                Para(
+                    "ليس كل عيب يستدعي الاستبدال. فالعيب التصنيعي يُقيَّم بحسب الغرض من الاستخدام والحالة التي وصلت بها الأداة. والأصناف التي يمكن إعادتها إلى المواصفة بإصلاحها في ورشتنا نصلحها، لأن ذلك يعيد لك أداة صالحة للاستخدام أسرع ويُبقيها في الخدمة السريرية.",
+                    "وعندما لا يمكن إعادة الصنف إلى مواصفته، أو عندما يتعطّل المرجع نفسه مراراً، نستبدله. ويُسجَّل القرار وسببه في طلب الإرجاع، فتحصل على أساس مكتوب للقرار في ملفك.",
+                    "وسنُخبرك أيضاً عندما يكون سبب العطل ناتجاً عن التعامل لا عن التصنيع، وبما ينبغي تغييره لتجنبه: كحرارة إعادة التعقيم، أو ملامسة مواد تنظيف غير متوافقة، أو تجاوز العمر التشغيلي للأداة. وهذه المحادثة غالباً أنفع من الاستبدال نفسه.",
+                    "أخرج الأصناف المُعادة من المخزون السريري حتى بعد رفع طلب الإرجاع. فلا يجوز أن تعود أداة أُرسلت للتقييم إلى صينية العمل، لأنك لا تستطيع استخدامها أثناء فحص حالتها.")),
+
+            // --- Sterilization ---
+            ("Sterilization", "autoclave-reprocessing", "Autoclave reprocessing at 134 °C", "إعادة التعقيم بالأوتوكلاف عند 134 درجة مئوية",
+                Para(
+                    "Reusable surgical instruments supplied for steam sterilization are intended to be reprocessed in a pre-vacuum steam autoclave at 134 °C. The cycle must include a drying stage, because residual moisture in a hollow or boxed instrument is the most common cause of both staining and corrosion.",
+                    "Exposure time, not just temperature, has to be correct for the cycle you are running, and it has to be validated in your own sterilizer with your own load. Do not take the cycle time from this page or from a general table; take it from your validated protocol.",
+                    "Instruments must be fully clean and dry before they enter the autoclave. Soil, blood, protein residue and salt are all harder to sterilise than the instrument surface, and they also cause the pitting and staining that make a good instrument look used when it is not."),
+                Para(
+                    "الأدوات الجراحية القابلة لإعادة الاستخدام والموردة للتعقيم بالبخار مُعدّة لإعادة المعالجة في أوتوكلاف بخار مسبوق بالتفريغ عند درجة حرارة 134 درجة مئوية. ويجب أن تتضمن الدورة مرحلة تجفيف، لأن الرطوبة المتبقية في الأدوات المجوّفة أو المغلّفة هي السبب الأكثر شيوعاً للبقع والتآكل معاً.",
+                    "لا تكفي الحرارة وحدها؛ فزمن التعرّض، إلى جانبها، يجب أن يكون صحيحاً لدورة التعقيم التي تشغّلها، ويجب أن يكون مُتحقَّقاً منه في جهازك أنت وبحمولتك أنت. لا تأخذ زمن الدورة من هذه الصفحة ولا من جدول عام؛ خذه من بروتوكولك المعتمَد.",
+                    "يجب أن تكون الأدوات نظيفة وجافة تماماً قبل إدخالها الأوتوكلاف. فالأوساخ والدم وبقايا البروتين والملح كلها أصعب في التعقيم من سطح الأداة نفسه، وهي أيضاً سبب التنقّط والبقع التي تجعل أداة سليمة تبدو مستعملة وهي ليست كذلك.")),
+
+            ("Sterilization", "cleaning-before-sterilization", "Cleaning and disinfection before sterilization", "التنظيف والتطهير قبل التعقيم البخاري",
+                Para(
+                    "Cleaning comes before sterilization, always. Instruments are rinsed or wiped as soon as possible after use, because dried protein is progressively harder to remove. Follow your facility's protocol for pre-cleaning, and never soak stainless instruments in solutions that are not intended for stainless steel.",
+                    "Use a neutral-pH, enzymatic cleaner and a soft brush or a cleaning basket. Harsh alkaline cleaners, chloride-containing agents and abrasive pads attack the passive layer on the steel, and the corrosion they start continues in service long after the instruments leave your department.",
+                    "Check each instrument as it is cleaned: hinge movement, box locks, screw heads, serrations and cutting edges. A hinge that has stiffened, or a ratchet that no longer engages fully, is a defect and should be reported rather than worked around in theatre.",
+                    "Dry instruments before packaging, and dry the box interiors. Moisture trapped in a box joint or in a basket is the starting point for wet-pack failures, which your sterilizer will flag even when the instruments themselves have been correctly treated."),
+                Para(
+                    "يأتي التنظيف قبل التعقيم، دائماً. تُشطف الأدوات أو تُمسح في أقرب وقت ممكن بعد الاستخدام، لأن البروتين المجفّ يصعب إزالته تدريجياً أكثر كلما طال الوقت. واتّبع بروتوكول مرافقك في التنظيف الأولي، ولا تنقع الأدوات المصنوعة من الفولاذ المقاوم للصدأ في محاليل غير مخصصة له.",
+                    "استخدم منظفاً إنزيمياً متعادل الحموضة مع فرشاة ناعمة أو سلة تنظيف. فالمنظفات القلوية القاسية والمحاليل التي تحتوي كلوريداً واللبادات الكاشطة تهاجم الطبقة السلبية على الفولاذ، والتآكل الذي تبدأه هذه العوامل يستمر أثناء الاستخدام بعد أن تغادر الأدوات قسمك بوقت طويل.",
+                    "افحص كل أداة أثناء تنظيفها: حركة المفصلة، والأقفال، ورؤوس البراغي، والتسنونات، وحافّات القطع. فالمفصلة التي صلبت، أو الترس الذي لم يعد يشتبك بالكامل، يُعدّ عيباً ويجب الإبلاغ عنه لا تخطيط له في غرفة العمليات.",
+                    "جفّف الأدوات قبل تغليفها، وجفّف داخل العلب. والرطوبة المحتبسة عند مفصل العلبة أو في السلة هي نقطة بداية أعطال البلل، التي سيُنبّهك إليها جهاز التعقيم حتى لو عولجت الأدوات نفسها معالجة صحيحة.")),
+
+            ("Sterilization", "packaging-and-indicators", "Packaging, indicators and shelf life", "التغليف والمؤشرات ومدة الصلاحية",
+                Para(
+                    "Instruments are supplied non-sterile, in individual peel packs or in inner bags, and are expected to be placed into your own validated sterile barrier system. Packaging is not a substitute for a validated container or pouch, and it does not carry a sterile status on its own.",
+                    "Use chemical indicators inside every pack, and an external indicator on the outside of the container. Indicators show that a process reached conditions, not that the load was sterile, and they are read against the colour change specified for the indicator you are using. Reading an indicator is a competence, not a formality.",
+                    "Sterile barrier systems have a shelf life that is set by the manufacturer of the packaging and the validated storage conditions, and it is not a universal number. Storage outside the validated conditions, or beyond the expiry, invalidates the pack regardless of how the indicator looks.",
+                    "Rotate stock oldest-first and keep the load separation rules in mind when you build the autoclave load, because overfilling reduces the steam's ability to reach every surface. If you are ever unsure whether a pack should be used, the pack must be treated as non-sterile."),
+                Para(
+                    "تُورَّد الأدوات غير معقمة، في عبوات فردية قابلة للكشف أو في أكياس داخلية، ويُتوقع أن توضع في نظام حاجز معقّم معتمَد خاص بك. فالتغليف ليس بديلاً عن حاوية أو كيس معتمد، ولا يحمل بذاته حالة التعقيم.",
+                    "استخدم مؤشراً كيميائياً داخل كل عبوة، ومؤشراً خارجياً على خارج الحاوية. والمؤشرات تُبيّن أن العملية بلغت الظروف المطلوبة، لا أن الحمولة أصبحت معقمة، وتُقرأ المؤشرات مقابل تغيّر اللون المحدَّد للمؤشر الذي تستخدمه. وقراءة المؤشر مهارة لا شكيلة.",
+                    "لأنظمة الحاجز المعقّم مدة صلاحية يحدّدها مصنع التغليف وشروط التخزين المعتمدة، وليست رقماً عاماً موحّداً. والتخزين خارج الشروط المعتمدة، أو بعد انتهاء المدّة، يُبطل صلاحية العبوة مهما كان شكل المؤشر.",
+                    "ادور المخزون من الأقدم إلى الأحدث، وخذ قواعد فصل الحمولات في الحسبان عند بناء حمولة الأوتوكلاف، لأن الإزدحام يقلل قدرة البخار على الوصول إلى كل سطح. وإذا شككت يوماً في صلاحية عبوة ما، فيجب معاملتها على أنها غير معقمة.")),
+
+            // --- Warranty ---
+            ("Warranty", "warranty-coverage", "What the warranty covers", "ما الذي يشمله الضمان",
+                Para(
+                    "The warranty covers manufacturing defects in the material and in the workmanship of an instrument supplied by us. A defect means the instrument does not perform to its stated specification under normal use and normal reprocessing. It does not mean the instrument has worn out, and wear is not a defect.",
+                    "The warranty runs from the date shown on your invoice. It applies to the instrument itself, not to the procedure it was used in and not to the outcome of that procedure. Keeping the original invoice, the delivery note and the batch or serial marking is what allows a claim to be matched to a production run.",
+                    "A claim is assessed on the instrument and on the evidence you provide, not on how frequently you use the item. A surgical instrument that has been in daily use for years and fails is treated the same as one that has been used twice, provided the defect is genuine and the reprocessing history is sound.",
+                    "Where a defect is genuine, we repair or replace. Where the instrument has been altered, sharpened by a third party, or reprocessed outside the published parameters, we will say so in the assessment, because that changes what we can honestly conclude from it."),
+                Para(
+                    "يشمل الضمان عيوب التصنيع في مادة الأداة وفي جودة تشغيلها. والعيب يعني أن الأداة لا تعمل وفق مواصفتها المعلنة في الاستخدام الطبيعي وفي إعادة المعالجة الطبيعية، ولا يعني أن الأداة قد استهلكت؛ فالاستهلاك ليس عيباً.",
+                    "يمتد الضمان من التاريخ المدوَّن على فاتورتك. وهو يسري على الأداة نفسها، لا على الإجراء الذي استُخدمت فيه، ولا على نتيجة ذلك الإجراء. والاحتفاظ بالفاتورة الأصلية وسند التسليم وعلامة التشغيلة أو الرقم التسلسلي هو ما يسمح بمطابقة أي مطالبة بدفعة إنتاج معيّنة.",
+                    "تُقيَّم المطالبة على أساس الأداة والأدلة التي تقدّمها، لا على أساس تكرار استخدام الصنف. فأداة جراحية مستخدمة يومياً منذ سنوات ومعطوبة تُعامَل على قدم المساواة مع أخرى استُخدمت مرتين، ما دام العيب حقيقياً وسجل إعادة المعالجة سليم.",
+                    "وعندما يكون العيب حقيقياً، فإننا نصلح أو نستبدل. أما إذا كانت الأداة قد عُدِّلت أو شُحِّذت لدى طرف ثالث، أو أُعيدت معالجتها خارج المعايير المعلنة، فسنذكر ذلك في التقييم، لأنه يغيّر ما يمكن استخلاصه منها بأمان.")),
+
+            ("Warranty", "making-a-warranty-claim", "Making a warranty claim", "تقديم مطالبة بالضمان",
+                Para(
+                    "Contact us with the invoice reference, the instrument reference and a description of the fault in the words you would use with a technician. Photographs or a short video of the fault are worth more than a description alone, and a photograph of the batch or serial marking is what lets us trace the production run.",
+                    "Send the instrument back under a return authorization so that it reaches the right place and is recorded against your case. Do not send it to the address on your delivery note unless we have told you to, and do not send a loose instrument in an envelope: the damage that causes in transit usually ends the claim.",
+                    "We will confirm the assessment in writing, including whether the item is repaired, replaced or credited. If the assessment needs a third-party opinion, for example a metallurgical check on a fractured instrument, we will say that this is what is happening and why it takes the time it takes.",
+                    "If a claim is declined, you will be given the reason and, where it helps, what would have made it assessable. Please treat that as information rather than as a refusal to look again, and come back to us if the situation changes."),
+                Para(
+                    "تواصل معنا مرفقاً مرجع الفاتورة ومرجع الأداة ووصفاً للعطل بالعبارات التي تستخدمها مع فني الصيانة. والصور أو مقطع فيديو قصير للعطل أنفع من الوصف وحده، أما صورة علامة التشغيلة أو الرقم التسلسلي فهي ما يتيح لنا تتبّع دفعة الإنتاج.",
+                    "أرسل الأداة في إطار إذن إرجاع حتى تصل إلى الوجهة الصحيحة وتُسجَّل مقابل حالتك. ولا ترسلها إلى العنوان المدوَّن على سند التسليم إلا إذا طلبنا منك ذلك، ولا ترسل أداة منفردة في مظروف؛ فالتلف الذي يلحقها أثناء النقل يُنهي المطالبة عادةً.",
+                    "سنؤكّد نتيجة التقييم كتابةً، بما فيها ما إذا كان الصنف سيُصلَح أو يُستبدل أو يُخصم. وإذا احتاج التقييم إلى رأي طرف ثالث، مثل فحص معدني لأداة مكسورة، فسنوضح أن هذا ما يجري ولماذا يستغرق ما يستغرقه من وقت.",
+                    "وإذا رُفضت مطالبة، فسيُعطى لك السبب، وعند الإمكان ما كان يمكن أن يجعلها قابلة للتقييم. ويُرجى التعامل مع ذلك على أنه معلومة لا رفضاً للنظر من جديد، فراجع إلينا إذا تغيّرت الأحوال.")),
+
+            ("Warranty", "what-warranty-excludes", "What the warranty does not cover", "ما لا يشمله الضمان",
+                Para(
+                    "Normal wear is not covered. Cutting edges dull, box locks loosen, serrations round off and pivot screws take up, and these are the expected consequences of use rather than defects. Sharpeners, blade replacements and spring replacements are maintenance items and are treated as such.",
+                    "Damage caused by reprocessing outside the published parameters is not covered. This includes exceeding the stated steam temperature, using chlorine-containing or acidic cleaning agents on stainless steel, and leaving instruments wet in a closed box. The corrosion that follows looks identical to corrosion that started as a manufacturing fault, and only the history distinguishes them.",
+                    "Loss or theft in transit, and damage from a consignment that was not inspected on arrival, are governed by the Incoterm and by your own insurance rather than by the warranty. Neither is damage caused by shipping the instruments loose, unprotected, or in a case that was not intended for the purpose.",
+                    "Instruments modified, relabelled or serviced by a party other than us are outside the warranty for the modification and for any consequential damage, because we can no longer vouch for the instrument as it leaves our hands. The unmodified parts of the same instrument remain covered."),
+                Para(
+                    "الاستهلاك الطبيعي غير مشمول. فحوافّ القطع تفقد حدّها، والأقفال ترتخي، والتسنونات تستدقّ، وبراغي المحور تتخلخل، وهذه نتائج متوقعة للاستخدام لا عيوب. أما صقل الحوافّ وتبديل الشفرات واستبدال الزنبركات فهي بنود صيانة تُعامل على هذا الأساس.",
+                    "التلف الناتج عن إعادة المعالجة خارج المعايير المعلنة غير مشمول. ويشمل ذلك تجاوز حرارة البخار المحدَّدة، واستخدام محاليل تحتوي كلوراً أو أحماضاً على الفولاذ المقاوم للصدأ، وترك الأدوات مبللة في علبة مغلقة. والتآكل الذي ينتج عن ذلك يبدو مطابقاً للتآكل الذي بدأ عيباً تصنيعياً، ولا يميّز بينهما إلا التاريخ.",
+                    "الفقد أو السرقة أثناء النقل، والتلف الناتج عن شحنة لم تُفحص عند وصولها، فيحكمهما الشرط التجاري (إنكوترم) وتأمينك أنت لا الضمان. وينطبق الأمر أيضاً على التلف الناتج عن شحن الأدوات منفردة أو بلا حماية أو في حزمة غير مخصصة للغرض.",
+                    "الأدوات التي يعدّلها أو يعيد وسمها أو يخدمها طرف غيرنا خارج الضمان بالنسبة لذلك التعديل وأي ضرر ناتج عنه، لأننا لم نعد نضمن الأداة كما تخرج من أيدينا. أما الأجزاء غير المعدّلة من الأداة نفسها فتبقى مشمولة.")),
+        };
+
+        private static readonly (string Question, string QuestionAr, string Answer, string AnswerAr)[] HelpFaqs =
+        {
+            ("Do you ship to my country?",
+             "هل تشحنون إلى بلدي؟",
+             "We ship to most destinations. Send us the destination country and, where you know it, the port or city of delivery, and we will confirm what we can do and which term applies. Some destinations need an import licence or a registration with the local health authority before we can ship, so tell us early and we will check.",
+             "نشحن إلى معظم الوجهات. أرسل لنا بلد الوجهة، وميناء التوصيل أو مدينته إن كان معروفاً لديك، وسنؤكّد ما يمكننا فعله والشرط المنطبق. وبعض الوجهات تتطلب ترخيص استيراد أو تسجيلاً لدى الجهة الصحية المحلية قبل أن نتمكن من الشحن، لذا أخبرنا مبكراً وسنتحقق من ذلك."),
+
+            ("What do you need from me to quote a price?",
+             "ما المعلومات المطلوبة مني لتقديم عرض سعر؟",
+             "The instrument reference or product code, the quantity per item and the destination. If you do not have a reference, a description with the intended specialty and the working length is enough for us to identify most items. Nothing is quoted from a catalogue line alone, because the length, the finish and the packaging all change the price.",
+             "مرجع الأداة أو رمز المنتج، والكمية المطلوبة من كل صنف، والوجهة. وإذا لم يتوفر لديك مرجع، فإن وصفاً يذكر التخصص المقصود وطول العمل يكفي للتعرّف على معظم الأصناف. ولا يُقدَّم أي عرض سعر اعتماداً على سطر واحد من الكتالوج، لأن الطول والتشطيب والتغليف جميعها تؤثر في السعر."),
+
+            ("Can you put our name or logo on the instruments?",
+             "هل يمكن وضع اسم شركتنا أو شعارها على الأدوات؟",
+             "Yes. We can laser-mark the instrument, print on the packaging, or supply an insert for the box. Tell us at the quotation stage rather than after production, because marking artwork has to be approved and prepared before the items are made. Marking is placed on an area chosen for legibility and cleanability, so it is not always where you would put it on a drawing.",
+             "نعم. يمكننا حرق اسمكم أو شعاركم على الأداة بالليزر، أو طباعته على العبوة، أو توفير بطاقة إرشادية تُوضع في العلبة. وأخبرنا في مرحلة عرض السعر لا بعد الإنتاج، لأن تصميم العلامة يحتاج إلى اعتماد وتجهيز قبل تصنيع الأصناف. ويُحدَّد موضع العلامة في منطقة مختارة للوضوح ولتسهيل التنظيف، ولذلك قد لا يكون الموضع الذي تختارونه في الرسمة هو نفسه."),
+
+            ("Are the instruments supplied sterile?",
+             "هل تُسلَّم الأدوات معقمة؟",
+             "No. Reusable instruments are supplied non-sterile so that your own facility controls the reprocessing, which is what makes the process auditable. They arrive individually packed, and you place them into your validated sterile barrier system before use.",
+             "لا. تُورَّد الأدوات القابلة لإعادة الاستخدام غير معقمة، حتى تتحكم مرافقتك أنت في إعادة المعالجة، وهو ما يجعل العملية قابلة للتدقيق. وتصلك الأدوات في عبوات فردية، ثم تضعها في نظام الحاجز المعقّم المعتمد لديك قبل الاستخدام."),
+
+            ("Can these instruments be autoclaved at 134 °C?",
+             "هل يمكن تعقيم هذه الأدوات بالأوتوكلاف عند 134 درجة مئوية؟",
+             "Reusable instruments intended for steam sterilization can be reprocessed at 134 °C in a pre-vacuum autoclave, provided the cycle includes a drying stage and the exposure time is taken from your own validated protocol. We cannot quote a cycle time for your machine: that is a function of your sterilizer, your load and your validation, not of our catalogue.",
+             "يمكن إعادة معالجة الأدوات القابلة لإعادة الاستخدام والمخصَّصة للتعقيم بالبخار عند 134 درجة مئوية في أوتوكلاف مسبوق بالتفريغ، شريطة أن تتضمن الدورة مرحلة تجفيف وأن يُؤخذ زمن التعرّض من بروتوكولك المعتمَد. ولا يمكننا تحديد زمن دورة لجهازك، فذلك يتوقف على جهازك وحمولتك وتحققك، لا على كتالوجنا."),
+
+            ("What does EXW mean for me?",
+             "ماذا يعني شرط EXW بالنسبة لي؟",
+             "EXW means the goods are made available at our works and the buyer takes over from that point. Under EXW you arrange and pay for everything downstream: loading, export clearance, carriage, insurance and import clearance in your country. It is the term that gives us the least involvement, which also means the least help if something goes wrong in transit.",
+             "يعني شرط EXW أن البضاعة تكون متاحة في مصنعنا ويتولى المشتري المسؤولية من تلك النقطة. وبموجب EXW تتولى أنت ترتيب ودفع كل ما يأتي بعدها: التحميل والتخليص للتصدير والنقل والتأمين والتخليص للاستيراد في بلدك. وهو الشرط الذي يمنحنا أقل قدر من التدخل، وبالتالي أقل قدر من المساعدة إذا حدث خطأ أثناء النقل."),
+
+            ("Who arranges the freight and who pays for it?",
+             "من ينظّم الشحنات ومن يدفع تكاليفها؟",
+             "It depends on the Incoterm on your order confirmation. Under EXW and FOB you arrange the freight and you pay the carrier directly. Under CIF we arrange and pay the carriage to the named destination port. We will tell you which applies before the order is confirmed, and we will not change the term after the goods have been shipped.",
+             "يعتمد ذلك على الشرط التجاري الوارد في تأكيد الطلب. وبموجب EXW وFOB تتولى أنت ترتيب الشحن وتدفع للناقل مباشرة. أما بموجب CIF فنحن نرتب وندفع أجرة النقل حتى ميناء الوجهة المذكور. وسنُخبرك بالشرط المنطبق قبل تأكيد الطلب، ولن نغيّر الشرط بعد شحن البضاعة."),
+
+            ("How do I report a defective instrument?",
+             "كيف أبلّغ عن أداة معيبة؟",
+             "Send us the invoice reference, the instrument reference, the batch or serial marking and a description or photograph of the fault, and raise a return authorization so we can record the case. Do not return the instrument without an authorization number, because an unannounced return cannot be matched to a claim and will be held in goods-in.",
+             "أرسل لنا مرجع الفاتورة ومرجع الأداة وعلامة التشغيلة أو الرقم التسلسلي ووصفاً أو صورة للعطل، وارفع طلب إذن إرجاع حتى نتمكن من تسجيل الحالة. ولا تُرجع الأداة دون رقم إذن إرجاع، لأن الإرجاع غير المُعلَن لا يمكن مطابقته بمطالبة وسيُحتجز في قسم الاستلام."),
+
+            ("Can we start with a small trial order?",
+             "هل يمكن البدء بطلب تجريبي صغير؟",
+             "Yes, and it is the usual way to evaluate a new line. Ask for a mixed trial shipment sampling several references in small quantities rather than a full production quantity of one item. Minimums are set per item, so a mixed small shipment is more often possible than a small shipment of a single reference.",
+             "نعم، وهذه هي الطريقة المعتادة لتقييم خط جديد. اطلب شحنة تجريبية مختلطة تضمّ عدة مراجع بكميات صغيرة بدلاً من كمية إنتاج كاملة لصنف واحد. فالحد الأدنى يُحدَّد لكل صنف، ما يجعل الشحنة الصغيرة المختلطة ممكنة أكثر من شحنة صغيرة لصنف واحد."),
+
+            ("How long does production take?",
+             "كم تستغرق فترة الإنتاج؟",
+             "Lead time depends on whether the item is a stock configuration or is built to order, and on the size of the order. Stock items ship from finished goods; build-to-order items go into production after the order is confirmed, and custom or branded items take longer again because of artwork and setup. We confirm a lead time in writing with each quotation and update you if it changes.",
+             "تعتمد مدة التجهيز على ما إذا كان الصنف من تشكيلة جاهزة أم يُصنَّع عند الطلب، وعلى حجم الطلب. فالأصناف الجاهزة تُشحن من مخزون الإنتاج، أما المصنَّعة عند الطلب فتدخل خط الإنتاج بعد تأكيد الطلب، وتستغرق الأصناف الخاصة أو ذات العلامة وقتاً أطول بسبب تصميم العلامة وعمليات التجهيز. ونؤكّد مدة التجهيز كتابةً مع كل عرض سعر، ونُعلمك إذا تغيّرت."),
+        };
+
         private static string Slugify(string value)
         {
             var s = (value ?? string.Empty).Trim().ToLowerInvariant().Replace(' ', '-').Replace('_', '-');
@@ -541,14 +790,29 @@ namespace SNUL.Shared.Persistance.Seeding
                     await db.SaveChangesAsync(ct);
                 }
 
+                // Bilingual help content. The public Help Center renders in Arabic, so every
+                // row carries both languages; the Arabic columns are nullable so a row that
+                // only has English still loads and falls back instead of failing.
+                //
+                // These three guards keep the seeder idempotent. An earlier version of this
+                // seeder wrote Lorem Ipsum bodies under slugs like "ordering-part-1", and
+                // those rows are still present in the shared database. Because the guards
+                // below are presence checks, re-running the seeder will NOT overwrite them.
+                // Placeholder rows are identifiable by CreatedBy = 'BogusSeeder'. To load
+                // the real content, clear them once and re-seed:
+                //
+                //   DELETE FROM HelpArticles WHERE CreatedBy = 'BogusSeeder';
+                //   DELETE FROM FAQItems     WHERE CreatedBy = 'BogusSeeder';
+                //   DELETE FROM HelpCategories WHERE CreatedBy = 'BogusSeeder';
+                //
+                // Deleting the categories is safe: HelpArticles cascades from them. Do it in
+                // that order or the article delete will fail on the foreign key.
                 var catEntities = new List<HelpCategory>();
                 if (!await db.HelpCategories.AnyAsync(c => !c.IsDeleted, ct))
                 {
-                    var helpCats = new[] { "Ordering", "Shipping & Incoterms", "Returns & RMA", "Sterilization", "Warranty" };
-                    var icons = new[] { "shopping_cart", "local_shipping", "restart_alt", "cleaning_services", "verified" };
-                    for (var i = 0; i < helpCats.Length; i++)
+                    foreach (var def in HelpCategories)
                     {
-                        var hc = new HelpCategory { Id = Guid.NewGuid(), Name = helpCats[i], Icon = icons[i] };
+                        var hc = new HelpCategory { Id = Guid.NewGuid(), Name = def.Name, NameAr = def.NameAr, Icon = def.Icon };
                         hc.MarkAsCreated(Marker);
                         catEntities.Add(hc);
                     }
@@ -562,38 +826,46 @@ namespace SNUL.Shared.Persistance.Seeding
                 if (!await db.HelpArticles.AnyAsync(a => !a.IsDeleted, ct) && catEntities.Count > 0)
                 {
                     var articles = new List<HelpArticle>();
-                    foreach (var hc in catEntities)
-                        for (var i = 1; i <= 3; i++)
+                    foreach (var def in HelpArticles)
+                    {
+                        // Match on the English category name: it is the stable key shared with
+                        // the definitions above, and it is what the admin UI displays.
+                        var cat = catEntities.FirstOrDefault(c => c.Name == def.Category);
+                        if (cat == null) continue;
+                        var ha = new HelpArticle
                         {
-                            var title = $"{hc.Name} guide part {i}: {faker.Lorem.Sentence(4, 2).TrimEnd('.')}";
-                            var ha = new HelpArticle
-                            {
-                                Id = Guid.NewGuid(),
-                                CategoryId = hc.Id,
-                                Title = title,
-                                Body = faker.Lorem.Paragraphs(2, 3),
-                                Slug = $"{Slugify(hc.Name)}-part-{i}",
-                            };
-                            ha.MarkAsCreated(Marker);
-                            articles.Add(ha);
-                        }
+                            Id = Guid.NewGuid(),
+                            CategoryId = cat.Id,
+                            Title = def.Title,
+                            TitleAr = def.TitleAr,
+                            Body = def.Body,
+                            BodyAr = def.BodyAr,
+                            Slug = def.Slug,
+                        };
+                        ha.MarkAsCreated(Marker);
+                        articles.Add(ha);
+                    }
                     await db.HelpArticles.AddRangeAsync(articles, ct);
                     await db.SaveChangesAsync(ct);
                 }
                 if (!await db.FAQItems.AnyAsync(f => !f.IsDeleted, ct))
                 {
-                    var faqs = Enumerable.Range(1, 10).Select(i =>
+                    var faqs = new List<FAQItem>();
+                    for (var i = 0; i < HelpFaqs.Length; i++)
                     {
+                        var def = HelpFaqs[i];
                         var f = new FAQItem
                         {
                             Id = Guid.NewGuid(),
-                            Question = faker.Lorem.Sentence(6, 3).TrimEnd('.') + "?",
-                            Answer = faker.Lorem.Paragraph(2),
-                            SortOrder = i,
+                            Question = def.Question,
+                            QuestionAr = def.QuestionAr,
+                            Answer = def.Answer,
+                            AnswerAr = def.AnswerAr,
+                            SortOrder = i + 1,
                         };
                         f.MarkAsCreated(Marker);
-                        return f;
-                    }).ToList();
+                        faqs.Add(f);
+                    }
                     await db.FAQItems.AddRangeAsync(faqs, ct);
                     await db.SaveChangesAsync(ct);
                 }

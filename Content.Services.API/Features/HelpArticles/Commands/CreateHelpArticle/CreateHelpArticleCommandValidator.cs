@@ -9,6 +9,7 @@ namespace Content.Services.API.Features.HelpArticles.Commands.CreateHelpArticle
         {
             RuleFor(x => x.CategoryId).NotEmpty().WithMessage(LocalizationKeys.HelpArticle.CategoryRequired);
             RuleFor(x => x.Title).NotEmpty().WithMessage(LocalizationKeys.HelpArticle.TitleRequired).MaximumLength(300);
+            RuleFor(x => x.TitleAr).MaximumLength(300).When(x => x.TitleAr != null);
             RuleFor(x => x.Body).NotEmpty().WithMessage(LocalizationKeys.HelpArticle.BodyRequired);
             RuleFor(x => x.Slug).NotEmpty().WithMessage(LocalizationKeys.HelpArticle.SlugRequired).MaximumLength(200);
         }

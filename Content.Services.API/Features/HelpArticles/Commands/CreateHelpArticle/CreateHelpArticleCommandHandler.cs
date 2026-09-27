@@ -34,7 +34,9 @@ namespace Content.Services.API.Features.HelpArticles.Commands.CreateHelpArticle
                 Id = Guid.NewGuid(),
                 CategoryId = request.CategoryId,
                 Title = request.Title.Trim(),
+                TitleAr = request.TitleAr?.Trim(),
                 Body = request.Body.Trim(),
+                BodyAr = request.BodyAr?.Trim(),
                 Slug = slug
             };
             entity.MarkAsCreated(currentUserId);

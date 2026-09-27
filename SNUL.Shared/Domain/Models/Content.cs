@@ -22,6 +22,7 @@ namespace SNUL.Shared.Domain.Models
     public class HelpCategory : BaseEntity<Guid>
     {
         public string Name { get; set; } = null!;
+        public string? NameAr { get; set; } // Arabic
         public string? Icon { get; set; }
         public virtual ICollection<HelpArticle> Articles { get; set; } = new List<HelpArticle>();
     }
@@ -30,13 +31,17 @@ namespace SNUL.Shared.Domain.Models
         public Guid CategoryId { get; set; }
         public virtual HelpCategory? Category { get; set; }
         public string Title { get; set; } = null!;
+        public string? TitleAr { get; set; } // Arabic
         public string Body { get; set; } = null!;
+        public string? BodyAr { get; set; } // Arabic
         public string Slug { get; set; } = null!;
     }
     public class FAQItem : BaseEntity<Guid>
     {
         public string Question { get; set; } = null!;
+        public string? QuestionAr { get; set; } // Arabic
         public string Answer { get; set; } = null!;
+        public string? AnswerAr { get; set; } // Arabic
         public int SortOrder { get; set; }
     }
     public class Notification : BaseEntity<Guid>

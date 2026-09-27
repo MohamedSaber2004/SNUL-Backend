@@ -34,6 +34,7 @@ namespace SNUL.Shared.Persistance.Configurations
         {
             b.ToTable("HelpCategories"); b.HasKey(x => x.Id);
             b.Property(x => x.Name).IsRequired().HasMaxLength(200);
+            b.Property(x => x.NameAr).HasMaxLength(200);
             b.Property(x => x.Icon).HasMaxLength(100);
             b.Property(x => x.CreatedBy).IsRequired();
         }
@@ -44,7 +45,9 @@ namespace SNUL.Shared.Persistance.Configurations
         {
             b.ToTable("HelpArticles"); b.HasKey(x => x.Id);
             b.Property(x => x.Title).IsRequired().HasMaxLength(300);
+            b.Property(x => x.TitleAr).HasMaxLength(300);
             b.Property(x => x.Body).IsRequired();
+            b.Property(x => x.BodyAr);
             b.Property(x => x.Slug).IsRequired().HasMaxLength(200); b.HasIndex(x => x.Slug).IsUnique();
             b.HasOne(x => x.Category).WithMany(x => x.Articles).HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Cascade);
             b.Property(x => x.CreatedBy).IsRequired();
@@ -56,7 +59,9 @@ namespace SNUL.Shared.Persistance.Configurations
         {
             b.ToTable("FAQItems"); b.HasKey(x => x.Id);
             b.Property(x => x.Question).IsRequired().HasMaxLength(500);
+            b.Property(x => x.QuestionAr).HasMaxLength(500);
             b.Property(x => x.Answer).IsRequired();
+            b.Property(x => x.AnswerAr);
             b.Property(x => x.CreatedBy).IsRequired();
         }
     }

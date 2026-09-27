@@ -9,6 +9,7 @@ namespace Content.Services.API.Features.FAQs.Commands.UpdateFAQ
         {
             RuleFor(x => x.Id).NotEmpty().WithMessage(LocalizationKeys.FAQ.FAQIdRequired);
             RuleFor(x => x.Question).NotEmpty().WithMessage(LocalizationKeys.FAQ.QuestionRequired).MaximumLength(500);
+            RuleFor(x => x.QuestionAr).MaximumLength(500).When(x => x.QuestionAr != null);
             RuleFor(x => x.Answer).NotEmpty().WithMessage(LocalizationKeys.FAQ.AnswerRequired);
         }
     }

@@ -7,6 +7,7 @@ namespace Content.Services.API.Features.HelpCategories.Commands.CreateHelpCatego
     public class CreateHelpCategoryCommand : IRequest<Result<HelpCategoryDto>>
     {
         public string Name { get; set; } = string.Empty;
+        public string? NameAr { get; set; }
         public string? Icon { get; set; }
     }
 }

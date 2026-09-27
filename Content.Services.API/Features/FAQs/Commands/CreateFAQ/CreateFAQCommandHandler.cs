@@ -23,7 +23,9 @@ namespace Content.Services.API.Features.FAQs.Commands.CreateFAQ
             {
                 Id = Guid.NewGuid(),
                 Question = request.Question.Trim(),
+                QuestionAr = request.QuestionAr?.Trim(),
                 Answer = request.Answer.Trim(),
+                AnswerAr = request.AnswerAr?.Trim(),
                 SortOrder = request.SortOrder
             };
             entity.MarkAsCreated(currentUserId);

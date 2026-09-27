@@ -33,6 +33,7 @@ namespace Content.Services.API.Features.HelpCategories.Commands.CreateHelpCatego
             {
                 Id = Guid.NewGuid(),
                 Name = request.Name.Trim(),
+                NameAr = request.NameAr?.Trim(),
                 Icon = request.Icon?.Trim()
             };
             entity.MarkAsCreated(currentUserId);

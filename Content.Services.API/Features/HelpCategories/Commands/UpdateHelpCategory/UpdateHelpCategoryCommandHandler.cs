@@ -34,6 +34,7 @@ namespace Content.Services.API.Features.HelpCategories.Commands.UpdateHelpCatego
 
             var currentUserId = _currentUser.UserId != Guid.Empty ? _currentUser.UserId.ToString() : "System";
             entity.Name = request.Name.Trim();
+            entity.NameAr = request.NameAr?.Trim();
             entity.Icon = request.Icon?.Trim();
             entity.MarkAsUpdated(currentUserId);
 

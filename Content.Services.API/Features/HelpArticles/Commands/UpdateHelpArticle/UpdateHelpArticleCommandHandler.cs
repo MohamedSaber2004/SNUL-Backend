@@ -34,7 +34,9 @@ namespace Content.Services.API.Features.HelpArticles.Commands.UpdateHelpArticle
             var currentUserId = _currentUser.UserId != Guid.Empty ? _currentUser.UserId.ToString() : "System";
             entity.CategoryId = request.CategoryId;
             entity.Title = request.Title.Trim();
+            entity.TitleAr = request.TitleAr?.Trim();
             entity.Body = request.Body.Trim();
+            entity.BodyAr = request.BodyAr?.Trim();
             entity.Slug = slug;
             entity.MarkAsUpdated(currentUserId);
 

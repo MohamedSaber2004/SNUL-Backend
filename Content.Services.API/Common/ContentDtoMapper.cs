@@ -40,6 +40,7 @@ namespace Content.Services.API.Common
         {
             Id = c.Id,
             Name = c.Name,
+            NameAr = c.NameAr,
             Icon = c.Icon,
             ArticleCount = c.Articles.Count(a => !a.IsDeleted),
             IsActive = c.IsActive,
@@ -52,7 +53,9 @@ namespace Content.Services.API.Common
             CategoryId = a.CategoryId,
             CategoryName = a.Category != null ? a.Category.Name : string.Empty,
             Title = a.Title,
+            TitleAr = a.TitleAr,
             Body = a.Body,
+            BodyAr = a.BodyAr,
             Slug = a.Slug,
             IsActive = a.IsActive,
             CreatedAt = a.CreatedAt
@@ -62,7 +65,9 @@ namespace Content.Services.API.Common
         {
             Id = f.Id,
             Question = f.Question,
+            QuestionAr = f.QuestionAr,
             Answer = f.Answer,
+            AnswerAr = f.AnswerAr,
             SortOrder = f.SortOrder,
             IsActive = f.IsActive,
             CreatedAt = f.CreatedAt
