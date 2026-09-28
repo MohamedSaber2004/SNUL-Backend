@@ -17,14 +17,21 @@ using SNUL.Shared.Controllers;
 
 namespace Auth.Services.API.Controllers
 {
-        [Route(AuthApiRoutes.Base)]
+    [Route(AuthApiRoutes.Base)]
     public class AuthController : AppControllerBase
     {
         public AuthController(IMediator mediator) : base(mediator)
         {
         }
 
-                [HttpPost]
+        /// <summary>
+        /// Register a new user and send an OTP to their email for verification.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+
+        [HttpPost]
         [Route(AuthApiRoutes.Authentication.Register)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -34,7 +41,13 @@ namespace Auth.Services.API.Controllers
             return ToActionResult(result);
         }
 
-                [HttpPost]
+        /// <summary>
+        /// Authenticate a user and return an access token and refresh token if successful.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
         [Route(AuthApiRoutes.Authentication.Login)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -45,7 +58,13 @@ namespace Auth.Services.API.Controllers
             return ToActionResult(result);
         }
 
-                [HttpPost]
+        /// <summary>
+        /// Verify the OTP sent to the user's email during registration.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
         [Route(AuthApiRoutes.Authentication.VerifyEmailOtp)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -56,6 +75,12 @@ namespace Auth.Services.API.Controllers
             return ToActionResult(result);
         }
 
+        /// <summary>
+        /// Resend the OTP to the user's email for registration verification.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route(AuthApiRoutes.Authentication.ResendRegisterOtp)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -67,7 +92,13 @@ namespace Auth.Services.API.Controllers
             return ToActionResult(result);
         }
 
-                [HttpPost]
+        /// <summary>
+        /// Forget PASSWORD: Initiate the password reset process by sending an OTP to the user's email.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
         [Route(AuthApiRoutes.Authentication.ForgotPassword)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -78,7 +109,13 @@ namespace Auth.Services.API.Controllers
             return ToActionResult(result);
         }
 
-                [HttpPost]
+        /// <summary>
+        /// Verify the OTP sent to the user's email for password reset.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
         [Route(AuthApiRoutes.Authentication.VerifyPasswordOtp)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -89,7 +126,13 @@ namespace Auth.Services.API.Controllers
             return ToActionResult(result);
         }
 
-                [HttpPost]
+        /// <summary>
+        /// Reset the user's password using the provided OTP and new password.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
         [Route(AuthApiRoutes.Authentication.ResetPassword)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -100,7 +143,13 @@ namespace Auth.Services.API.Controllers
             return ToActionResult(result);
         }
 
-                [HttpPost]
+        /// <summary>
+        /// Refresh the access token using a valid refresh token.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
         [Route(AuthApiRoutes.Authentication.RefreshToken)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -110,7 +159,13 @@ namespace Auth.Services.API.Controllers
             return ToActionResult(result);
         }
 
-                [HttpPost]
+        /// <summary>
+        /// Logout the user by revoking the refresh token and optionally revoking all sessions.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
         [Route(AuthApiRoutes.Authentication.Logout)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Logout([FromBody] LogoutCommand? command, CancellationToken cancellationToken)
@@ -119,7 +174,12 @@ namespace Auth.Services.API.Controllers
             return ToActionResult(result);
         }
 
-                [HttpGet]
+        /// <summary>
+        /// Get the profile information of the currently authenticated user.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet]
         [RoleAuthorize]
         [Route(AuthApiRoutes.Authentication.Profile)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -132,7 +192,13 @@ namespace Auth.Services.API.Controllers
             return ToActionResult(result);
         }
 
-                [HttpPut]
+        /// <summary>
+        /// Update the profile information of the currently authenticated user.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPut]
         [RoleAuthorize]
         [Route(AuthApiRoutes.Authentication.Profile)]
         [ProducesResponseType(StatusCodes.Status200OK)]
