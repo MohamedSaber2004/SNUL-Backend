@@ -117,6 +117,23 @@
       "UpstreamPathTemplate": "/api/docs/content",
       "UpstreamHttpMethod": [ "GET" ],
       "DangerousAcceptAnyServerCertificateValidator": false
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/content/logo",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [{ "Host": "snul-content.runasp.net", "Port": 443 }],
+      "UpstreamPathTemplate": "/api/v1/content/logo",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DangerousAcceptAnyServerCertificateValidator": false
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/content/logo",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [{ "Host": "snul-content.runasp.net", "Port": 443 }],
+      "UpstreamPathTemplate": "/api/v1/content/logo",
+      "UpstreamHttpMethod": [ "PUT" ],
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer", "AllowedScopes": [] },
+      "DangerousAcceptAnyServerCertificateValidator": false
     }
   ]
 }

@@ -8,6 +8,7 @@ using FAQEntity = SNUL.Shared.Domain.Models.FAQItem;
 using SupportTicketEntity = SNUL.Shared.Domain.Models.SupportTicket;
 using SupportContactEntity = SNUL.Shared.Domain.Models.SupportContact;
 using HelpSiteStatEntity = SNUL.Shared.Domain.Models.HelpSiteStat;
+using SiteLogoEntity = SNUL.Shared.Domain.Models.SiteLogo;
 
 namespace Content.Services.API.Common
 {
@@ -105,6 +106,14 @@ namespace Content.Services.API.Common
             LabelAr = s.LabelAr,
             SortOrder = s.SortOrder,
             IsVisible = s.IsVisible
+        };
+
+        public static Expression<Func<SiteLogoEntity, SiteLogoDto>> SiteLogoProjection => s => new SiteLogoDto
+        {
+            Id = s.Id,
+            LogoUrl = s.LogoUrl,
+            AltText = s.AltText,
+            UpdatedAt = s.UpdatedAt ?? s.CreatedAt
         };
     }
 }

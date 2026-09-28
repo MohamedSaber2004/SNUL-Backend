@@ -109,4 +109,15 @@ namespace SNUL.Shared.Domain.Models
         public int SortOrder { get; set; }
         public bool IsVisible { get; set; }
     }
+    public class SiteLogo : BaseEntity<Guid>
+    {
+        /// <summary>
+        /// Full URL of the logo image (CDN/attachment URL).
+        /// Admin-managed via PUT /api/v1/content/logo. Empty means "use the default static logo".
+        /// </summary>
+        public string LogoUrl { get; set; } = string.Empty;
+
+        /// <summary>Accessible alt text for the logo image.</summary>
+        public string AltText { get; set; } = "SNUL";
+    }
 }

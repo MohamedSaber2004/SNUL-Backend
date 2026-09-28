@@ -545,5 +545,13 @@ namespace SNUL.Shared.Localization
             public const string HelpSiteStatIdRequired = "HelpSiteStat.HelpSiteStatIdRequired";
             public const string StatKeyAlreadyExists = "HelpSiteStat.StatKeyAlreadyExists";
         }
+
+        public static class SiteLogo
+        {
+            public const string Fetched = "SiteLogo.Fetched";
+            public const string Updated = "SiteLogo.Updated";
+            public const string LogoUrlRequired = "SiteLogo.LogoUrlRequired";
+            public const string SiteLogoIdRequired = "SiteLogo.SiteLogoIdRequired";
+        }
     }
 }

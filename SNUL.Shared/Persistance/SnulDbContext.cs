@@ -50,6 +50,7 @@ namespace SNUL.Shared.Persistance
         public DbSet<SupportContact> SupportContacts => Set<SupportContact>();
         public DbSet<OemInquiry> OemInquiries => Set<OemInquiry>();
         public DbSet<HelpSiteStat> HelpSiteStats => Set<HelpSiteStat>();
+        public DbSet<SiteLogo> SiteLogos => Set<SiteLogo>();
         public SnulDbContext(DbContextOptions<SnulDbContext> options, ICurrentUserService? currentUserService = null)
             : base(options)
         {

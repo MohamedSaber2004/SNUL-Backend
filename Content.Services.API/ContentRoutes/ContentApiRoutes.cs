@@ -93,5 +93,13 @@ namespace Content.Services.API.ContentRoutes
             public const string Update = "{id}";
             public const string Delete = "{id}";
         }
+
+        public const string SiteLogoBase = Root + "/" + Version + "/content/logo";
+        public static class SiteLogo
+        {
+            public const string Base = SiteLogoBase;
+            public const string Get = "";
+            public const string Upsert = "";
+        }
     }
 }
