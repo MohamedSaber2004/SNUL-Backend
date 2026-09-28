@@ -24,7 +24,7 @@ namespace Content.Services.API.Features.SiteLogo.Commands.UpsertSiteLogo
             SiteLogoEntity logo;
             if (existing != null)
             {
-                existing.LogoUrl = request.LogoUrl.Trim();
+                existing.LogoUrl = (request.LogoUrl ?? string.Empty).Trim();
                 existing.AltText = string.IsNullOrWhiteSpace(request.AltText) ? "SNUL" : request.AltText.Trim();
                 repo.Update(existing);
                 logo = existing;
@@ -34,7 +34,7 @@ namespace Content.Services.API.Features.SiteLogo.Commands.UpsertSiteLogo
                 logo = new SiteLogoEntity
                 {
                     Id = Guid.NewGuid(),
-                    LogoUrl = request.LogoUrl.Trim(),
+                    LogoUrl = (request.LogoUrl ?? string.Empty).Trim(),
                     AltText = string.IsNullOrWhiteSpace(request.AltText) ? "SNUL" : request.AltText.Trim()
                 };
                 await repo.AddAsync(logo, cancellationToken);
