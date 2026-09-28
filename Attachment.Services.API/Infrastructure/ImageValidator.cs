@@ -6,8 +6,20 @@ namespace Attachment.Services.API.Infrastructure
 {
     public class ImageValidator : IImageValidator
     {
-        private const long MaxImageSizeBytes = 5 * 1024 * 1024;
-        private static readonly string[] AllowedImageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+        private const long MaxImageSizeBytes = 15 * 1024 * 1024;
+        private static readonly HashSet<string> AllowedImageExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".jpg", ".jpeg", ".jpe", ".jif", ".jfif", ".jfi",
+            ".png",
+            ".svg", ".svgz",
+            ".webp",
+            ".gif",
+            ".bmp", ".dib",
+            ".ico",
+            ".tiff", ".tif",
+            ".avif",
+            ".heic", ".heif"
+        };
 
         private readonly IBaseFileService _baseFileService;
         private readonly IHttpClientFactory _httpClientFactory;

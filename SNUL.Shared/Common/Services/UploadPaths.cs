@@ -41,7 +41,17 @@ namespace SNUL.Shared.Common.Services
             if (Options is null || string.IsNullOrWhiteSpace(Options.RootPath))
                 return null;
 
-            return Path.GetFullPath(Options.RootPath, AppContext.BaseDirectory);
+            try
+            {
+                var resolved = Path.GetFullPath(Options.RootPath, AppContext.BaseDirectory);
+                if (Directory.Exists(resolved))
+                    return resolved;
+            }
+            catch
+            {
+            }
+
+            return null;
         }
     }
 }
